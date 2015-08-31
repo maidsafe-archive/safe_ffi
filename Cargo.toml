@@ -1,0 +1,14 @@
+[package]
+name          = "safe_ffi"
+version       = "0.0.1"
+authors       = ["MaidSafe Developers <dev@maidsafe.net>"]
+description   = "SAFE API - FFI library"
+documentation = "http://maidsafe.github.io/safe_ffi/latest/"
+repository    = "https://github.com/maidsafe/safe_ffi"
+readme        = "README.md"
+license       = "GPL-3.0"
+homepage      = "http://maidsafe.net"
+
+[lib]
+name       = "safe_ffi"
+crate_type = ["staticlib", "dylib", "rlib"]
