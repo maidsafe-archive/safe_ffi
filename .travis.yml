@@ -4,7 +4,7 @@ os:
 language: rust
 rust:
   - nightly
-sudo: true
+sudo: false
 branches:
   only:
       - master
@@ -13,11 +13,9 @@ install:
   - tar xvfz libsodium-1.0.3.tar.gz
   - cd libsodium-1.0.3
   - ./configure --prefix=$HOME/libsodium-1.0.3
-  - sudo make install
-  - echo "travis-dir"
+  - make install
   - ls -al /home/travis/libsodium-1.0.3/lib
-  - echo "usr/lib-dir"
-  - ls -al /usr/lib/libsod*
+  - export LD_LIBRARY_PATH=/home/travis/libsodium-1.0.3/lib:$LD_LIBRARY_PATH
   - cd ..
   - export PKG_CONFIG_PATH=$HOME/libsodium-1.0.3/lib/pkgconfig:$PKG_CONFIG_PATH
 script:
