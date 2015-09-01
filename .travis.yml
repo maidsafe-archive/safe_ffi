@@ -9,7 +9,8 @@ branches:
   only:
       - master
 install:
-  - curl -sSL https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/install_libsodium_ffi.sh | source
+  - curl -sSL https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/install_libsodium_ffi.sh -O
+  - source ./install_libsodium_ffi.sh
 script:
   - cargo build --verbose --features "use-mock-routing"
   - cargo test --verbose --features "use-mock-routing"
