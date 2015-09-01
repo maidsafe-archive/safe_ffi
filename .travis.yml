@@ -9,7 +9,7 @@ branches:
   only:
       - master
 install:
-  - curl -sSL https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/install_libsodium_ffi.sh
+  - curl -sSL https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/install_libsodium_ffi.sh -O
   - source ./install_libsodium_ffi.sh
   - echo $LD_LIBRARY_PATH
   - echo $PKG_CONFIG_PATH
