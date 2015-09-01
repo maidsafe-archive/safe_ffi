@@ -12,3 +12,19 @@ homepage      = "http://maidsafe.net"
 [lib]
 name       = "safe_ffi"
 crate_type = ["staticlib", "dylib", "rlib"]
+
+[dependencies]
+# ---- Maidsafe ----
+routing     = "0.3.*"
+safe_nfs    = "0.1.*"
+safe_dns    = "0.1.*"
+safe_client = "0.1.*"
+
+# ---- Others ----
+libc        = "*"
+sodiumoxide = "*"
+
+[features]
+use-mock-routing = ["safe_dns/use-mock-routing",
+                    "safe_nfs/use-mock-routing",
+                    "safe_client/use-mock-routing"]
