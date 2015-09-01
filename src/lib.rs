@@ -37,7 +37,7 @@ unused_qualifications, variant_size_differences)]
 
 // TODO
 //! #Client-FFI Library
-//! [Project github page](https://github.com/ustulation/safe_ffi)
+//! [Project github page](https://github.com/maidsafe/safe_ffi)
 
 extern crate libc;
 extern crate routing;
