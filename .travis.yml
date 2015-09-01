@@ -4,12 +4,21 @@ os:
 language: rust
 rust:
   - nightly
-sudo: false
+sudo: true
 branches:
   only:
       - master
 install:
-  - curl -sSL https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/install_libsodium_ffi.sh | bash
+  - wget https://github.com/jedisct1/libsodium/releases/download/1.0.3/libsodium-1.0.3.tar.gz
+  - tar xvfz libsodium-1.0.3.tar.gz
+  - cd libsodium-1.0.3
+  - ./configure --prefix=$HOME/libsodium-1.0.3
+  - sudo make install
+  - echo "travis-dir"
+  - ls -al /home/travis/libsodium-1.0.3/lib
+  - echo "usr/lib-dir"
+  - ls -al /usr/lib/libsod*
+  - cd ..
   - export PKG_CONFIG_PATH=$HOME/libsodium-1.0.3/lib/pkgconfig:$PKG_CONFIG_PATH
 script:
   - cargo build --verbose --features "use-mock-routing"
