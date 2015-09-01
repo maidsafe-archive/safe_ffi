@@ -9,15 +9,10 @@ branches:
   only:
       - master
 install:
-  - wget https://github.com/jedisct1/libsodium/releases/download/1.0.3/libsodium-1.0.3.tar.gz
-  - tar xvfz libsodium-1.0.3.tar.gz
-  - cd libsodium-1.0.3
-  - ./configure --prefix=$HOME/libsodium-1.0.3
-  - make install
-  - ls -al /home/travis/libsodium-1.0.3/lib
-  - export LD_LIBRARY_PATH=/home/travis/libsodium-1.0.3/lib:$LD_LIBRARY_PATH
-  - cd ..
-  - export PKG_CONFIG_PATH=$HOME/libsodium-1.0.3/lib/pkgconfig:$PKG_CONFIG_PATH
+  - curl -sSL https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/install_libsodium_ffi.sh
+  - source ./install_libsodium_ffi.sh
+  - echo $LD_LIBRARY_PATH
+  - echo $PKG_CONFIG_PATH
 script:
   - cargo build --verbose --features "use-mock-routing"
   - cargo test --verbose --features "use-mock-routing"
