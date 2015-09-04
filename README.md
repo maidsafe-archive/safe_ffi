@@ -37,3 +37,7 @@ To interface it with actual routing (default):
 cargo build
 cargo test
 ```
+##TODO
+### [0.0.1]
+- [ ] [MAID-1231](https://maidsafe.atlassian.net/browse/MAID-1321) safe_ffi - Make reading for file relative to serice home dir
+- [ ] [MAID-1232](https://maidsafe.atlassian.net/browse/MAID-1322) safe_ffi - changes according to other crates and update test cases
