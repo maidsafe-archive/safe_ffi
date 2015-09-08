@@ -52,9 +52,26 @@ pub fn path_tokeniser(c_path: *const ::libc::c_char) -> Result<Vec<String>, ::er
     Ok(string_path.split("/").filter(|a| !a.is_empty()).map(|a| a.to_string()).collect())
 }
 
-pub fn get_final_subdirectory(tokens: &Vec<String>) -> Result<::safe_nfs::directory_listing::DirectoryListing, ::errors::FfiError> {
+pub fn get_final_subdirectory(tokens            : &Vec<String>,
+                              starting_directory: Option<(&(::routing::NameType, u64), bool)>) -> Result<::safe_nfs::directory_listing::DirectoryListing,
+                                                                                                         ::errors::FfiError> {
     let dir_helper = ::safe_nfs::helper::directory_helper::DirectoryHelper::new(get_test_client());
-    let mut current_dir_listing = try!(dir_helper.get_user_root_directory_listing());
+
+    let mut current_dir_listing = match starting_directory {
+        Some(dir_key_and_access) => {
+            let access_level = if dir_key_and_access.1 {
+                ::safe_nfs::AccessLevel::Private
+            } else {
+                ::safe_nfs::AccessLevel::Public
+            };
+
+            try!(dir_helper.get((&(dir_key_and_access.0).0, (dir_key_and_access.0).1),
+                                false,
+                                &access_level))
+        },
+        None => try!(dir_helper.get_user_root_directory_listing()),
+    };
+
     for it in tokens.iter() {
         let current_dir_info = try!(current_dir_listing.get_sub_directories().iter().find(|a| *a.get_name() == *it).ok_or(::errors::FfiError::PathNotFound)).clone();
         current_dir_listing = try!(dir_helper.get(current_dir_info.get_key(),

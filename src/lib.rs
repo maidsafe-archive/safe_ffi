@@ -35,8 +35,17 @@ unused_qualifications, variant_size_differences)]
 
 ///////////////////////////////////////////////////
 
-// TODO
-//! #Client-FFI Library
+//! This crate provides FFI-bindings to the Client Modules (`safe_client`, `safe_nfs`, `safe_dns`)
+//! In the current implementation the allocations made by this crate are managed within the crate
+//! itself and is guaranteed that management of such allocations will not be pushed beyond the FFI
+//! boundary. This has a 2-fold outcome: firstly, the passing of data is done by filling of the
+//! allocations passed by the caller and is caller's responsibility to manage those. For this every
+//! function that fills an allocated memory also has a companion function to return the size of
+//! data which the caller can call to find out how much space needs to be allocated in the first
+//! place. Second and consequently, the caller does not have to bother calling functions within
+//! this crate which only serve to free resources allocated by the crate itself. This otherwise
+//! would be error prone and cumbersome. Instead the caller can use whatever idiom in his language
+//! to manage memory much more naturally and conveniently (eg., RAII idioms etc)
 //! [Project github page](https://github.com/maidsafe/safe_ffi)
 
 extern crate libc;
@@ -51,14 +60,54 @@ extern crate sodiumoxide;
 mod errors;
 mod implementation;
 
+/// Create an unregistered client. This or any one of the other companion functions to get a
+/// client must be called before initiating any operation allowed by this crate
+#[no_mangle]
+pub extern fn create_unregistered_client() -> *const libc::c_void {
+    let client = Box::new(std::sync::Arc::new(std::sync::Mutex::new(safe_client::client::Client::create_unregistered_client())));
+    unsafe { std::mem::transmute(client) }
+}
+
+/// Create an unregistered client. This or any one of the other companion functions to get a
+/// client must be called before initiating any operation allowed by this crate
+#[no_mangle]
+pub extern fn create_account(c_keyword    : *const libc::c_char,
+                             c_pin        : *const libc::c_char,
+                             c_password   : *const libc::c_char,
+                             client_handle: *mut *const libc::c_void) -> libc::int32_t {
+    let client = ffi_try!(safe_client::client::Client::create_account(ffi_try!(implementation::c_char_ptr_to_string(c_keyword)),
+                                                                      ffi_try!(implementation::c_char_ptr_to_string(c_pin)),
+                                                                      ffi_try!(implementation::c_char_ptr_to_string(c_password))));
+    let boxed_client = Box::new(std::sync::Arc::new(std::sync::Mutex::new(client)));
+    unsafe { *client_handle = std::mem::transmute(boxed_client); }
+
+    0
+}
+
+/// Create an unregistered client. This or any one of the other companion functions to get a
+/// client must be called before initiating any operation allowed by this crate
+#[no_mangle]
+pub extern fn log_in(c_keyword    : *const libc::c_char,
+                     c_pin        : *const libc::c_char,
+                     c_password   : *const libc::c_char,
+                     client_handle: *mut *const libc::c_void) -> libc::int32_t {
+    let client = ffi_try!(safe_client::client::Client::log_in(ffi_try!(implementation::c_char_ptr_to_string(c_keyword)),
+                                                              ffi_try!(implementation::c_char_ptr_to_string(c_pin)),
+                                                              ffi_try!(implementation::c_char_ptr_to_string(c_password))));
+    let boxed_client = Box::new(std::sync::Arc::new(std::sync::Mutex::new(client)));
+    unsafe { *client_handle = std::mem::transmute(boxed_client); }
+
+    0
+}
+
 /// Create a subdirectory. The Name of the subdirectory is the final token in the given path. Eg.,
-/// if given path = "/a/b/c/d" then "d" is interpreted as the subdirectory intended to be created.
+/// if given path = `/a/b/c/d` then `d` is interpreted as the subdirectory intended to be created.
 #[no_mangle]
 pub extern fn create_sub_directory(c_path: *const libc::c_char, is_private: bool) -> libc::int32_t {
     let mut tokens = ffi_try!(implementation::path_tokeniser(c_path));
 
     let sub_dir_name = ffi_try!(tokens.pop().ok_or(errors::FfiError::InvalidPath));
-    let mut parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens));
+    let mut parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens, None));
     let dir_helper = safe_nfs::helper::directory_helper::DirectoryHelper::new(implementation::get_test_client());
 
     let access_level = if is_private {
@@ -78,7 +127,7 @@ pub extern fn create_sub_directory(c_path: *const libc::c_char, is_private: bool
 }
 
 /// Create a file. The Name of the file is the final token in the given path. Eg.,
-/// if given path = "/a/b/c/d" then "d" is interpreted as the file intended to be created.
+/// if given path = `/a/b/c/d` then `d` is interpreted as the file intended to be created.
 #[no_mangle]
 pub extern fn create_file(c_path   : *const libc::c_char,
                           c_content: *const libc::uint8_t,
@@ -86,7 +135,7 @@ pub extern fn create_file(c_path   : *const libc::c_char,
     let mut tokens = ffi_try!(implementation::path_tokeniser(c_path));
 
     let file_name = ffi_try!(tokens.pop().ok_or(errors::FfiError::InvalidPath));
-    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens));
+    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens, None));
     let file_helper = safe_nfs::helper::file_helper::FileHelper::new(implementation::get_test_client());
 
     let mut writer = ffi_try!(file_helper.create(file_name,
@@ -101,31 +150,31 @@ pub extern fn create_file(c_path   : *const libc::c_char,
 
 /// Get the size of the file. c_size should be properly and sufficiently pre-allocated.
 /// The Name of the file is the final token in the given path. Eg.,
-/// if given path = "/a/b/c/d" then "d" is interpreted as the file intended to be read.
-#[allow(trivial_numeric_casts)] // TODO refer to the one below - sort that then remove this
+/// if given path = `/a/b/c/d` then `d` is interpreted as the file intended to be read.
+/// `c_size` should be properly and sufficiently pre-allocated.
 #[no_mangle]
-pub extern fn get_file_size(c_path: *const libc::c_char, c_size: *mut libc::size_t) -> libc::int32_t {
+pub extern fn get_file_size(c_path: *const libc::c_char, c_size: *mut libc::uint64_t) -> libc::int32_t {
     let mut tokens = ffi_try!(implementation::path_tokeniser(c_path));
 
     let file_name = ffi_try!(tokens.pop().ok_or(errors::FfiError::InvalidPath));
-    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens));
+    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens, None));
 
     let size = ffi_try!(implementation::get_file_size(&file_name, &parent_dir_listing));
 
-    unsafe { std::ptr::write(c_size, size as libc::size_t) }; // TODO All crates must use usize instead of u64 for file-sizes to avoid casting for lower bit architectures
+    unsafe { std::ptr::write(c_size, size) };
 
     0
 }
 
 /// Read a file. The Name of the file is the final token in the given path. Eg.,
-/// if given path = "/a/b/c/d" then "d" is interpreted as the file intended to be read.
-/// c_content_buf should be properly and sufficiently pre-allocated.
+/// if given path = `/a/b/c/d` then `d` is interpreted as the file intended to be read.
+/// `c_content_buf` should be properly and sufficiently pre-allocated.
 #[no_mangle]
 pub extern fn get_file_content(c_path: *const libc::c_char, c_content_buf: *mut libc::uint8_t) -> libc::int32_t {
     let mut tokens = ffi_try!(implementation::path_tokeniser(c_path));
 
     let file_name = ffi_try!(tokens.pop().ok_or(errors::FfiError::InvalidPath));
-    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens));
+    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens, None));
     let data_vec = ffi_try!(implementation::get_file_content(&file_name, &parent_dir_listing));
 
     unsafe { std::ptr::copy(data_vec.as_ptr(), c_content_buf, data_vec.len()) };
@@ -142,7 +191,7 @@ pub extern fn register_dns(c_long_name            : *const libc::c_char,
 
     let tokens = ffi_try!(implementation::path_tokeniser(c_service_home_dir_path));
 
-    let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens));
+    let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens, None));
     let service_home_dir_key = service_home_dir_listing.get_info().get_key();
 
     let long_name = ffi_try!(implementation::c_char_ptr_to_string(c_long_name));
@@ -175,7 +224,7 @@ pub extern fn add_service(c_long_name            : *const libc::c_char,
 
     let tokens = ffi_try!(implementation::path_tokeniser(c_service_home_dir_path));
 
-    let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens));
+    let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens, None));
     let service_home_dir_key = service_home_dir_listing.get_info().get_key();
 
     let long_name = ffi_try!(implementation::c_char_ptr_to_string(c_long_name));
@@ -194,75 +243,65 @@ pub extern fn add_service(c_long_name            : *const libc::c_char,
     0
 }
 
-// TODO The follwoing two functions are a little rough for this iteration. It is intended to
-// ultimately accept the complete path to the file, root being cosidered the
-// service-home-directory.
-
 /// Get file size from service home directory
-#[allow(trivial_numeric_casts)] // TODO refer to the one below - sort that then remove this
+/// The Name of the file is the final token in the given path. Eg.,
+/// if given path = `/a/b/c/d` then `d` is interpreted as the file intended to be read.
+/// `c_content_size` should be properly and sufficiently pre-allocated.
 #[no_mangle]
 pub extern fn get_file_size_from_service_home_dir(c_long_name   : *const libc::c_char,
                                                   c_service_name: *const libc::c_char,
                                                   c_file_name   : *const libc::c_char,
                                                   is_private    : bool,
-                                                  c_content_size: *mut libc::size_t) -> libc::int32_t {
-    let long_name = ffi_try!(implementation::c_char_ptr_to_string(c_long_name));
-    let service_name = ffi_try!(implementation::c_char_ptr_to_string(c_service_name));
-    let file_name = ffi_try!(implementation::c_char_ptr_to_string(c_file_name));
+                                                  c_content_size: *mut libc::uint64_t) -> libc::int32_t {
+    let (file_name, service_file_dir_listing) = ffi_try!(get_directory_for_service_file(c_long_name,
+                                                                                        c_service_name,
+                                                                                        c_file_name,
+                                                                                        is_private));
 
-    let dns_operations = ffi_try!(safe_dns::dns_operations::DnsOperations::new(implementation::get_test_client()));
-    let service_dir_key = ffi_try!(dns_operations.get_service_home_directory_key(&long_name,
-                                                                                 &service_name,
-                                                                                 None));
-    let access_level = if is_private {
-        safe_nfs::AccessLevel::Private
-    } else {
-        safe_nfs::AccessLevel::Public
-    };
+    let file_size = ffi_try!(implementation::get_file_size(&file_name, &service_file_dir_listing));
 
-    let dir_helper = safe_nfs::helper::directory_helper::DirectoryHelper::new(implementation::get_test_client());
-    let service_dir_listing = ffi_try!(dir_helper.get((&service_dir_key.0, service_dir_key.1),
-                                                      false,
-                                                      &access_level));
-
-    let file_size = ffi_try!(implementation::get_file_size(&file_name, &service_dir_listing));
-
-    unsafe { std::ptr::write(c_content_size, file_size as libc::size_t) }; // TODO All crates must use usize instead of u64 for file-sizes to avoid casting for lower bit architectures
+    unsafe { std::ptr::write(c_content_size, file_size) };
 
     0
 }
 
 /// Get file content from service home directory
+/// The Name of the file is the final token in the given path. Eg.,
+/// if given path = `/a/b/c/d` then `d` is interpreted as the file intended to be read.
+/// `c_content_buf` should be properly and sufficiently pre-allocated.
 #[no_mangle]
 pub extern fn get_file_content_from_service_home_dir(c_long_name   : *const libc::c_char,
                                                      c_service_name: *const libc::c_char,
                                                      c_file_name   : *const libc::c_char,
                                                      is_private    : bool,
                                                      c_content_buf : *mut libc::uint8_t) -> libc::int32_t {
-    let long_name = ffi_try!(implementation::c_char_ptr_to_string(c_long_name));
-    let service_name = ffi_try!(implementation::c_char_ptr_to_string(c_service_name));
-    let file_name = ffi_try!(implementation::c_char_ptr_to_string(c_file_name));
+    let (file_name, service_file_dir_listing) = ffi_try!(get_directory_for_service_file(c_long_name,
+                                                                                        c_service_name,
+                                                                                        c_file_name,
+                                                                                        is_private));
 
-    let dns_operations = ffi_try!(safe_dns::dns_operations::DnsOperations::new(implementation::get_test_client()));
-    let service_dir_key = ffi_try!(dns_operations.get_service_home_directory_key(&long_name,
-                                                                                 &service_name,
-                                                                                 None));
-    let access_level = if is_private {
-        safe_nfs::AccessLevel::Private
-    } else {
-        safe_nfs::AccessLevel::Public
-    };
-
-    let dir_helper = safe_nfs::helper::directory_helper::DirectoryHelper::new(implementation::get_test_client());
-    let service_dir_listing = ffi_try!(dir_helper.get((&service_dir_key.0, service_dir_key.1),
-                                                      false,
-                                                      &access_level));
-
-    let data_vec = ffi_try!(implementation::get_file_content(&file_name, &service_dir_listing));
+    let data_vec = ffi_try!(implementation::get_file_content(&file_name, &service_file_dir_listing));
 
     unsafe { std::ptr::copy(data_vec.as_ptr(), c_content_buf, data_vec.len()) };
 
     0
+}
+
+fn get_directory_for_service_file(c_long_name   : *const libc::c_char,
+                                  c_service_name: *const libc::c_char,
+                                  c_file_name   : *const libc::c_char,
+                                  is_private    : bool) -> Result<(String, safe_nfs::directory_listing::DirectoryListing), errors::FfiError> {
+    let mut tokens = try!(implementation::path_tokeniser(c_file_name));
+
+    let file_name = try!(tokens.pop().ok_or(errors::FfiError::InvalidPath));
+    let long_name = try!(implementation::c_char_ptr_to_string(c_long_name));
+    let service_name = try!(implementation::c_char_ptr_to_string(c_service_name));
+
+    let dns_operations = try!(safe_dns::dns_operations::DnsOperations::new(implementation::get_test_client()));
+    let service_dir_key = try!(dns_operations.get_service_home_directory_key(&long_name,
+                                                                             &service_name,
+                                                                             None));
+    Ok((file_name, try!(implementation::get_final_subdirectory(&tokens, Some((&service_dir_key, is_private))))))
 }
 
 #[cfg(test)]
@@ -272,8 +311,9 @@ mod test {
 
     #[test]
     fn create_directories_files_and_read_files() {
-        let size_of_c_int = ::std::mem::size_of::<::libc::c_int>();
         let size_of_c_char = ::std::mem::size_of::<::libc::c_char>();
+        let size_of_c_uint8 = ::std::mem::size_of::<::libc::uint8_t>();
+        let size_of_c_uint64 = ::std::mem::size_of::<::libc::uint64_t>();
 
         // --------------------------------------------------------------------------------------------------
         //                                       NFS Operations
@@ -346,7 +386,7 @@ mod test {
             unsafe { ::std::ptr::copy(cstring_path.as_ptr(), c_path, path_lenght_for_c) };
         }
 
-        let c_size = unsafe { ::libc::malloc(1 * size_of_c_int as ::libc::size_t) } as *mut ::libc::size_t;
+        let c_size = unsafe { ::libc::malloc(size_of_c_uint64 as ::libc::size_t) } as *mut ::libc::uint64_t;
 
         assert_eq!(get_file_size(c_path, c_size), 0);
         unsafe { assert_eq!(*c_size as usize, cstring_content.as_bytes_with_nul().len()) };
@@ -367,7 +407,9 @@ mod test {
             unsafe { ::std::ptr::copy(cstring_path.as_ptr(), c_path, path_lenght_for_c) };
         }
 
-        let mut c_content = unsafe { ::libc::malloc((*c_size as usize * ::std::mem::size_of::<::libc::c_int>()) as ::libc::size_t) } as *mut ::libc::uint8_t;
+        // Note: This will result in narrowing on < 64 bit systems - but it's Ok for this test as
+        //       we are not dealing with files larger than 2^32 bytes.
+        let mut c_content = unsafe { ::libc::malloc((*c_size as usize * size_of_c_uint8) as ::libc::size_t) } as *mut ::libc::uint8_t;
 
         assert_eq!(get_file_content(c_path, c_content), 0);
 
@@ -398,9 +440,23 @@ mod test {
         }
 
         // --------------------------------------------------------------------
+        // Create Path String /a - c string size with \0 = 3
+        // --------------------------------------------------------------------
+        let c_path_blog = unsafe { ::libc::malloc(3 * size_of_c_char as ::libc::size_t) } as *mut ::libc::c_char;
+
+        {
+            let cstring_path = eval_result!(::std::ffi::CString::new("/a").map_err(|error| ::errors::FfiError::from(error.description())));
+
+            let path_lenght_for_c = cstring_path.as_bytes_with_nul().len();
+            assert_eq!(path_lenght_for_c, 3 * size_of_c_char);
+
+            unsafe { ::std::ptr::copy(cstring_path.as_ptr(), c_path_blog, path_lenght_for_c) };
+        }
+
+        // --------------------------------------------------------------------
         // Create File Name String file.txt - c string size with \0 = 9
         // --------------------------------------------------------------------
-        let c_file_name = unsafe { ::libc::malloc(9 * size_of_c_char as ::libc::size_t) } as *mut ::libc::c_char;
+        let c_file_name_www = unsafe { ::libc::malloc(9 * size_of_c_char as ::libc::size_t) } as *mut ::libc::c_char;
 
         {
             let cstring_file_name = eval_result!(::std::ffi::CString::new("file.txt").map_err(|error| ::errors::FfiError::from(error.description())));
@@ -408,7 +464,21 @@ mod test {
             let file_name_length_for_c = cstring_file_name.as_bytes_with_nul().len();
             assert_eq!(file_name_length_for_c, 9 * size_of_c_char);
 
-            unsafe { ::std::ptr::copy(cstring_file_name.as_ptr(), c_file_name, file_name_length_for_c) };
+            unsafe { ::std::ptr::copy(cstring_file_name.as_ptr(), c_file_name_www, file_name_length_for_c) };
+        }
+
+        // --------------------------------------------------------------------
+        // Create File Name String last/file.txt - c string size with \0 = 14
+        // --------------------------------------------------------------------
+        let c_file_name_blog = unsafe { ::libc::malloc(14 * size_of_c_char as ::libc::size_t) } as *mut ::libc::c_char;
+
+        {
+            let cstring_file_name = eval_result!(::std::ffi::CString::new("last/file.txt").map_err(|error| ::errors::FfiError::from(error.description())));
+
+            let file_name_length_for_c = cstring_file_name.as_bytes_with_nul().len();
+            assert_eq!(file_name_length_for_c, 14 * size_of_c_char);
+
+            unsafe { ::std::ptr::copy(cstring_file_name.as_ptr(), c_file_name_blog, file_name_length_for_c) };
         }
 
         let mut long_name = eval_result!(::safe_client::utility::generate_random_vector::<u8>(10));
@@ -466,11 +536,13 @@ mod test {
         assert_eq!(register_dns(c_long_name, c_service_name_www, c_path), 0);
 
         // Add Service
-        assert_eq!(add_service(c_long_name, c_service_name_blog, c_path), 0);
+        assert_eq!(add_service(c_long_name, c_service_name_blog, c_path_blog), 0);
 
         // Get specific file for www service
-        c_content = unsafe { ::libc::malloc((*c_size as usize * ::std::mem::size_of::<::libc::c_int>()) as ::libc::size_t) } as *mut ::libc::uint8_t;
-        assert_eq!(get_file_content_from_service_home_dir(c_long_name, c_service_name_www, c_file_name, false, c_content), 0);
+        // Note: This will result in narrowing on < 64 bit systems - but it's Ok for this test as
+        //       we are not dealing with files larger than 2^32 bytes.
+        c_content = unsafe { ::libc::malloc((*c_size as usize * size_of_c_uint8) as ::libc::size_t) } as *mut ::libc::uint8_t;
+        assert_eq!(get_file_content_from_service_home_dir(c_long_name, c_service_name_www, c_file_name_www, false, c_content), 0);
 
         {
             let read_cstr_content = unsafe { ::std::ffi::CStr::from_ptr(c_content as *const ::libc::c_char) };
@@ -480,8 +552,10 @@ mod test {
         unsafe { ::libc::free(c_content as *mut ::libc::c_void) };
 
         // Get specific file for blog service
-        c_content = unsafe { ::libc::malloc((*c_size as usize * ::std::mem::size_of::<::libc::c_int>()) as ::libc::size_t) } as *mut ::libc::uint8_t;
-        assert_eq!(get_file_content_from_service_home_dir(c_long_name, c_service_name_blog, c_file_name, false, c_content), 0);
+        // Note: This will result in narrowing on < 64 bit systems - but it's Ok for this test as
+        //       we are not dealing with files larger than 2^32 bytes.
+        c_content = unsafe { ::libc::malloc((*c_size as usize * size_of_c_uint8) as ::libc::size_t) } as *mut ::libc::uint8_t;
+        assert_eq!(get_file_content_from_service_home_dir(c_long_name, c_service_name_blog, c_file_name_blog, false, c_content), 0);
 
         {
             let read_cstr_content = unsafe { ::std::ffi::CStr::from_ptr(c_content as *const ::libc::c_char) };
@@ -491,8 +565,10 @@ mod test {
         unsafe { ::libc::free(c_path as *mut ::libc::c_void) };
         unsafe { ::libc::free(c_size as *mut ::libc::c_void) };
         unsafe { ::libc::free(c_content as *mut ::libc::c_void) };
+        unsafe { ::libc::free(c_path_blog as *mut ::libc::c_void) };
         unsafe { ::libc::free(c_long_name as *mut ::libc::c_void) };
-        unsafe { ::libc::free(c_file_name as *mut ::libc::c_void) };
+        unsafe { ::libc::free(c_file_name_www as *mut ::libc::c_void) };
+        unsafe { ::libc::free(c_file_name_blog as *mut ::libc::c_void) };
         unsafe { ::libc::free(c_service_name_www as *mut ::libc::c_void) };
         unsafe { ::libc::free(c_service_name_blog as *mut ::libc::c_void) };
     }
