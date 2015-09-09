@@ -30,7 +30,7 @@
 ///     0
 /// }
 /// # fn main() {
-/// # let error_code = f();
+/// # let _error_code = f();
 /// # }
 /// ```
 #[macro_export]
