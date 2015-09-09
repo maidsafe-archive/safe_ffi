@@ -64,8 +64,9 @@ mod implementation;
 /// client must be called before initiating any operation allowed by this crate
 #[no_mangle]
 pub extern fn create_unregistered_client() -> *const libc::c_void {
-    let client = Box::new(std::sync::Arc::new(std::sync::Mutex::new(safe_client::client::Client::create_unregistered_client())));
-    unsafe { std::mem::transmute(client) }
+    let boxed_client = Box::new(std::sync::Arc::new(std::sync::Mutex::new(safe_client::client::Client::create_unregistered_client())));
+
+    unsafe { std::mem::transmute(boxed_client) }
 }
 
 /// Create an unregistered client. This or any one of the other companion functions to get a
@@ -100,15 +101,29 @@ pub extern fn log_in(c_keyword    : *const libc::c_char,
     0
 }
 
+/// Discard and clean up the previously allocated client. Use this only if the client is obtained
+/// from one of the client obtainment functions in this crate (`crate_account`, `log_in` etc).
+#[no_mangle]
+pub extern fn drop_client(client_handle: *const libc::c_void) {
+    let _ = unsafe { std::mem::transmute::<_, Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>>>(client_handle) };
+}
+
 /// Create a subdirectory. The Name of the subdirectory is the final token in the given path. Eg.,
 /// if given path = `/a/b/c/d` then `d` is interpreted as the subdirectory intended to be created.
 #[no_mangle]
-pub extern fn create_sub_directory(c_path: *const libc::c_char, is_private: bool) -> libc::int32_t {
+pub extern fn create_sub_directory(client_handle: *const libc::c_void,
+                                   c_path       : *const libc::c_char,
+                                   is_versioned : bool,
+                                   is_private   : bool) -> libc::int32_t {
+    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
+        std::mem::transmute(client_handle)
+    };
+
     let mut tokens = ffi_try!(implementation::path_tokeniser(c_path));
 
     let sub_dir_name = ffi_try!(tokens.pop().ok_or(errors::FfiError::InvalidPath));
-    let mut parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens, None));
-    let dir_helper = safe_nfs::helper::directory_helper::DirectoryHelper::new(implementation::get_test_client());
+    let mut parent_dir_listing = ffi_try!(implementation::get_final_subdirectory((*boxed_client).clone(), &tokens, None));
+    let dir_helper = safe_nfs::helper::directory_helper::DirectoryHelper::new((*boxed_client).clone());
 
     let access_level = if is_private {
         safe_nfs::AccessLevel::Private
@@ -119,9 +134,11 @@ pub extern fn create_sub_directory(c_path: *const libc::c_char, is_private: bool
     let _ = ffi_try!(dir_helper.create(sub_dir_name,
                                        safe_nfs::UNVERSIONED_DIRECTORY_LISTING_TAG,
                                        vec![],
-                                       false,
+                                       is_versioned,
                                        access_level,
                                        Some(&mut parent_dir_listing)));
+
+    std::mem::forget(boxed_client);
 
     0
 }
@@ -129,14 +146,19 @@ pub extern fn create_sub_directory(c_path: *const libc::c_char, is_private: bool
 /// Create a file. The Name of the file is the final token in the given path. Eg.,
 /// if given path = `/a/b/c/d` then `d` is interpreted as the file intended to be created.
 #[no_mangle]
-pub extern fn create_file(c_path   : *const libc::c_char,
-                          c_content: *const libc::uint8_t,
-                          c_size   : libc::size_t) -> libc::int32_t {
+pub extern fn create_file(client_handle: *const libc::c_void,
+                          c_path       : *const libc::c_char,
+                          c_content    : *const libc::uint8_t,
+                          c_size       : libc::size_t) -> libc::int32_t {
+    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
+        std::mem::transmute(client_handle)
+    };
+
     let mut tokens = ffi_try!(implementation::path_tokeniser(c_path));
 
     let file_name = ffi_try!(tokens.pop().ok_or(errors::FfiError::InvalidPath));
-    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens, None));
-    let file_helper = safe_nfs::helper::file_helper::FileHelper::new(implementation::get_test_client());
+    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory((*boxed_client).clone(), &tokens, None));
+    let file_helper = safe_nfs::helper::file_helper::FileHelper::new((*boxed_client).clone());
 
     let mut writer = ffi_try!(file_helper.create(file_name,
                                                  vec![],
@@ -144,6 +166,8 @@ pub extern fn create_file(c_path   : *const libc::c_char,
 
     writer.write(&implementation::c_uint8_ptr_to_vec(c_content, c_size), 0);
     let _ = ffi_try!(writer.close());
+
+    std::mem::forget(boxed_client);
 
     0
 }
@@ -153,15 +177,23 @@ pub extern fn create_file(c_path   : *const libc::c_char,
 /// if given path = `/a/b/c/d` then `d` is interpreted as the file intended to be read.
 /// `c_size` should be properly and sufficiently pre-allocated.
 #[no_mangle]
-pub extern fn get_file_size(c_path: *const libc::c_char, c_size: *mut libc::uint64_t) -> libc::int32_t {
+pub extern fn get_file_size(client_handle: *const libc::c_void,
+                            c_path       : *const libc::c_char,
+                            c_size       : *mut libc::uint64_t) -> libc::int32_t {
+    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
+        std::mem::transmute(client_handle)
+    };
+
     let mut tokens = ffi_try!(implementation::path_tokeniser(c_path));
 
     let file_name = ffi_try!(tokens.pop().ok_or(errors::FfiError::InvalidPath));
-    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens, None));
+    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory((*boxed_client).clone(), &tokens, None));
 
-    let size = ffi_try!(implementation::get_file_size(&file_name, &parent_dir_listing));
+    let size = ffi_try!(implementation::get_file_size((*boxed_client).clone(), &file_name, &parent_dir_listing));
 
     unsafe { std::ptr::write(c_size, size) };
+
+    std::mem::forget(boxed_client);
 
     0
 }
@@ -170,28 +202,41 @@ pub extern fn get_file_size(c_path: *const libc::c_char, c_size: *mut libc::uint
 /// if given path = `/a/b/c/d` then `d` is interpreted as the file intended to be read.
 /// `c_content_buf` should be properly and sufficiently pre-allocated.
 #[no_mangle]
-pub extern fn get_file_content(c_path: *const libc::c_char, c_content_buf: *mut libc::uint8_t) -> libc::int32_t {
+pub extern fn get_file_content(client_handle: *const libc::c_void,
+                               c_path       : *const libc::c_char,
+                               c_content_buf: *mut libc::uint8_t) -> libc::int32_t {
+    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
+        std::mem::transmute(client_handle)
+    };
+
     let mut tokens = ffi_try!(implementation::path_tokeniser(c_path));
 
     let file_name = ffi_try!(tokens.pop().ok_or(errors::FfiError::InvalidPath));
-    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens, None));
-    let data_vec = ffi_try!(implementation::get_file_content(&file_name, &parent_dir_listing));
+    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory((*boxed_client).clone(), &tokens, None));
+    let data_vec = ffi_try!(implementation::get_file_content((*boxed_client).clone(), &file_name, &parent_dir_listing));
 
     unsafe { std::ptr::copy(data_vec.as_ptr(), c_content_buf, data_vec.len()) };
+
+    std::mem::forget(boxed_client);
 
     0
 }
 
 /// Register Dns
 #[no_mangle]
-pub extern fn register_dns(c_long_name            : *const libc::c_char,
+pub extern fn register_dns(client_handle          : *const libc::c_void,
+                           c_long_name            : *const libc::c_char,
                            c_service_name         : *const libc::c_char,
                            c_service_home_dir_path: *const libc::c_char) -> libc::int32_t {
-    let client = implementation::get_test_client();
+    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
+        std::mem::transmute(client_handle)
+    };
+
+    let client = (*boxed_client).clone();
 
     let tokens = ffi_try!(implementation::path_tokeniser(c_service_home_dir_path));
 
-    let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens, None));
+    let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory((*boxed_client).clone(), &tokens, None));
     let service_home_dir_key = service_home_dir_listing.get_info().get_key();
 
     let long_name = ffi_try!(implementation::c_char_ptr_to_string(c_long_name));
@@ -212,19 +257,26 @@ pub extern fn register_dns(c_long_name            : *const libc::c_char,
 
     client.lock().unwrap().put(routing::data::Data::StructuredData(record_struct_data), None);
 
+    std::mem::forget(boxed_client);
+
     0
 }
 
 /// Add a new service to the existing (registered) Dns record
 #[no_mangle]
-pub extern fn add_service(c_long_name            : *const libc::c_char,
+pub extern fn add_service(client_handle          : *const libc::c_void,
+                          c_long_name            : *const libc::c_char,
                           c_service_name         : *const libc::c_char,
                           c_service_home_dir_path: *const libc::c_char) -> libc::int32_t {
-    let client = implementation::get_test_client();
+    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
+        std::mem::transmute(client_handle)
+    };
+
+    let client = (*boxed_client).clone();
 
     let tokens = ffi_try!(implementation::path_tokeniser(c_service_home_dir_path));
 
-    let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory(&tokens, None));
+    let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory((*boxed_client).clone(), &tokens, None));
     let service_home_dir_key = service_home_dir_listing.get_info().get_key();
 
     let long_name = ffi_try!(implementation::c_char_ptr_to_string(c_long_name));
@@ -240,6 +292,8 @@ pub extern fn add_service(c_long_name            : *const libc::c_char,
 
     client.lock().unwrap().post(routing::data::Data::StructuredData(record_struct_data), None);
 
+    std::mem::forget(boxed_client);
+
     0
 }
 
@@ -248,19 +302,29 @@ pub extern fn add_service(c_long_name            : *const libc::c_char,
 /// if given path = `/a/b/c/d` then `d` is interpreted as the file intended to be read.
 /// `c_content_size` should be properly and sufficiently pre-allocated.
 #[no_mangle]
-pub extern fn get_file_size_from_service_home_dir(c_long_name   : *const libc::c_char,
+pub extern fn get_file_size_from_service_home_dir(client_handle : *const libc::c_void,
+                                                  c_long_name   : *const libc::c_char,
                                                   c_service_name: *const libc::c_char,
                                                   c_file_name   : *const libc::c_char,
+                                                  is_versioned  : bool,
                                                   is_private    : bool,
                                                   c_content_size: *mut libc::uint64_t) -> libc::int32_t {
-    let (file_name, service_file_dir_listing) = ffi_try!(get_directory_for_service_file(c_long_name,
+    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
+        std::mem::transmute(client_handle)
+    };
+
+    let (file_name, service_file_dir_listing) = ffi_try!(get_directory_for_service_file((*boxed_client).clone(),
+                                                                                        c_long_name,
                                                                                         c_service_name,
                                                                                         c_file_name,
+                                                                                        is_versioned,
                                                                                         is_private));
 
-    let file_size = ffi_try!(implementation::get_file_size(&file_name, &service_file_dir_listing));
+    let file_size = ffi_try!(implementation::get_file_size((*boxed_client).clone(), &file_name, &service_file_dir_listing));
 
     unsafe { std::ptr::write(c_content_size, file_size) };
+
+    std::mem::forget(boxed_client);
 
     0
 }
@@ -270,26 +334,38 @@ pub extern fn get_file_size_from_service_home_dir(c_long_name   : *const libc::c
 /// if given path = `/a/b/c/d` then `d` is interpreted as the file intended to be read.
 /// `c_content_buf` should be properly and sufficiently pre-allocated.
 #[no_mangle]
-pub extern fn get_file_content_from_service_home_dir(c_long_name   : *const libc::c_char,
+pub extern fn get_file_content_from_service_home_dir(client_handle : *const libc::c_void,
+                                                     c_long_name   : *const libc::c_char,
                                                      c_service_name: *const libc::c_char,
                                                      c_file_name   : *const libc::c_char,
+                                                     is_versioned  : bool,
                                                      is_private    : bool,
                                                      c_content_buf : *mut libc::uint8_t) -> libc::int32_t {
-    let (file_name, service_file_dir_listing) = ffi_try!(get_directory_for_service_file(c_long_name,
+    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
+        std::mem::transmute(client_handle)
+    };
+
+    let (file_name, service_file_dir_listing) = ffi_try!(get_directory_for_service_file((*boxed_client).clone(),
+                                                                                        c_long_name,
                                                                                         c_service_name,
                                                                                         c_file_name,
+                                                                                        is_versioned,
                                                                                         is_private));
 
-    let data_vec = ffi_try!(implementation::get_file_content(&file_name, &service_file_dir_listing));
+    let data_vec = ffi_try!(implementation::get_file_content((*boxed_client).clone(), &file_name, &service_file_dir_listing));
 
     unsafe { std::ptr::copy(data_vec.as_ptr(), c_content_buf, data_vec.len()) };
+
+    std::mem::forget(boxed_client);
 
     0
 }
 
-fn get_directory_for_service_file(c_long_name   : *const libc::c_char,
+fn get_directory_for_service_file(client        : std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>,
+                                  c_long_name   : *const libc::c_char,
                                   c_service_name: *const libc::c_char,
                                   c_file_name   : *const libc::c_char,
+                                  is_versioned  : bool,
                                   is_private    : bool) -> Result<(String, safe_nfs::directory_listing::DirectoryListing), errors::FfiError> {
     let mut tokens = try!(implementation::path_tokeniser(c_file_name));
 
@@ -297,11 +373,14 @@ fn get_directory_for_service_file(c_long_name   : *const libc::c_char,
     let long_name = try!(implementation::c_char_ptr_to_string(c_long_name));
     let service_name = try!(implementation::c_char_ptr_to_string(c_service_name));
 
-    let dns_operations = try!(safe_dns::dns_operations::DnsOperations::new(implementation::get_test_client()));
+    let dns_operations = safe_dns::dns_operations::DnsOperations::new_unregistered(client.clone());
     let service_dir_key = try!(dns_operations.get_service_home_directory_key(&long_name,
                                                                              &service_name,
                                                                              None));
-    Ok((file_name, try!(implementation::get_final_subdirectory(&tokens, Some((&service_dir_key, is_private))))))
+
+    Ok((file_name, try!(implementation::get_final_subdirectory(client,
+                                                               &tokens,
+                                                               Some((&service_dir_key, is_versioned, is_private))))))
 }
 
 #[cfg(test)]
@@ -309,8 +388,81 @@ mod test {
     use super::*;
     use std::error::Error;
 
+    fn generate_random_cstring(len: usize) -> Result<::std::ffi::CString, ::errors::FfiError> {
+        let mut cstring_vec = try!(::safe_client::utility::generate_random_vector::<u8>(len));
+        // Avoid internal nulls and ensure valid ASCII (thus valid utf8)
+        for it in cstring_vec.iter_mut() {
+            *it %= 128;
+            if *it == 0 {
+                *it += 1;
+            }
+        }
+
+        ::std::ffi::CString::new(cstring_vec).map_err(|error| ::errors::FfiError::from(error.description()))
+    }
+
+    #[test]
+    fn account_creation_and_login() {
+        let cstring_pin = eval_result!(generate_random_cstring(10));
+        let cstring_keyword = eval_result!(generate_random_cstring(10));
+        let cstring_password = eval_result!(generate_random_cstring(10));
+
+        {
+            let mut client_handle = 0 as *const ::libc::c_void;
+            assert_eq!(client_handle, 0 as *const ::libc::c_void);
+
+            {
+                let ptr_to_client_handle = &mut client_handle;
+
+                let _ = assert_eq!(create_account(cstring_keyword.as_ptr(),
+                                                  cstring_pin.as_ptr(),
+                                                  cstring_password.as_ptr(),
+                                                  ptr_to_client_handle),
+                                   0);
+            }
+
+            assert!(client_handle != 0 as *const ::libc::c_void);
+            drop_client(client_handle);
+        }
+
+        {
+            let mut client_handle = 0 as *const ::libc::c_void;
+            assert_eq!(client_handle, 0 as *const ::libc::c_void);
+
+            {
+                let ptr_to_client_handle = &mut client_handle;
+
+                let _ = assert_eq!(log_in(cstring_keyword.as_ptr(),
+                                          cstring_pin.as_ptr(),
+                                          cstring_password.as_ptr(),
+                                          ptr_to_client_handle),
+                                   0);
+            }
+
+            assert!(client_handle != 0 as *const ::libc::c_void);
+            drop_client(client_handle);
+        }
+    }
+
     #[test]
     fn create_directories_files_and_read_files() {
+        // Create a client
+        let cstring_pin = eval_result!(generate_random_cstring(10));
+        let cstring_keyword = eval_result!(generate_random_cstring(10));
+        let cstring_password = eval_result!(generate_random_cstring(10));
+
+        let mut client_handle = 0 as *const ::libc::c_void;
+
+        {
+            let ptr_to_client_handle = &mut client_handle;
+            let _ = assert_eq!(create_account(cstring_keyword.as_ptr(),
+                                              cstring_pin.as_ptr(),
+                                              cstring_password.as_ptr(),
+                                              ptr_to_client_handle),
+                               0);
+        }
+
+        // Some size references
         let size_of_c_char = ::std::mem::size_of::<::libc::c_char>();
         let size_of_c_uint8 = ::std::mem::size_of::<::libc::uint8_t>();
         let size_of_c_uint64 = ::std::mem::size_of::<::libc::uint64_t>();
@@ -333,7 +485,7 @@ mod test {
             unsafe { ::std::ptr::copy(cstring_path.as_ptr(), c_path, path_lenght_for_c) };
         }
 
-        assert_eq!(create_sub_directory(c_path, false), 0);
+        assert_eq!(create_sub_directory(client_handle, c_path, false, false), 0);
         unsafe { ::libc::free(c_path as *mut ::libc::c_void) };
 
         // --------------------------------------------------------------------
@@ -350,7 +502,7 @@ mod test {
             unsafe { ::std::ptr::copy(cstring_path.as_ptr(), c_path, path_lenght_for_c) };
         }
 
-        assert_eq!(create_sub_directory(c_path, false), 0);
+        assert_eq!(create_sub_directory(client_handle, c_path, false, false), 0);
         unsafe { ::libc::free(c_path as *mut ::libc::c_void) };
 
         // --------------------------------------------------------------------
@@ -369,7 +521,10 @@ mod test {
             unsafe { ::std::ptr::copy(cstring_path.as_ptr(), c_path, path_lenght_for_c) };
         }
 
-        assert_eq!(create_file(c_path, cstring_content.as_ptr() as *const ::libc::uint8_t, cstring_content.as_bytes_with_nul().len() as ::libc::size_t), 0);
+        assert_eq!(create_file(client_handle,
+                               c_path,
+                               cstring_content.as_ptr() as *const ::libc::uint8_t, cstring_content.as_bytes_with_nul().len() as ::libc::size_t),
+                    0);
         unsafe { ::libc::free(c_path as *mut ::libc::c_void) };
 
         // --------------------------------------------------------------------
@@ -388,7 +543,7 @@ mod test {
 
         let c_size = unsafe { ::libc::malloc(size_of_c_uint64 as ::libc::size_t) } as *mut ::libc::uint64_t;
 
-        assert_eq!(get_file_size(c_path, c_size), 0);
+        assert_eq!(get_file_size(client_handle, c_path, c_size), 0);
         unsafe { assert_eq!(*c_size as usize, cstring_content.as_bytes_with_nul().len()) };
 
         unsafe { ::libc::free(c_path as *mut ::libc::c_void) };
@@ -411,7 +566,7 @@ mod test {
         //       we are not dealing with files larger than 2^32 bytes.
         let mut c_content = unsafe { ::libc::malloc((*c_size as usize * size_of_c_uint8) as ::libc::size_t) } as *mut ::libc::uint8_t;
 
-        assert_eq!(get_file_content(c_path, c_content), 0);
+        assert_eq!(get_file_content(client_handle, c_path, c_content), 0);
 
         {
             let read_cstr_content = unsafe { ::std::ffi::CStr::from_ptr(c_content as *const ::libc::c_char) };
@@ -481,25 +636,17 @@ mod test {
             unsafe { ::std::ptr::copy(cstring_file_name.as_ptr(), c_file_name_blog, file_name_length_for_c) };
         }
 
-        let mut long_name = eval_result!(::safe_client::utility::generate_random_vector::<u8>(10));
-        // Avoid internal nulls and ensure valid ASCII (thus valid utf8)
-        for it in long_name.iter_mut() {
-            *it %= 128;
-            if *it == 0 {
-                *it += 1;
-            }
-        }
-        let size_for_c = long_name.len() + 1;
+        const SIZE_FOR_C: usize = 11;
         // --------------------------------------------------------------------
         // Create Long Name String <random> - c string size with \0 = <calculate>
         // --------------------------------------------------------------------
-        let c_long_name = unsafe { ::libc::malloc((size_for_c * size_of_c_char) as ::libc::size_t) } as *mut ::libc::c_char;
+        let c_long_name = unsafe { ::libc::malloc((SIZE_FOR_C * size_of_c_char) as ::libc::size_t) } as *mut ::libc::c_char;
 
         {
-            let cstring_long_name = eval_result!(::std::ffi::CString::new(long_name).map_err(|error| ::errors::FfiError::from(error.description())));
+            let cstring_long_name = eval_result!(generate_random_cstring(SIZE_FOR_C - 1));
 
             let long_name_length_for_c = cstring_long_name.as_bytes_with_nul().len();
-            assert_eq!(long_name_length_for_c, size_for_c * size_of_c_char);
+            assert_eq!(long_name_length_for_c, SIZE_FOR_C * size_of_c_char);
 
             unsafe { ::std::ptr::copy(cstring_long_name.as_ptr(), c_long_name, long_name_length_for_c) };
         }
@@ -533,16 +680,33 @@ mod test {
         }
 
         // Register DNS
-        assert_eq!(register_dns(c_long_name, c_service_name_www, c_path), 0);
+        assert_eq!(register_dns(client_handle, c_long_name, c_service_name_www, c_path), 0);
 
         // Add Service
-        assert_eq!(add_service(c_long_name, c_service_name_blog, c_path_blog), 0);
+        assert_eq!(add_service(client_handle, c_long_name, c_service_name_blog, c_path_blog), 0);
+
+        // --------------------------------------------------------------------
+        // Dns Getters - Browser Equivalents
+        // --------------------------------------------------------------------
+
+        // Destroy previous handle
+        drop_client(client_handle);
+
+        // Get an unregistered client
+        let unregistered_client_handle = create_unregistered_client();
 
         // Get specific file for www service
         // Note: This will result in narrowing on < 64 bit systems - but it's Ok for this test as
         //       we are not dealing with files larger than 2^32 bytes.
         c_content = unsafe { ::libc::malloc((*c_size as usize * size_of_c_uint8) as ::libc::size_t) } as *mut ::libc::uint8_t;
-        assert_eq!(get_file_content_from_service_home_dir(c_long_name, c_service_name_www, c_file_name_www, false, c_content), 0);
+        assert_eq!(get_file_content_from_service_home_dir(unregistered_client_handle,
+                                                          c_long_name,
+                                                          c_service_name_www,
+                                                          c_file_name_www,
+                                                          false,
+                                                          false,
+                                                          c_content),
+                   0);
 
         {
             let read_cstr_content = unsafe { ::std::ffi::CStr::from_ptr(c_content as *const ::libc::c_char) };
@@ -555,7 +719,14 @@ mod test {
         // Note: This will result in narrowing on < 64 bit systems - but it's Ok for this test as
         //       we are not dealing with files larger than 2^32 bytes.
         c_content = unsafe { ::libc::malloc((*c_size as usize * size_of_c_uint8) as ::libc::size_t) } as *mut ::libc::uint8_t;
-        assert_eq!(get_file_content_from_service_home_dir(c_long_name, c_service_name_blog, c_file_name_blog, false, c_content), 0);
+        assert_eq!(get_file_content_from_service_home_dir(unregistered_client_handle,
+                                                          c_long_name,
+                                                          c_service_name_blog,
+                                                          c_file_name_blog,
+                                                          false,
+                                                          false,
+                                                          c_content),
+                   0);
 
         {
             let read_cstr_content = unsafe { ::std::ffi::CStr::from_ptr(c_content as *const ::libc::c_char) };
