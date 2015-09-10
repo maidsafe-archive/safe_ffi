@@ -46,6 +46,13 @@ unused_qualifications, variant_size_differences)]
 //! this crate which only serve to free resources allocated by the crate itself. This otherwise
 //! would be error prone and cumbersome. Instead the caller can use whatever idiom in his language
 //! to manage memory much more naturally and conveniently (eg., RAII idioms etc)
+//!
+//! The only exception to the above rule is the obtainment of the client engine itself. The client
+//! engine is allocated and managed by the crate. This is necessary because it serves as a context
+//! to all operations provided by the crate. Hence the user will obtain the engine on calling any
+//! one of the functions to create it and must preserve it for all subsequent operations. When
+//! done, to release the resources, `drop_client` may be called.
+//!
 //! [Project github page](https://github.com/maidsafe/safe_ffi)
 
 extern crate libc;
@@ -61,16 +68,16 @@ mod errors;
 mod implementation;
 
 /// Create an unregistered client. This or any one of the other companion functions to get a
-/// client must be called before initiating any operation allowed by this crate
+/// client must be called before initiating any operation allowed by this crate.
 #[no_mangle]
 pub extern fn create_unregistered_client() -> *const libc::c_void {
-    let boxed_client = Box::new(std::sync::Arc::new(std::sync::Mutex::new(safe_client::client::Client::create_unregistered_client())));
-
-    unsafe { std::mem::transmute(boxed_client) }
+    cast_to_client_ffi_handle(safe_client::client::Client::create_unregistered_client())
 }
 
-/// Create an unregistered client. This or any one of the other companion functions to get a
-/// client must be called before initiating any operation allowed by this crate
+/// Create a registered client. This or any one of the other companion functions to get a
+/// client must be called before initiating any operation allowed by this crate. `client_handle` is
+/// a pointer to a pointer and must point to a valid pointer not junk, else the consequences are
+/// undefined.
 #[no_mangle]
 pub extern fn create_account(c_keyword    : *const libc::c_char,
                              c_pin        : *const libc::c_char,
@@ -79,14 +86,15 @@ pub extern fn create_account(c_keyword    : *const libc::c_char,
     let client = ffi_try!(safe_client::client::Client::create_account(ffi_try!(implementation::c_char_ptr_to_string(c_keyword)),
                                                                       ffi_try!(implementation::c_char_ptr_to_string(c_pin)),
                                                                       ffi_try!(implementation::c_char_ptr_to_string(c_password))));
-    let boxed_client = Box::new(std::sync::Arc::new(std::sync::Mutex::new(client)));
-    unsafe { *client_handle = std::mem::transmute(boxed_client); }
+    unsafe { *client_handle = cast_to_client_ffi_handle(client); }
 
     0
 }
 
-/// Create an unregistered client. This or any one of the other companion functions to get a
-/// client must be called before initiating any operation allowed by this crate
+/// Log into a registered client. This or any one of the other companion functions to get a
+/// client must be called before initiating any operation allowed by this crate. `client_handle` is
+/// a pointer to a pointer and must point to a valid pointer not junk, else the consequences are
+/// undefined.
 #[no_mangle]
 pub extern fn log_in(c_keyword    : *const libc::c_char,
                      c_pin        : *const libc::c_char,
@@ -95,14 +103,15 @@ pub extern fn log_in(c_keyword    : *const libc::c_char,
     let client = ffi_try!(safe_client::client::Client::log_in(ffi_try!(implementation::c_char_ptr_to_string(c_keyword)),
                                                               ffi_try!(implementation::c_char_ptr_to_string(c_pin)),
                                                               ffi_try!(implementation::c_char_ptr_to_string(c_password))));
-    let boxed_client = Box::new(std::sync::Arc::new(std::sync::Mutex::new(client)));
-    unsafe { *client_handle = std::mem::transmute(boxed_client); }
+    unsafe { *client_handle = cast_to_client_ffi_handle(client); }
 
     0
 }
 
 /// Discard and clean up the previously allocated client. Use this only if the client is obtained
-/// from one of the client obtainment functions in this crate (`crate_account`, `log_in` etc).
+/// from one of the client obtainment functions in this crate (`crate_account`, `log_in`,
+/// `create_unregistered_client`). Using `client_handle` after a call to this functions is
+/// undefined behaviour.
 #[no_mangle]
 pub extern fn drop_client(client_handle: *const libc::c_void) {
     let _ = unsafe { std::mem::transmute::<_, Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>>>(client_handle) };
@@ -115,15 +124,13 @@ pub extern fn create_sub_directory(client_handle: *const libc::c_void,
                                    c_path       : *const libc::c_char,
                                    is_versioned : bool,
                                    is_private   : bool) -> libc::int32_t {
-    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
-        std::mem::transmute(client_handle)
-    };
+    let client = cast_from_client_ffi_handle(client_handle);
 
     let mut tokens = ffi_try!(implementation::path_tokeniser(c_path));
 
     let sub_dir_name = ffi_try!(tokens.pop().ok_or(errors::FfiError::InvalidPath));
-    let mut parent_dir_listing = ffi_try!(implementation::get_final_subdirectory((*boxed_client).clone(), &tokens, None));
-    let dir_helper = safe_nfs::helper::directory_helper::DirectoryHelper::new((*boxed_client).clone());
+    let mut parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(), &tokens, None));
+    let dir_helper = safe_nfs::helper::directory_helper::DirectoryHelper::new(client);
 
     let access_level = if is_private {
         safe_nfs::AccessLevel::Private
@@ -138,8 +145,6 @@ pub extern fn create_sub_directory(client_handle: *const libc::c_void,
                                        access_level,
                                        Some(&mut parent_dir_listing)));
 
-    std::mem::forget(boxed_client);
-
     0
 }
 
@@ -150,15 +155,13 @@ pub extern fn create_file(client_handle: *const libc::c_void,
                           c_path       : *const libc::c_char,
                           c_content    : *const libc::uint8_t,
                           c_size       : libc::size_t) -> libc::int32_t {
-    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
-        std::mem::transmute(client_handle)
-    };
+    let client = cast_from_client_ffi_handle(client_handle);
 
     let mut tokens = ffi_try!(implementation::path_tokeniser(c_path));
 
     let file_name = ffi_try!(tokens.pop().ok_or(errors::FfiError::InvalidPath));
-    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory((*boxed_client).clone(), &tokens, None));
-    let file_helper = safe_nfs::helper::file_helper::FileHelper::new((*boxed_client).clone());
+    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(), &tokens, None));
+    let file_helper = safe_nfs::helper::file_helper::FileHelper::new(client);
 
     let mut writer = ffi_try!(file_helper.create(file_name,
                                                  vec![],
@@ -166,8 +169,6 @@ pub extern fn create_file(client_handle: *const libc::c_void,
 
     writer.write(&implementation::c_uint8_ptr_to_vec(c_content, c_size), 0);
     let _ = ffi_try!(writer.close());
-
-    std::mem::forget(boxed_client);
 
     0
 }
@@ -180,20 +181,16 @@ pub extern fn create_file(client_handle: *const libc::c_void,
 pub extern fn get_file_size(client_handle: *const libc::c_void,
                             c_path       : *const libc::c_char,
                             c_size       : *mut libc::uint64_t) -> libc::int32_t {
-    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
-        std::mem::transmute(client_handle)
-    };
+    let client = cast_from_client_ffi_handle(client_handle);
 
     let mut tokens = ffi_try!(implementation::path_tokeniser(c_path));
 
     let file_name = ffi_try!(tokens.pop().ok_or(errors::FfiError::InvalidPath));
-    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory((*boxed_client).clone(), &tokens, None));
+    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(), &tokens, None));
 
-    let size = ffi_try!(implementation::get_file_size((*boxed_client).clone(), &file_name, &parent_dir_listing));
+    let size = ffi_try!(implementation::get_file_size(client, &file_name, &parent_dir_listing));
 
     unsafe { std::ptr::write(c_size, size) };
-
-    std::mem::forget(boxed_client);
 
     0
 }
@@ -205,19 +202,15 @@ pub extern fn get_file_size(client_handle: *const libc::c_void,
 pub extern fn get_file_content(client_handle: *const libc::c_void,
                                c_path       : *const libc::c_char,
                                c_content_buf: *mut libc::uint8_t) -> libc::int32_t {
-    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
-        std::mem::transmute(client_handle)
-    };
+    let client = cast_from_client_ffi_handle(client_handle);
 
     let mut tokens = ffi_try!(implementation::path_tokeniser(c_path));
 
     let file_name = ffi_try!(tokens.pop().ok_or(errors::FfiError::InvalidPath));
-    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory((*boxed_client).clone(), &tokens, None));
-    let data_vec = ffi_try!(implementation::get_file_content((*boxed_client).clone(), &file_name, &parent_dir_listing));
+    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(), &tokens, None));
+    let data_vec = ffi_try!(implementation::get_file_content(client, &file_name, &parent_dir_listing));
 
     unsafe { std::ptr::copy(data_vec.as_ptr(), c_content_buf, data_vec.len()) };
-
-    std::mem::forget(boxed_client);
 
     0
 }
@@ -228,15 +221,11 @@ pub extern fn register_dns(client_handle          : *const libc::c_void,
                            c_long_name            : *const libc::c_char,
                            c_service_name         : *const libc::c_char,
                            c_service_home_dir_path: *const libc::c_char) -> libc::int32_t {
-    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
-        std::mem::transmute(client_handle)
-    };
-
-    let client = (*boxed_client).clone();
+    let client = cast_from_client_ffi_handle(client_handle);
 
     let tokens = ffi_try!(implementation::path_tokeniser(c_service_home_dir_path));
 
-    let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory((*boxed_client).clone(), &tokens, None));
+    let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(), &tokens, None));
     let service_home_dir_key = service_home_dir_listing.get_info().get_key();
 
     let long_name = ffi_try!(implementation::c_char_ptr_to_string(c_long_name));
@@ -255,9 +244,7 @@ pub extern fn register_dns(client_handle          : *const libc::c_void,
                                                                   &secret_signing_key,
                                                                   None));
 
-    client.lock().unwrap().put(routing::data::Data::StructuredData(record_struct_data), None);
-
-    std::mem::forget(boxed_client);
+    eval_result!(client.lock()).put(routing::data::Data::StructuredData(record_struct_data), None);
 
     0
 }
@@ -268,15 +255,11 @@ pub extern fn add_service(client_handle          : *const libc::c_void,
                           c_long_name            : *const libc::c_char,
                           c_service_name         : *const libc::c_char,
                           c_service_home_dir_path: *const libc::c_char) -> libc::int32_t {
-    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
-        std::mem::transmute(client_handle)
-    };
-
-    let client = (*boxed_client).clone();
+    let client = cast_from_client_ffi_handle(client_handle);
 
     let tokens = ffi_try!(implementation::path_tokeniser(c_service_home_dir_path));
 
-    let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory((*boxed_client).clone(), &tokens, None));
+    let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(), &tokens, None));
     let service_home_dir_key = service_home_dir_listing.get_info().get_key();
 
     let long_name = ffi_try!(implementation::c_char_ptr_to_string(c_long_name));
@@ -290,9 +273,7 @@ pub extern fn add_service(client_handle          : *const libc::c_void,
                                                                  &secret_signing_key,
                                                                  None));
 
-    client.lock().unwrap().post(routing::data::Data::StructuredData(record_struct_data), None);
-
-    std::mem::forget(boxed_client);
+    eval_result!(client.lock()).post(routing::data::Data::StructuredData(record_struct_data), None);
 
     0
 }
@@ -309,22 +290,18 @@ pub extern fn get_file_size_from_service_home_dir(client_handle : *const libc::c
                                                   is_versioned  : bool,
                                                   is_private    : bool,
                                                   c_content_size: *mut libc::uint64_t) -> libc::int32_t {
-    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
-        std::mem::transmute(client_handle)
-    };
+    let client = cast_from_client_ffi_handle(client_handle);
 
-    let (file_name, service_file_dir_listing) = ffi_try!(get_directory_for_service_file((*boxed_client).clone(),
+    let (file_name, service_file_dir_listing) = ffi_try!(get_directory_for_service_file(client.clone(),
                                                                                         c_long_name,
                                                                                         c_service_name,
                                                                                         c_file_name,
                                                                                         is_versioned,
                                                                                         is_private));
 
-    let file_size = ffi_try!(implementation::get_file_size((*boxed_client).clone(), &file_name, &service_file_dir_listing));
+    let file_size = ffi_try!(implementation::get_file_size(client, &file_name, &service_file_dir_listing));
 
     unsafe { std::ptr::write(c_content_size, file_size) };
-
-    std::mem::forget(boxed_client);
 
     0
 }
@@ -341,24 +318,36 @@ pub extern fn get_file_content_from_service_home_dir(client_handle : *const libc
                                                      is_versioned  : bool,
                                                      is_private    : bool,
                                                      c_content_buf : *mut libc::uint8_t) -> libc::int32_t {
-    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
-        std::mem::transmute(client_handle)
-    };
+    let client = cast_from_client_ffi_handle(client_handle);
 
-    let (file_name, service_file_dir_listing) = ffi_try!(get_directory_for_service_file((*boxed_client).clone(),
+    let (file_name, service_file_dir_listing) = ffi_try!(get_directory_for_service_file(client.clone(),
                                                                                         c_long_name,
                                                                                         c_service_name,
                                                                                         c_file_name,
                                                                                         is_versioned,
                                                                                         is_private));
 
-    let data_vec = ffi_try!(implementation::get_file_content((*boxed_client).clone(), &file_name, &service_file_dir_listing));
+    let data_vec = ffi_try!(implementation::get_file_content(client, &file_name, &service_file_dir_listing));
 
     unsafe { std::ptr::copy(data_vec.as_ptr(), c_content_buf, data_vec.len()) };
 
+    0
+}
+
+fn cast_to_client_ffi_handle(client: safe_client::client::Client) -> *const libc::c_void {
+    let boxed_client = Box::new(std::sync::Arc::new(std::sync::Mutex::new(client)));
+    unsafe { std::mem::transmute(boxed_client) }
+}
+
+fn cast_from_client_ffi_handle(client_handle: *const libc::c_void) -> std::sync::Arc<std::sync::Mutex<safe_client::client::Client>> {
+    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
+        std::mem::transmute(client_handle)
+    };
+
+    let client = (*boxed_client).clone();
     std::mem::forget(boxed_client);
 
-    0
+    client
 }
 
 fn get_directory_for_service_file(client        : std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>,
@@ -732,6 +721,9 @@ mod test {
             let read_cstr_content = unsafe { ::std::ffi::CStr::from_ptr(c_content as *const ::libc::c_char) };
             assert_eq!(&*cstring_content, read_cstr_content);
         }
+
+        // Destroy client handle
+        drop_client(unregistered_client_handle);
 
         unsafe { ::libc::free(c_path as *mut ::libc::c_void) };
         unsafe { ::libc::free(c_size as *mut ::libc::c_void) };
