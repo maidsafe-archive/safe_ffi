@@ -15,13 +15,8 @@
 |:------:|:-------:|:-------:|:-------:|
 
 ###Pre-requisite:
-`libsodium` is a native dependency for [sodiumxoide](https://github.com/dnaq/sodiumoxide). Install sodium by following the instructions [here](http://doc.libsodium.org/installation/index.html).
+`libsodium` is a native dependency for [sodiumxoide](https://github.com/dnaq/sodiumoxide). Install sodium by following the instructions [here](https://github.com/maidsafe/QA/blob/master/Documentation/Install_libsodium.md).
 
-For windows:
-
-- Download [prebuilt libsodium library](https://download.libsodium.org/libsodium/releases/libsodium-1.0.2-mingw.tar.gz)
-- Extract `libsodium.a` for x86/x64 from the corresponding folder in the archive to your local filesystem
-- Add this local path to `%SODIUM_LIB_DIR%` (`setx SODIUM_LIB_DIR <path-to-extracted-libsodium.a-dir>`). Restarting the command-prompt maybe necessary after this.
 
 ###Build Instructions:
 `safe_ffi` can interface with Client modules conditionally built against either the routing crate or a mock used for local testing.
