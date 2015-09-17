@@ -33,30 +33,21 @@ pub fn path_tokeniser(c_path: *const ::libc::c_char) -> Result<Vec<String>, ::er
 
 pub fn get_final_subdirectory(client            : ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>,
                               tokens            : &Vec<String>,
-                              starting_directory: Option<(&(::routing::NameType, u64), bool, bool)>) -> Result<::safe_nfs::directory_listing::DirectoryListing,
-                                                                                                         ::errors::FfiError> {
+                              starting_directory: Option<&::safe_nfs::metadata::directory_key::DirectoryKey>) -> Result<::safe_nfs::directory_listing::DirectoryListing,
+                                                                                                                        ::errors::FfiError> {
     let dir_helper = ::safe_nfs::helper::directory_helper::DirectoryHelper::new(client);
 
     let mut current_dir_listing = match starting_directory {
-        Some(dir_key_and_access) => {
-            let access_level = if dir_key_and_access.2 {
-                ::safe_nfs::AccessLevel::Private
-            } else {
-                ::safe_nfs::AccessLevel::Public
-            };
-
-            try!(dir_helper.get((&(dir_key_and_access.0).0, (dir_key_and_access.0).1),
-                                dir_key_and_access.1,
-                                &access_level))
-        },
+        Some(directory_key) => try!(dir_helper.get(directory_key)),
         None => try!(dir_helper.get_user_root_directory_listing()),
     };
 
     for it in tokens.iter() {
-        let current_dir_info = try!(current_dir_listing.get_sub_directories().iter().find(|a| *a.get_name() == *it).ok_or(::errors::FfiError::PathNotFound)).clone();
-        current_dir_listing = try!(dir_helper.get(current_dir_info.get_key(),
-                                                  current_dir_info.get_metadata().is_versioned(),
-                                                  current_dir_info.get_metadata().get_access_level()));
+        current_dir_listing = {
+            let current_dir_metadata = try!(current_dir_listing.get_sub_directories().iter().find(|a| *a.get_name() == *it)
+                                                                                            .ok_or(::errors::FfiError::PathNotFound));
+            try!(dir_helper.get(current_dir_metadata.get_key()))
+        };
     }
 
     Ok(current_dir_listing)
