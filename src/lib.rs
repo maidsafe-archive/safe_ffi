@@ -226,7 +226,7 @@ pub extern fn register_dns(client_handle          : *const libc::c_void,
     let tokens = ffi_try!(implementation::path_tokeniser(c_service_home_dir_path));
 
     let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(), &tokens, None));
-    let service_home_dir_key = service_home_dir_listing.get_info().get_key();
+    let service_home_dir_key = service_home_dir_listing.get_key();
 
     let long_name = ffi_try!(implementation::c_char_ptr_to_string(c_long_name));
     let service_name = ffi_try!(implementation::c_char_ptr_to_string(c_service_name));
@@ -239,7 +239,7 @@ pub extern fn register_dns(client_handle          : *const libc::c_void,
     let record_struct_data = ffi_try!(dns_operations.register_dns(long_name,
                                                                   &public_encryption_key,
                                                                   &secret_encryption_key,
-                                                                  &vec![(service_name, (service_home_dir_key.0.clone(), service_home_dir_key.1))],
+                                                                  &vec![(service_name, service_home_dir_key.clone())],
                                                                   vec![public_signing_key],
                                                                   &secret_signing_key,
                                                                   None));
@@ -260,7 +260,7 @@ pub extern fn add_service(client_handle          : *const libc::c_void,
     let tokens = ffi_try!(implementation::path_tokeniser(c_service_home_dir_path));
 
     let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(), &tokens, None));
-    let service_home_dir_key = service_home_dir_listing.get_info().get_key();
+    let service_home_dir_key = service_home_dir_listing.get_key();
 
     let long_name = ffi_try!(implementation::c_char_ptr_to_string(c_long_name));
     let service_name = ffi_try!(implementation::c_char_ptr_to_string(c_service_name));
@@ -269,7 +269,7 @@ pub extern fn add_service(client_handle          : *const libc::c_void,
 
     let dns_operations = ffi_try!(safe_dns::dns_operations::DnsOperations::new(client.clone()));
     let record_struct_data = ffi_try!(dns_operations.add_service(&long_name,
-                                                                 (service_name, (service_home_dir_key.0.clone(), service_home_dir_key.1)),
+                                                                 (service_name, service_home_dir_key.clone()),
                                                                  &secret_signing_key,
                                                                  None));
 
@@ -287,17 +287,13 @@ pub extern fn get_file_size_from_service_home_dir(client_handle : *const libc::c
                                                   c_long_name   : *const libc::c_char,
                                                   c_service_name: *const libc::c_char,
                                                   c_file_name   : *const libc::c_char,
-                                                  is_versioned  : bool,
-                                                  is_private    : bool,
                                                   c_content_size: *mut libc::uint64_t) -> libc::int32_t {
     let client = cast_from_client_ffi_handle(client_handle);
 
     let (file_name, service_file_dir_listing) = ffi_try!(get_directory_for_service_file(client.clone(),
                                                                                         c_long_name,
                                                                                         c_service_name,
-                                                                                        c_file_name,
-                                                                                        is_versioned,
-                                                                                        is_private));
+                                                                                        c_file_name));
 
     let file_size = ffi_try!(implementation::get_file_size(client, &file_name, &service_file_dir_listing));
 
@@ -315,17 +311,13 @@ pub extern fn get_file_content_from_service_home_dir(client_handle : *const libc
                                                      c_long_name   : *const libc::c_char,
                                                      c_service_name: *const libc::c_char,
                                                      c_file_name   : *const libc::c_char,
-                                                     is_versioned  : bool,
-                                                     is_private    : bool,
                                                      c_content_buf : *mut libc::uint8_t) -> libc::int32_t {
     let client = cast_from_client_ffi_handle(client_handle);
 
     let (file_name, service_file_dir_listing) = ffi_try!(get_directory_for_service_file(client.clone(),
                                                                                         c_long_name,
                                                                                         c_service_name,
-                                                                                        c_file_name,
-                                                                                        is_versioned,
-                                                                                        is_private));
+                                                                                        c_file_name));
 
     let data_vec = ffi_try!(implementation::get_file_content(client, &file_name, &service_file_dir_listing));
 
@@ -353,9 +345,7 @@ fn cast_from_client_ffi_handle(client_handle: *const libc::c_void) -> std::sync:
 fn get_directory_for_service_file(client        : std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>,
                                   c_long_name   : *const libc::c_char,
                                   c_service_name: *const libc::c_char,
-                                  c_file_name   : *const libc::c_char,
-                                  is_versioned  : bool,
-                                  is_private    : bool) -> Result<(String, safe_nfs::directory_listing::DirectoryListing), errors::FfiError> {
+                                  c_file_name   : *const libc::c_char) -> Result<(String, safe_nfs::directory_listing::DirectoryListing), errors::FfiError> {
     let mut tokens = try!(implementation::path_tokeniser(c_file_name));
 
     let file_name = try!(tokens.pop().ok_or(errors::FfiError::InvalidPath));
@@ -369,7 +359,7 @@ fn get_directory_for_service_file(client        : std::sync::Arc<std::sync::Mute
 
     Ok((file_name, try!(implementation::get_final_subdirectory(client,
                                                                &tokens,
-                                                               Some((&service_dir_key, is_versioned, is_private))))))
+                                                               Some(&service_dir_key)))))
 }
 
 #[cfg(test)]
@@ -692,8 +682,6 @@ mod test {
                                                           c_long_name,
                                                           c_service_name_www,
                                                           c_file_name_www,
-                                                          false,
-                                                          false,
                                                           c_content),
                    0);
 
@@ -712,8 +700,6 @@ mod test {
                                                           c_long_name,
                                                           c_service_name_blog,
                                                           c_file_name_blog,
-                                                          false,
-                                                          false,
                                                           c_content),
                    0);
 
