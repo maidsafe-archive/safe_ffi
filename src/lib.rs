@@ -248,7 +248,7 @@ pub extern fn register_dns(client_handle          : *const libc::c_void,
                                                                   &secret_signing_key,
                                                                   None));
 
-    eval_result!(client.lock()).put(routing::data::Data::StructuredData(record_struct_data), None);
+    ffi_try!(eval_result!(client.lock()).put(routing::data::Data::StructuredData(record_struct_data), None));
 
     0
 }
