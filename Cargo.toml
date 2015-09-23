@@ -1,6 +1,6 @@
 [package]
 name          = "safe_ffi"
-version       = "0.0.1"
+version       = "0.1.0"
 authors       = ["MaidSafe Developers <dev@maidsafe.net>"]
 description   = "SAFE API - FFI library"
 documentation = "http://maidsafe.github.io/safe_ffi/latest/"
@@ -15,23 +15,14 @@ crate_type = ["staticlib", "dylib", "rlib"]
 
 [dependencies]
 # ---- Maidsafe ----
-routing     = "0.3.*"
-#safe_nfs    = "0.1.*"
-#safe_dns    = "0.1.*"
-#safe_client = "0.1.*"
+routing     = "0.4.*"
+safe_nfs    = "0.2.*"
+safe_dns    = "0.2.*"
+safe_client = "0.2.*"
 
 # ---- Others ----
 libc        = "*"
 sodiumoxide = "*"
-
-[dependencies.safe_nfs]
-git = "https://github.com/maidsafe/safe_nfs"
-
-[dependencies.safe_dns]
-git = "https://github.com/maidsafe/safe_dns"
-
-[dependencies.safe_client]
-git = "https://github.com/maidsafe/safe_client"
 
 [features]
 use-mock-routing = ["safe_dns/use-mock-routing",
