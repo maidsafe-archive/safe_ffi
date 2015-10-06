@@ -15,26 +15,6 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-#![crate_name = "safe_ffi"]
-#![crate_type = "lib"]
-
-///////////////////////////////////////////////////
-//               LINT
-///////////////////////////////////////////////////
-
-#![forbid(bad_style, warnings)]
-
-#![deny(deprecated, improper_ctypes, missing_docs, non_shorthand_field_patterns,
-overflowing_literals, plugin_as_library, private_no_mangle_fns, private_no_mangle_statics,
-raw_pointer_derive, stable_features, unconditional_recursion, unknown_lints,
-unused, unused_allocation, unused_attributes, unused_comparisons,
-unused_features, unused_parens, while_true)]
-
-#![warn(trivial_casts, trivial_numeric_casts, unused_extern_crates, unused_import_braces,
-unused_qualifications, variant_size_differences)]
-
-///////////////////////////////////////////////////
-
 //! This crate provides FFI-bindings to the Client Modules (`safe_client`, `safe_nfs`, `safe_dns`)
 //! In the current implementation the allocations made by this crate are managed within the crate
 //! itself and is guaranteed that management of such allocations will not be pushed beyond the FFI
@@ -55,6 +35,25 @@ unused_qualifications, variant_size_differences)]
 //!
 //! [Project github page](https://github.com/maidsafe/safe_ffi)
 
+#![doc(html_logo_url =
+           "https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png",
+       html_favicon_url = "http://maidsafe.net/img/favicon.ico",
+       html_root_url = "http://maidsafe.github.io/safe_ffi")]
+
+// For explanation of lint checks, run `rustc -W help` or see
+// https://github.com/maidsafe/QA/blob/master/Documentation/Rust%20Lint%20Checks.md
+#![forbid(bad_style, exceeding_bitshifts, mutable_transmutes, no_mangle_const_items,
+          unknown_crate_types, warnings)]
+#![deny(deprecated, drop_with_repr_extern, improper_ctypes, missing_docs,
+        non_shorthand_field_patterns, overflowing_literals, plugin_as_library,
+        private_no_mangle_fns, private_no_mangle_statics, raw_pointer_derive, stable_features,
+        unconditional_recursion, unknown_lints, unsafe_code, unused, unused_allocation,
+        unused_attributes, unused_comparisons, unused_features, unused_parens, while_true)]
+#![warn(trivial_casts, trivial_numeric_casts, unused_extern_crates, unused_import_braces,
+        unused_qualifications, unused_results, variant_size_differences)]
+#![allow(box_pointers, fat_ptr_transmutes, missing_copy_implementations,
+         missing_debug_implementations)]
+
 extern crate libc;
 extern crate routing;
 extern crate safe_nfs;
@@ -70,6 +69,7 @@ mod implementation;
 /// Create an unregistered client. This or any one of the other companion functions to get a
 /// client must be called before initiating any operation allowed by this crate.
 #[no_mangle]
+#[allow(unsafe_code)]
 pub extern fn create_unregistered_client(client_handle: *mut *const libc::c_void) -> libc::int32_t {
     unsafe {
         *client_handle = cast_to_client_ffi_handle(ffi_try!(safe_client::client::Client::create_unregistered_client()));
@@ -83,6 +83,7 @@ pub extern fn create_unregistered_client(client_handle: *mut *const libc::c_void
 /// a pointer to a pointer and must point to a valid pointer not junk, else the consequences are
 /// undefined.
 #[no_mangle]
+#[allow(unsafe_code)]
 pub extern fn create_account(c_keyword    : *const libc::c_char,
                              c_pin        : *const libc::c_char,
                              c_password   : *const libc::c_char,
@@ -100,6 +101,7 @@ pub extern fn create_account(c_keyword    : *const libc::c_char,
 /// a pointer to a pointer and must point to a valid pointer not junk, else the consequences are
 /// undefined.
 #[no_mangle]
+#[allow(unsafe_code)]
 pub extern fn log_in(c_keyword    : *const libc::c_char,
                      c_pin        : *const libc::c_char,
                      c_password   : *const libc::c_char,
@@ -117,6 +119,7 @@ pub extern fn log_in(c_keyword    : *const libc::c_char,
 /// `create_unregistered_client`). Using `client_handle` after a call to this functions is
 /// undefined behaviour.
 #[no_mangle]
+#[allow(unsafe_code)]
 pub extern fn drop_client(client_handle: *const libc::c_void) {
     let _ = unsafe { std::mem::transmute::<_, Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>>>(client_handle) };
 }
@@ -182,6 +185,7 @@ pub extern fn create_file(client_handle: *const libc::c_void,
 /// if given path = `/a/b/c/d` then `d` is interpreted as the file intended to be read.
 /// `c_size` should be properly and sufficiently pre-allocated.
 #[no_mangle]
+#[allow(unsafe_code)]
 pub extern fn get_file_size(client_handle: *const libc::c_void,
                             c_path       : *const libc::c_char,
                             c_size       : *mut libc::uint64_t) -> libc::int32_t {
@@ -203,6 +207,7 @@ pub extern fn get_file_size(client_handle: *const libc::c_void,
 /// if given path = `/a/b/c/d` then `d` is interpreted as the file intended to be read.
 /// `c_content_buf` should be properly and sufficiently pre-allocated.
 #[no_mangle]
+#[allow(unsafe_code)]
 pub extern fn get_file_content(client_handle: *const libc::c_void,
                                c_path       : *const libc::c_char,
                                c_content_buf: *mut libc::uint8_t) -> libc::int32_t {
@@ -287,6 +292,7 @@ pub extern fn add_service(client_handle          : *const libc::c_void,
 /// if given path = `/a/b/c/d` then `d` is interpreted as the file intended to be read.
 /// `c_content_size` should be properly and sufficiently pre-allocated.
 #[no_mangle]
+#[allow(unsafe_code)]
 pub extern fn get_file_size_from_service_home_dir(client_handle : *const libc::c_void,
                                                   c_long_name   : *const libc::c_char,
                                                   c_service_name: *const libc::c_char,
@@ -311,6 +317,7 @@ pub extern fn get_file_size_from_service_home_dir(client_handle : *const libc::c
 /// if given path = `/a/b/c/d` then `d` is interpreted as the file intended to be read.
 /// `c_content_buf` should be properly and sufficiently pre-allocated.
 #[no_mangle]
+#[allow(unsafe_code)]
 pub extern fn get_file_content_from_service_home_dir(client_handle : *const libc::c_void,
                                                      c_long_name   : *const libc::c_char,
                                                      c_service_name: *const libc::c_char,
@@ -330,11 +337,13 @@ pub extern fn get_file_content_from_service_home_dir(client_handle : *const libc
     0
 }
 
+#[allow(unsafe_code)]
 fn cast_to_client_ffi_handle(client: safe_client::client::Client) -> *const libc::c_void {
     let boxed_client = Box::new(std::sync::Arc::new(std::sync::Mutex::new(client)));
     unsafe { std::mem::transmute(boxed_client) }
 }
 
+#[allow(unsafe_code)]
 fn cast_from_client_ffi_handle(client_handle: *const libc::c_void) -> std::sync::Arc<std::sync::Mutex<safe_client::client::Client>> {
     let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
         std::mem::transmute(client_handle)
@@ -368,6 +377,7 @@ fn get_directory_for_service_file(client        : std::sync::Arc<std::sync::Mute
 
 #[cfg(test)]
 mod test {
+    #![allow(unsafe_code)]
     use super::*;
     use std::error::Error;
 
