@@ -31,7 +31,7 @@ pub fn path_tokeniser(c_path: *const ::libc::c_char) -> Result<Vec<String>, ::er
     Ok(string_path.split("/").filter(|a| !a.is_empty()).map(|a| a.to_string()).collect())
 }
 
-pub fn get_final_subdirectory(client            : ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>,
+pub fn get_final_subdirectory(client            : ::std::sync::Arc<::std::sync::Mutex<::safe_core::client::Client>>,
                               tokens            : &Vec<String>,
                               starting_directory: Option<&::safe_nfs::metadata::directory_key::DirectoryKey>) -> Result<::safe_nfs::directory_listing::DirectoryListing,
                                                                                                                         ::errors::FfiError> {
@@ -53,14 +53,14 @@ pub fn get_final_subdirectory(client            : ::std::sync::Arc<::std::sync::
     Ok(current_dir_listing)
 }
 
-pub fn get_file_size(client          : ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>,
+pub fn get_file_size(client          : ::std::sync::Arc<::std::sync::Mutex<::safe_core::client::Client>>,
                      name            : &String,
                      parent_directory: &::safe_nfs::directory_listing::DirectoryListing) -> Result<u64, ::errors::FfiError> {
     let reader = try!(get_reader(client, name, parent_directory));
     Ok(reader.size())
 }
 
-pub fn get_file_content(client          : ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>,
+pub fn get_file_content(client          : ::std::sync::Arc<::std::sync::Mutex<::safe_core::client::Client>>,
                         name            : &String,
                         parent_directory: &::safe_nfs::directory_listing::DirectoryListing) -> Result<Vec<u8>, ::errors::FfiError> {
     let mut reader = try!(get_reader(client, name, parent_directory));
@@ -68,7 +68,7 @@ pub fn get_file_content(client          : ::std::sync::Arc<::std::sync::Mutex<::
     Ok(try!(reader.read(0, size)))
 }
 
-fn get_reader<'a>(client          : ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>,
+fn get_reader<'a>(client          : ::std::sync::Arc<::std::sync::Mutex<::safe_core::client::Client>>,
                   name            : &String,
                   parent_directory: &'a ::safe_nfs::directory_listing::DirectoryListing) -> Result<::safe_nfs::helper::reader::Reader<'a>, ::errors::FfiError> {
     let file = try!(parent_directory.get_files().iter().find(|a| *a.get_name() == *name).ok_or(::errors::FfiError::FileNotFound));

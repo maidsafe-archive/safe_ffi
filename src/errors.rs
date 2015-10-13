@@ -19,8 +19,8 @@ const FFI_ERROR_START_RANGE: i32 = ::safe_dns::errors::DNS_ERROR_START_RANGE - 5
 
 /// Errors during FFI operations
 pub enum FfiError {
-    /// Errors from safe_client
-    ClientError(::safe_client::errors::ClientError),
+    /// Errors from safe_core
+    CoreError(::safe_core::errors::CoreError),
     /// Errors from safe_nfs
     NfsError(::safe_nfs::errors::NfsError),
     /// Errors from safe_dns
@@ -38,7 +38,7 @@ pub enum FfiError {
 impl ::std::fmt::Debug for FfiError {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match *self {
-            FfiError::ClientError(ref error) => write!(f, "FfiError::ClientError -> {:?}", error),
+            FfiError::CoreError(ref error) => write!(f, "FfiError::CoreError -> {:?}", error),
             FfiError::NfsError(ref error)    => write!(f, "FfiError::NfsError -> {:?}", error),
             FfiError::DnsError(ref error)    => write!(f, "FfiError::DnsError -> {:?}", error),
             FfiError::InvalidPath            => write!(f, "FfiError::InvalidPath"),
@@ -49,9 +49,9 @@ impl ::std::fmt::Debug for FfiError {
     }
 }
 
-impl From<::safe_client::errors::ClientError> for FfiError {
-    fn from(error: ::safe_client::errors::ClientError) -> FfiError {
-        FfiError::ClientError(error)
+impl From<::safe_core::errors::CoreError> for FfiError {
+    fn from(error: ::safe_core::errors::CoreError) -> FfiError {
+        FfiError::CoreError(error)
     }
 }
 
@@ -76,7 +76,7 @@ impl<'a> From<&'a str> for FfiError {
 impl Into<i32> for FfiError {
     fn into(self) -> i32 {
         match self {
-            FfiError::ClientError(error) => error.into(),
+            FfiError::CoreError(error) => error.into(),
             FfiError::NfsError(error)    => error.into(),
             FfiError::DnsError(error)    => error.into(),
             FfiError::InvalidPath        => FFI_ERROR_START_RANGE,
