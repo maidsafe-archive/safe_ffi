@@ -1,6 +1,6 @@
 [package]
 name          = "safe_ffi"
-version       = "0.3.0"
+version       = "0.2.0"
 authors       = ["MaidSafe Developers <dev@maidsafe.net>"]
 description   = "SAFE API - FFI library"
 documentation = "http://maidsafe.github.io/safe_ffi/latest/"
