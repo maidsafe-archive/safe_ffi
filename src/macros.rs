@@ -22,9 +22,9 @@
 ///
 /// ```
 /// # #[macro_use] extern crate safe_ffi;
-/// # #[macro_use] extern crate safe_client;
+/// # #[macro_use] extern crate safe_core;
 /// fn f() -> i32 {
-///     let some_result: Result<String, safe_client::errors::ClientError> = Ok("Hello".to_string());
+///     let some_result: Result<String, safe_core::errors::CoreError> = Ok("Hello".to_string());
 ///     let string_length = ffi_try!(some_result).len();
 ///     assert_eq!(string_length, 5);
 ///     0

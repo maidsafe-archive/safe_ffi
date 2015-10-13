@@ -15,7 +15,7 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-//! This crate provides FFI-bindings to the Client Modules (`safe_client`, `safe_nfs`, `safe_dns`)
+//! This crate provides FFI-bindings to the Client Modules (`safe_core`, `safe_nfs`, `safe_dns`)
 //! In the current implementation the allocations made by this crate are managed within the crate
 //! itself and is guaranteed that management of such allocations will not be pushed beyond the FFI
 //! boundary. This has a 2-fold outcome: firstly, the passing of data is done by filling of the
@@ -59,7 +59,7 @@ extern crate routing;
 extern crate safe_nfs;
 extern crate safe_dns;
 extern crate sodiumoxide;
-#[macro_use] extern crate safe_client;
+#[macro_use] extern crate safe_core;
 
 #[macro_use] mod macros;
 
@@ -72,7 +72,7 @@ mod implementation;
 #[allow(unsafe_code)]
 pub extern fn create_unregistered_client(client_handle: *mut *const libc::c_void) -> libc::int32_t {
     unsafe {
-        *client_handle = cast_to_client_ffi_handle(ffi_try!(safe_client::client::Client::create_unregistered_client()));
+        *client_handle = cast_to_client_ffi_handle(ffi_try!(safe_core::client::Client::create_unregistered_client()));
     }
 
     0
@@ -88,7 +88,7 @@ pub extern fn create_account(c_keyword    : *const libc::c_char,
                              c_pin        : *const libc::c_char,
                              c_password   : *const libc::c_char,
                              client_handle: *mut *const libc::c_void) -> libc::int32_t {
-    let client = ffi_try!(safe_client::client::Client::create_account(ffi_try!(implementation::c_char_ptr_to_string(c_keyword)),
+    let client = ffi_try!(safe_core::client::Client::create_account(ffi_try!(implementation::c_char_ptr_to_string(c_keyword)),
                                                                       ffi_try!(implementation::c_char_ptr_to_string(c_pin)),
                                                                       ffi_try!(implementation::c_char_ptr_to_string(c_password))));
     unsafe { *client_handle = cast_to_client_ffi_handle(client); }
@@ -106,7 +106,7 @@ pub extern fn log_in(c_keyword    : *const libc::c_char,
                      c_pin        : *const libc::c_char,
                      c_password   : *const libc::c_char,
                      client_handle: *mut *const libc::c_void) -> libc::int32_t {
-    let client = ffi_try!(safe_client::client::Client::log_in(ffi_try!(implementation::c_char_ptr_to_string(c_keyword)),
+    let client = ffi_try!(safe_core::client::Client::log_in(ffi_try!(implementation::c_char_ptr_to_string(c_keyword)),
                                                               ffi_try!(implementation::c_char_ptr_to_string(c_pin)),
                                                               ffi_try!(implementation::c_char_ptr_to_string(c_password))));
     unsafe { *client_handle = cast_to_client_ffi_handle(client); }
@@ -121,7 +121,7 @@ pub extern fn log_in(c_keyword    : *const libc::c_char,
 #[no_mangle]
 #[allow(unsafe_code)]
 pub extern fn drop_client(client_handle: *const libc::c_void) {
-    let _ = unsafe { std::mem::transmute::<_, Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>>>(client_handle) };
+    let _ = unsafe { std::mem::transmute::<_, Box<std::sync::Arc<std::sync::Mutex<safe_core::client::Client>>>>(client_handle) };
 }
 
 /// Create a subdirectory. The Name of the subdirectory is the final token in the given path. Eg.,
@@ -338,14 +338,14 @@ pub extern fn get_file_content_from_service_home_dir(client_handle : *const libc
 }
 
 #[allow(unsafe_code)]
-fn cast_to_client_ffi_handle(client: safe_client::client::Client) -> *const libc::c_void {
+fn cast_to_client_ffi_handle(client: safe_core::client::Client) -> *const libc::c_void {
     let boxed_client = Box::new(std::sync::Arc::new(std::sync::Mutex::new(client)));
     unsafe { std::mem::transmute(boxed_client) }
 }
 
 #[allow(unsafe_code)]
-fn cast_from_client_ffi_handle(client_handle: *const libc::c_void) -> std::sync::Arc<std::sync::Mutex<safe_client::client::Client>> {
-    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>> = unsafe {
+fn cast_from_client_ffi_handle(client_handle: *const libc::c_void) -> std::sync::Arc<std::sync::Mutex<safe_core::client::Client>> {
+    let boxed_client: Box<std::sync::Arc<std::sync::Mutex<safe_core::client::Client>>> = unsafe {
         std::mem::transmute(client_handle)
     };
 
@@ -355,7 +355,7 @@ fn cast_from_client_ffi_handle(client_handle: *const libc::c_void) -> std::sync:
     client
 }
 
-fn get_directory_for_service_file(client        : std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>,
+fn get_directory_for_service_file(client        : std::sync::Arc<std::sync::Mutex<safe_core::client::Client>>,
                                   c_long_name   : *const libc::c_char,
                                   c_service_name: *const libc::c_char,
                                   c_file_name   : *const libc::c_char) -> Result<(String, safe_nfs::directory_listing::DirectoryListing), errors::FfiError> {
@@ -382,7 +382,7 @@ mod test {
     use std::error::Error;
 
     fn generate_random_cstring(len: usize) -> Result<::std::ffi::CString, ::errors::FfiError> {
-        let mut cstring_vec = try!(::safe_client::utility::generate_random_vector::<u8>(len));
+        let mut cstring_vec = try!(::safe_core::utility::generate_random_vector::<u8>(len));
         // Avoid internal nulls and ensure valid ASCII (thus valid utf8)
         for it in cstring_vec.iter_mut() {
             *it %= 128;
