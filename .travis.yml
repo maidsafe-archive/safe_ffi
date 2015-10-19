@@ -1,29 +1,27 @@
 env:
   global:
-  - secure: ScqRDEVg5IfH1+bBAv71sFWzLmv27tIKuQmanpiSllJ3/gBrFA8febBRgRBEOojoSpjndA7FRme2ixKY9uaAmUKo+N/LK64eRjCArY2a5g+flvnfPMOsWnQiMfDQwfotN1Yq2tCi0WGrvEzveDiZxi5kCYzZGWrYjWzUo1OlRm++Qk2dhwCar2G011U8PvrXfj3OaE9F7DR1zmpfE6RZf4nw5gOtx7lgFzjGdBXkckyCgXYmDb5uTl0uMVuP9vW53qdPu/8bbavPYoV8OgEtOBwQJbpW9K5IJyDpYu9vGGK03yAMhdnDHP0DOPQ8k99NbUwKfXXyLisgKSFQOCdBMXqJex5QAPYcyRuwAyQJxqHI5NUYy5otJI/D/uAIRE0nfrUrBI4TaXhLJF37GTYvh7NnTLFeerpFtXaczmQtrmMRYfj7oQwB1eskfaTF+Kpc4nF/fVTYhNPsyRuYc04H8QsMTGYxn+8OMFcV8I90KWnT6ZpTit5P6GB4pwR/KJXKLgioILWl0iwKW/NzJ4O214siWCV+xMmTeKHqboLUyiJJhg00sWN+TJDQg595uQlG5ywV33ZnMx4liO4h0KxQy6o64WsMuRdgIY5gokutaLVsOX25kHWIZ89htN2O6+wWiMqMMcKsytp/k/8qBteb9A0QWms3JvNA1X7F8cGvsHs=
-  - LibSodiumVersion=1.0.3
-  - ElfUtilsVersion=0.163
-  - Features=use-mock-routing
+    - secure: Sgjiohn7EAzFFuPHim2syI8xXne3O86WXrd6g7sLkCy77in1rBP4+RyYJlTst8IbZOP+D65WnTh7a3c22oCdA8wNkquoBLlQxRX6g8A6rqs2o7CjhYHchyk/9suHew7HRNn7iu8zwVAwaOMds7GQ5i5pd75t3llX8/QvvxEkSmz0hDUJsTBP5xqVlIDDkZoWknuxqwwyVNljyeFX8eecNZlG13fFKVtWrlcvPFNDMuvzDWw8WyzCc2aKS/7YradCFb/UzAws2ted1gVhEjpZc8/2OU6ZgrazL1bg3DQPZVNlBDaOZ7SxNMmC18mskoyTkHghe6EM+KCsxqG44wEJWBoiN3WoNEOq0+90YmPHWOEluqoQ2nBBbshxqj58FaQo8/M5rS+3/pw0qVUlePw6gb9FylVIRXwFKGOcJImEIdeD0BAfVE1GTY+NRnfm2kwd7G5QCbbiSaYY5pGyxZ19OegnL0z5ddwzEOnJwjNnovuT0jcQ1P4TYDWeiGygDbLhSb//SR4ReZrfX4Inmm3B+WytspQYpfkFTnxvM6kfWYSDzKdo2knJCNk/rt2euXK29MIyw0mOZGfpdb3jf4I+s5EANT7Ufz9BBOHvnchR/28eCRLvBjE2bUpdKRIrcvkwTaqw5BHDxiy6ffT6CQC8CMa/h3SWfGQ5cUJ8Uv+zRB0=
+    - LibSodiumVersion=1.0.3
+    - ElfUtilsVersion=0.163
+    - Features=use-mock-routing
 os:
-- linux
-- osx
+  - linux
+  - osx
 language: rust
 rust:
-- nightly
+  - nightly
 sudo: false
 branches:
   only:
-  - master
+    - master
 cache:
   directories:
-  - "$HOME/libsodium-$LibSodiumVersion"
-  - "$HOME/elfutils-$ElfUtilsVersion"
+    - "$HOME/libsodium-$LibSodiumVersion"
+    - "$HOME/elfutils-$ElfUtilsVersion"
 install:
-- curl -sSLO https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/install_libsodium.sh
-- ". install_libsodium.sh"
+  - curl -sSLO https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/install_libsodium.sh
+  - ". install_libsodium.sh"
 script:
-- curl -sSL https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/build_and_run_tests.sh
-  | bash
+  - curl -sSL https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/build_and_run_tests.sh | bash
 after_success:
-- curl -sSL https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/after_success.sh
-  | bash
+  - curl -sSL https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/after_success.sh | bash
