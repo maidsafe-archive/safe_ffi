@@ -1,6 +1,6 @@
 # safe_ffi
 
-[![](https://img.shields.io/badge/Project%20SAFE-Approved-green.svg)](http://maidsafe.net/applications) [![](https://img.shields.io/badge/License-GPL3-green.svg)](https://github.com/maidsafe/crust/blob/master/COPYING)
+[![](https://img.shields.io/badge/Project%20SAFE-Approved-green.svg)](http://maidsafe.net/applications) [![](https://img.shields.io/badge/License-GPL3-green.svg)](https://github.com/maidsafe/safe_ffi/blob/master/COPYING)
 
 
 **Primary Maintainer:**     Spandan Sharma (spandan.sharma@maidsafe.net)
@@ -37,5 +37,5 @@ cargo test
 ## Todo Items
 
 ### [0.0.1]
-- [X] [MAID-1321](https://maidsafe.atlassian.net/browse/MAID-1321) safe_ffi - Make reading for file relative to serice home dir
+- [X] [MAID-1321](https://maidsafe.atlassian.net/browse/MAID-1321) safe_ffi - Make reading for file relative to service home dir
 - [X] [MAID-1322](https://maidsafe.atlassian.net/browse/MAID-1322) safe_ffi - changes according to other crates and update test cases
