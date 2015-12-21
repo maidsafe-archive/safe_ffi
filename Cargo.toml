@@ -17,7 +17,6 @@ safe_core = "~0.4.0"
 safe_dns = "~0.4.0"
 safe_nfs = "~0.4.0"
 sodiumoxide = "~0.0.9"
-xor_name = "~0.0.1"
 
 [features]
 use-mock-routing = ["safe_dns/use-mock-routing", "safe_nfs/use-mock-routing", "safe_core/use-mock-routing"]
