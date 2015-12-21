@@ -19,7 +19,7 @@ use std::error::Error;
 
 #[allow(unsafe_code)]
 pub fn c_uint8_ptr_to_vec(c_uint8_ptr: *const ::libc::uint8_t, c_size: ::libc::size_t) -> Vec<u8> {
-    unsafe { ::std::slice::from_raw_parts(c_uint8_ptr, c_size as usize).to_vec() }
+    unsafe { ::std::slice::from_raw_parts(c_uint8_ptr, c_size).to_vec() }
 }
 
 #[allow(unsafe_code)]
@@ -85,17 +85,17 @@ mod test {
 
     #[test]
     fn parse_path() {
-        let path_0 = eval_result!(::std::ffi::CString::new("/abc/d/ef").map_err(|error| ::errors::FfiError::from(error.description())));
-        let path_1 = eval_result!(::std::ffi::CString::new("/abc/d/ef/").map_err(|error| ::errors::FfiError::from(error.description())));
-        let path_2 = eval_result!(::std::ffi::CString::new("///abc///d/ef////").map_err(|error| ::errors::FfiError::from(error.description())));
+        let path_0 = unwrap_result!(::std::ffi::CString::new("/abc/d/ef").map_err(|error| ::errors::FfiError::from(error.description())));
+        let path_1 = unwrap_result!(::std::ffi::CString::new("/abc/d/ef/").map_err(|error| ::errors::FfiError::from(error.description())));
+        let path_2 = unwrap_result!(::std::ffi::CString::new("///abc///d/ef////").map_err(|error| ::errors::FfiError::from(error.description())));
 
         let expected = vec!["abc".to_string(),
                             "d".to_string(),
                             "ef".to_string()];
 
-        let tokenised_0 = eval_result!(path_tokeniser(path_0.as_ptr()));
-        let tokenised_1 = eval_result!(path_tokeniser(path_1.as_ptr()));
-        let tokenised_2 = eval_result!(path_tokeniser(path_2.as_ptr()));
+        let tokenised_0 = unwrap_result!(path_tokeniser(path_0.as_ptr()));
+        let tokenised_1 = unwrap_result!(path_tokeniser(path_1.as_ptr()));
+        let tokenised_2 = unwrap_result!(path_tokeniser(path_2.as_ptr()));
 
         assert_eq!(tokenised_0, expected);
         assert_eq!(tokenised_1, expected);

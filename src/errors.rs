@@ -38,13 +38,13 @@ pub enum FfiError {
 impl ::std::fmt::Debug for FfiError {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match *self {
-            FfiError::CoreError(ref error) => write!(f, "FfiError::CoreError -> {:?}", error),
-            FfiError::NfsError(ref error)    => write!(f, "FfiError::NfsError -> {:?}", error),
-            FfiError::DnsError(ref error)    => write!(f, "FfiError::DnsError -> {:?}", error),
-            FfiError::InvalidPath            => write!(f, "FfiError::InvalidPath"),
-            FfiError::PathNotFound           => write!(f, "FfiError::PathNotFound"),
-            FfiError::FileNotFound           => write!(f, "FfiError::FileNotFound"),
-            FfiError::Unexpected(ref error)  => write!(f, "FfiError::Unexpected::{{{:?}}}", error),
+            FfiError::CoreError(ref error)  => write!(f, "FfiError::CoreError -> {:?}", error),
+            FfiError::NfsError(ref error)   => write!(f, "FfiError::NfsError -> {:?}", error),
+            FfiError::DnsError(ref error)   => write!(f, "FfiError::DnsError -> {:?}", error),
+            FfiError::InvalidPath           => write!(f, "FfiError::InvalidPath"),
+            FfiError::PathNotFound          => write!(f, "FfiError::PathNotFound"),
+            FfiError::FileNotFound          => write!(f, "FfiError::FileNotFound"),
+            FfiError::Unexpected(ref error) => write!(f, "FfiError::Unexpected::{{{:?}}}", error),
         }
     }
 }
@@ -77,12 +77,12 @@ impl Into<i32> for FfiError {
     fn into(self) -> i32 {
         match self {
             FfiError::CoreError(error) => error.into(),
-            FfiError::NfsError(error)    => error.into(),
-            FfiError::DnsError(error)    => error.into(),
-            FfiError::InvalidPath        => FFI_ERROR_START_RANGE,
-            FfiError::PathNotFound       => FFI_ERROR_START_RANGE - 1,
-            FfiError::FileNotFound       => FFI_ERROR_START_RANGE - 2,
-            FfiError::Unexpected(_)      => FFI_ERROR_START_RANGE - 3,
+            FfiError::NfsError(error)  => error.into(),
+            FfiError::DnsError(error)  => error.into(),
+            FfiError::InvalidPath      => FFI_ERROR_START_RANGE,
+            FfiError::PathNotFound     => FFI_ERROR_START_RANGE - 1,
+            FfiError::FileNotFound     => FFI_ERROR_START_RANGE - 2,
+            FfiError::Unexpected(_)    => FFI_ERROR_START_RANGE - 3,
         }
     }
 }
