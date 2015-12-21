@@ -15,25 +15,6 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-/// This macro is intended to be used in all cases where we get Result<T, U> and want to convert it
-/// to C friendly error code to inform about error conditions accross library boundaries
-///
-/// #Examples
-///
-/// ```
-/// # #[macro_use] extern crate safe_ffi;
-/// # #[macro_use] extern crate safe_core;
-/// fn f() -> i32 {
-///     let some_result: Result<String, safe_core::errors::CoreError> = Ok("Hello".to_string());
-///     let string_length = ffi_try!(some_result).len();
-///     assert_eq!(string_length, 5);
-///     0
-/// }
-/// # fn main() {
-/// # let _error_code = f();
-/// # }
-/// ```
-#[macro_export]
 macro_rules! ffi_try {
     ($result:expr) => {
         match $result {

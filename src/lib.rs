@@ -46,7 +46,7 @@
           unknown_crate_types, warnings)]
 #![deny(deprecated, drop_with_repr_extern, improper_ctypes, missing_docs,
         non_shorthand_field_patterns, overflowing_literals, plugin_as_library,
-        private_no_mangle_fns, private_no_mangle_statics, raw_pointer_derive, stable_features,
+        private_no_mangle_fns, private_no_mangle_statics, stable_features,
         unconditional_recursion, unknown_lints, unsafe_code, unused, unused_allocation,
         unused_attributes, unused_comparisons, unused_features, unused_parens, while_true)]
 #![warn(trivial_casts, trivial_numeric_casts, unused_extern_crates, unused_import_braces,
@@ -58,8 +58,12 @@ extern crate libc;
 extern crate routing;
 extern crate safe_nfs;
 extern crate safe_dns;
+extern crate safe_core;
 extern crate sodiumoxide;
-#[macro_use] extern crate safe_core;
+#[allow(unused_extern_crates)]
+#[macro_use] extern crate maidsafe_utilities;
+
+use routing::Data;
 
 #[macro_use] mod macros;
 
@@ -253,7 +257,7 @@ pub extern fn register_dns(client_handle          : *const libc::c_void,
                                                                   &secret_signing_key,
                                                                   None));
 
-    ffi_try!(eval_result!(client.lock()).put(routing::data::Data::StructuredData(record_struct_data), None));
+    ffi_try!(unwrap_result!(client.lock()).put(Data::StructuredData(record_struct_data), None));
 
     0
 }
@@ -282,7 +286,7 @@ pub extern fn add_service(client_handle          : *const libc::c_void,
                                                                  &secret_signing_key,
                                                                  None));
 
-    eval_result!(client.lock()).post(routing::data::Data::StructuredData(record_struct_data), None);
+    ffi_try!(unwrap_result!(client.lock()).post(Data::StructuredData(record_struct_data), None));
 
     0
 }
@@ -396,9 +400,9 @@ mod test {
 
     #[test]
     fn account_creation_and_login() {
-        let cstring_pin = eval_result!(generate_random_cstring(10));
-        let cstring_keyword = eval_result!(generate_random_cstring(10));
-        let cstring_password = eval_result!(generate_random_cstring(10));
+        let cstring_pin = unwrap_result!(generate_random_cstring(10));
+        let cstring_keyword = unwrap_result!(generate_random_cstring(10));
+        let cstring_password = unwrap_result!(generate_random_cstring(10));
 
         {
             let mut client_handle = 0 as *const ::libc::c_void;
@@ -440,9 +444,9 @@ mod test {
     #[test]
     fn create_directories_files_and_read_files() {
         // Create a client
-        let cstring_pin = eval_result!(generate_random_cstring(10));
-        let cstring_keyword = eval_result!(generate_random_cstring(10));
-        let cstring_password = eval_result!(generate_random_cstring(10));
+        let cstring_pin = unwrap_result!(generate_random_cstring(10));
+        let cstring_keyword = unwrap_result!(generate_random_cstring(10));
+        let cstring_password = unwrap_result!(generate_random_cstring(10));
 
         let mut client_handle = 0 as *const ::libc::c_void;
 
@@ -467,10 +471,10 @@ mod test {
         // --------------------------------------------------------------------
         // Create Sub-directory /a - c string size with \0 = 3
         // --------------------------------------------------------------------
-        let mut c_path = unsafe { ::libc::malloc(3 * size_of_c_char as ::libc::size_t) } as *mut ::libc::c_char;
+        let mut c_path = unsafe { ::libc::malloc(3 * size_of_c_char) } as *mut ::libc::c_char;
 
         {
-            let cstring_path = eval_result!(::std::ffi::CString::new("/a").map_err(|error| ::errors::FfiError::from(error.description())));
+            let cstring_path = unwrap_result!(::std::ffi::CString::new("/a").map_err(|error| ::errors::FfiError::from(error.description())));
 
             let path_lenght_for_c = cstring_path.as_bytes_with_nul().len();
             assert_eq!(path_lenght_for_c, 3 * size_of_c_char);
@@ -485,10 +489,10 @@ mod test {
         // --------------------------------------------------------------------
         // Create Sub-directory /a/last - c string size with \0 = 8
         // --------------------------------------------------------------------
-        c_path = unsafe { ::libc::malloc(8 * size_of_c_char as ::libc::size_t) } as *mut ::libc::c_char;
+        c_path = unsafe { ::libc::malloc(8 * size_of_c_char) } as *mut ::libc::c_char;
 
         {
-            let cstring_path = eval_result!(::std::ffi::CString::new("/a/last").map_err(|error| ::errors::FfiError::from(error.description())));
+            let cstring_path = unwrap_result!(::std::ffi::CString::new("/a/last").map_err(|error| ::errors::FfiError::from(error.description())));
 
             let path_lenght_for_c = cstring_path.as_bytes_with_nul().len();
             assert_eq!(path_lenght_for_c, 8 * size_of_c_char);
@@ -502,12 +506,12 @@ mod test {
         // --------------------------------------------------------------------
         // Create file /a/last/file.txt - c string size with \0 = 17
         // --------------------------------------------------------------------
-        c_path = unsafe { ::libc::malloc(17 * size_of_c_char as ::libc::size_t) } as *mut ::libc::c_char;
+        c_path = unsafe { ::libc::malloc(17 * size_of_c_char) } as *mut ::libc::c_char;
 
-        let cstring_content = eval_result!(::std::ffi::CString::new("This is the file content.").map_err(|error| ::errors::FfiError::from(error.description())));
+        let cstring_content = unwrap_result!(::std::ffi::CString::new("This is the file content.").map_err(|error| ::errors::FfiError::from(error.description())));
 
         {
-            let cstring_path = eval_result!(::std::ffi::CString::new("/a/last/file.txt").map_err(|error| ::errors::FfiError::from(error.description())));
+            let cstring_path = unwrap_result!(::std::ffi::CString::new("/a/last/file.txt").map_err(|error| ::errors::FfiError::from(error.description())));
 
             let path_lenght_for_c = cstring_path.as_bytes_with_nul().len();
             assert_eq!(path_lenght_for_c, 17 * size_of_c_char);
@@ -517,17 +521,17 @@ mod test {
 
         assert_eq!(create_file(client_handle,
                                c_path,
-                               cstring_content.as_ptr() as *const ::libc::uint8_t, cstring_content.as_bytes_with_nul().len() as ::libc::size_t),
+                               cstring_content.as_ptr() as *const ::libc::uint8_t, cstring_content.as_bytes_with_nul().len()),
                     0);
         unsafe { ::libc::free(c_path as *mut ::libc::c_void) };
 
         // --------------------------------------------------------------------
         // Get the size of the file
         // --------------------------------------------------------------------
-        c_path = unsafe { ::libc::malloc(17 * size_of_c_char as ::libc::size_t) } as *mut ::libc::c_char;
+        c_path = unsafe { ::libc::malloc(17 * size_of_c_char) } as *mut ::libc::c_char;
 
         {
-            let cstring_path = eval_result!(::std::ffi::CString::new("/a/last/file.txt").map_err(|error| ::errors::FfiError::from(error.description())));
+            let cstring_path = unwrap_result!(::std::ffi::CString::new("/a/last/file.txt").map_err(|error| ::errors::FfiError::from(error.description())));
 
             let path_lenght_for_c = cstring_path.as_bytes_with_nul().len();
             assert_eq!(path_lenght_for_c, 17 * size_of_c_char);
@@ -535,7 +539,7 @@ mod test {
             unsafe { ::std::ptr::copy(cstring_path.as_ptr(), c_path, path_lenght_for_c) };
         }
 
-        let c_size = unsafe { ::libc::malloc(size_of_c_uint64 as ::libc::size_t) } as *mut ::libc::uint64_t;
+        let c_size = unsafe { ::libc::malloc(size_of_c_uint64) } as *mut ::libc::uint64_t;
 
         assert_eq!(get_file_size(client_handle, c_path, c_size), 0);
         unsafe { assert_eq!(*c_size as usize, cstring_content.as_bytes_with_nul().len()) };
@@ -545,10 +549,10 @@ mod test {
         // --------------------------------------------------------------------
         // Get the contents of the file
         // --------------------------------------------------------------------
-        c_path = unsafe { ::libc::malloc(17 * size_of_c_char as ::libc::size_t) } as *mut ::libc::c_char;
+        c_path = unsafe { ::libc::malloc(17 * size_of_c_char) } as *mut ::libc::c_char;
 
         {
-            let cstring_path = eval_result!(::std::ffi::CString::new("/a/last/file.txt").map_err(|error| ::errors::FfiError::from(error.description())));
+            let cstring_path = unwrap_result!(::std::ffi::CString::new("/a/last/file.txt").map_err(|error| ::errors::FfiError::from(error.description())));
 
             let path_lenght_for_c = cstring_path.as_bytes_with_nul().len();
             assert_eq!(path_lenght_for_c, 17 * size_of_c_char);
@@ -558,7 +562,7 @@ mod test {
 
         // Note: This will result in narrowing on < 64 bit systems - but it's Ok for this test as
         //       we are not dealing with files larger than 2^32 bytes.
-        let mut c_content = unsafe { ::libc::malloc((*c_size as usize * size_of_c_uint8) as ::libc::size_t) } as *mut ::libc::uint8_t;
+        let mut c_content = unsafe { ::libc::malloc(*c_size as usize * size_of_c_uint8) } as *mut ::libc::uint8_t;
 
         assert_eq!(get_file_content(client_handle, c_path, c_content), 0);
 
@@ -577,10 +581,10 @@ mod test {
         // --------------------------------------------------------------------
         // Create Path String /a/last - c string size with \0 = 8
         // --------------------------------------------------------------------
-        c_path = unsafe { ::libc::malloc(8 * size_of_c_char as ::libc::size_t) } as *mut ::libc::c_char;
+        c_path = unsafe { ::libc::malloc(8 * size_of_c_char) } as *mut ::libc::c_char;
 
         {
-            let cstring_path = eval_result!(::std::ffi::CString::new("/a/last").map_err(|error| ::errors::FfiError::from(error.description())));
+            let cstring_path = unwrap_result!(::std::ffi::CString::new("/a/last").map_err(|error| ::errors::FfiError::from(error.description())));
 
             let path_lenght_for_c = cstring_path.as_bytes_with_nul().len();
             assert_eq!(path_lenght_for_c, 8 * size_of_c_char);
@@ -591,10 +595,10 @@ mod test {
         // --------------------------------------------------------------------
         // Create Path String /a - c string size with \0 = 3
         // --------------------------------------------------------------------
-        let c_path_blog = unsafe { ::libc::malloc(3 * size_of_c_char as ::libc::size_t) } as *mut ::libc::c_char;
+        let c_path_blog = unsafe { ::libc::malloc(3 * size_of_c_char) } as *mut ::libc::c_char;
 
         {
-            let cstring_path = eval_result!(::std::ffi::CString::new("/a").map_err(|error| ::errors::FfiError::from(error.description())));
+            let cstring_path = unwrap_result!(::std::ffi::CString::new("/a").map_err(|error| ::errors::FfiError::from(error.description())));
 
             let path_lenght_for_c = cstring_path.as_bytes_with_nul().len();
             assert_eq!(path_lenght_for_c, 3 * size_of_c_char);
@@ -605,10 +609,10 @@ mod test {
         // --------------------------------------------------------------------
         // Create File Name String file.txt - c string size with \0 = 9
         // --------------------------------------------------------------------
-        let c_file_name_www = unsafe { ::libc::malloc(9 * size_of_c_char as ::libc::size_t) } as *mut ::libc::c_char;
+        let c_file_name_www = unsafe { ::libc::malloc(9 * size_of_c_char) } as *mut ::libc::c_char;
 
         {
-            let cstring_file_name = eval_result!(::std::ffi::CString::new("file.txt").map_err(|error| ::errors::FfiError::from(error.description())));
+            let cstring_file_name = unwrap_result!(::std::ffi::CString::new("file.txt").map_err(|error| ::errors::FfiError::from(error.description())));
 
             let file_name_length_for_c = cstring_file_name.as_bytes_with_nul().len();
             assert_eq!(file_name_length_for_c, 9 * size_of_c_char);
@@ -619,10 +623,10 @@ mod test {
         // --------------------------------------------------------------------
         // Create File Name String last/file.txt - c string size with \0 = 14
         // --------------------------------------------------------------------
-        let c_file_name_blog = unsafe { ::libc::malloc(14 * size_of_c_char as ::libc::size_t) } as *mut ::libc::c_char;
+        let c_file_name_blog = unsafe { ::libc::malloc(14 * size_of_c_char) } as *mut ::libc::c_char;
 
         {
-            let cstring_file_name = eval_result!(::std::ffi::CString::new("last/file.txt").map_err(|error| ::errors::FfiError::from(error.description())));
+            let cstring_file_name = unwrap_result!(::std::ffi::CString::new("last/file.txt").map_err(|error| ::errors::FfiError::from(error.description())));
 
             let file_name_length_for_c = cstring_file_name.as_bytes_with_nul().len();
             assert_eq!(file_name_length_for_c, 14 * size_of_c_char);
@@ -634,10 +638,10 @@ mod test {
         // --------------------------------------------------------------------
         // Create Long Name String <random> - c string size with \0 = <calculate>
         // --------------------------------------------------------------------
-        let c_long_name = unsafe { ::libc::malloc((SIZE_FOR_C * size_of_c_char) as ::libc::size_t) } as *mut ::libc::c_char;
+        let c_long_name = unsafe { ::libc::malloc(SIZE_FOR_C * size_of_c_char) } as *mut ::libc::c_char;
 
         {
-            let cstring_long_name = eval_result!(generate_random_cstring(SIZE_FOR_C - 1));
+            let cstring_long_name = unwrap_result!(generate_random_cstring(SIZE_FOR_C - 1));
 
             let long_name_length_for_c = cstring_long_name.as_bytes_with_nul().len();
             assert_eq!(long_name_length_for_c, SIZE_FOR_C * size_of_c_char);
@@ -648,10 +652,10 @@ mod test {
         // --------------------------------------------------------------------
         // Create Service Name String www - c string size with \0 = 4
         // --------------------------------------------------------------------
-        let c_service_name_www = unsafe { ::libc::malloc(4 * size_of_c_char as ::libc::size_t) } as *mut ::libc::c_char;
+        let c_service_name_www = unsafe { ::libc::malloc(4 * size_of_c_char) } as *mut ::libc::c_char;
 
         {
-            let cstring_service_name = eval_result!(::std::ffi::CString::new("www").map_err(|error| ::errors::FfiError::from(error.description())));
+            let cstring_service_name = unwrap_result!(::std::ffi::CString::new("www").map_err(|error| ::errors::FfiError::from(error.description())));
 
             let service_name_length_for_c = cstring_service_name.as_bytes_with_nul().len();
             assert_eq!(service_name_length_for_c, 4 * size_of_c_char);
@@ -662,10 +666,10 @@ mod test {
         // --------------------------------------------------------------------
         // Create Service Name String blog - c string size with \0 = 5
         // --------------------------------------------------------------------
-        let c_service_name_blog = unsafe { ::libc::malloc(5 * size_of_c_char as ::libc::size_t) } as *mut ::libc::c_char;
+        let c_service_name_blog = unsafe { ::libc::malloc(5 * size_of_c_char) } as *mut ::libc::c_char;
 
         {
-            let cstring_service_name = eval_result!(::std::ffi::CString::new("blog").map_err(|error| ::errors::FfiError::from(error.description())));
+            let cstring_service_name = unwrap_result!(::std::ffi::CString::new("blog").map_err(|error| ::errors::FfiError::from(error.description())));
 
             let service_name_length_for_c = cstring_service_name.as_bytes_with_nul().len();
             assert_eq!(service_name_length_for_c, 5 * size_of_c_char);
@@ -697,7 +701,7 @@ mod test {
         // Get specific file for www service
         // Note: This will result in narrowing on < 64 bit systems - but it's Ok for this test as
         //       we are not dealing with files larger than 2^32 bytes.
-        c_content = unsafe { ::libc::malloc((*c_size as usize * size_of_c_uint8) as ::libc::size_t) } as *mut ::libc::uint8_t;
+        c_content = unsafe { ::libc::malloc(*c_size as usize * size_of_c_uint8) } as *mut ::libc::uint8_t;
         assert_eq!(get_file_content_from_service_home_dir(unregistered_client_handle,
                                                           c_long_name,
                                                           c_service_name_www,
@@ -715,7 +719,7 @@ mod test {
         // Get specific file for blog service
         // Note: This will result in narrowing on < 64 bit systems - but it's Ok for this test as
         //       we are not dealing with files larger than 2^32 bytes.
-        c_content = unsafe { ::libc::malloc((*c_size as usize * size_of_c_uint8) as ::libc::size_t) } as *mut ::libc::uint8_t;
+        c_content = unsafe { ::libc::malloc(*c_size as usize * size_of_c_uint8) } as *mut ::libc::uint8_t;
         assert_eq!(get_file_content_from_service_home_dir(unregistered_client_handle,
                                                           c_long_name,
                                                           c_service_name_blog,
