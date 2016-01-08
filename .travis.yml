@@ -1,0 +1,21 @@
+os:
+  - linux
+  - osx
+language: rust
+rust:
+  - nightly
+sudo: false
+branches:
+  only:
+      - master
+install:
+  - curl -sSL https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/install_libsodium.sh | bash
+  - export PKG_CONFIG_PATH=$HOME/libsodium-1.0.3/lib/pkgconfig:$PKG_CONFIG_PATH
+script:
+  - cargo build --verbose
+  - cargo test --verbose
+after_success:
+  - curl -sSL https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/deploy_gh-pages.sh | bash
+env:
+  global:
+    secure: "Q+SwRzZ0meFuwNj8DDctw6Wwk50/GhG9gQJQMyIcT0vdcVGeQlBSscQT9z2LHcezpS4hIgyosEqteOAtOmT78Lxaq0PVLX84lcym4WO8Bk7OQZ5jHddImCvygVAByZwEMC2MHyKkBkfsijAz0qvyyFIuPMbZ+I69jGppOtU/GB0="

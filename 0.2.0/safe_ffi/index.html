@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `safe_ffi` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, safe_ffi">
+
+    <title>safe_ffi - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    <link rel="shortcut icon" href="http://maidsafe.net/img/favicon.ico">
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        <a href='../safe_ffi/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <p class='location'></p><script>window.sidebarCurrent = {name: 'safe_ffi', ty: 'mod', relpath: '../'};</script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>safe_ffi</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-0' class='srclink' href='../src/safe_ffi/lib.rs.html#18-744' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>This crate provides FFI-bindings to the Client Modules (<code>safe_core</code>, <code>safe_nfs</code>, <code>safe_dns</code>)
+In the current implementation the allocations made by this crate are managed within the crate
+itself and is guaranteed that management of such allocations will not be pushed beyond the FFI
+boundary. This has a 2-fold outcome: firstly, the passing of data is done by filling of the
+allocations passed by the caller and is caller&#39;s responsibility to manage those. For this every
+function that fills an allocated memory also has a companion function to return the size of
+data which the caller can call to find out how much space needs to be allocated in the first
+place. Second and consequently, the caller does not have to bother calling functions within
+this crate which only serve to free resources allocated by the crate itself. This otherwise
+would be error prone and cumbersome. Instead the caller can use whatever idiom in his language
+to manage memory much more naturally and conveniently (eg., RAII idioms etc)</p>
+
+<p>The only exception to the above rule is the obtainment of the client engine itself. The client
+engine is allocated and managed by the crate. This is necessary because it serves as a context
+to all operations provided by the crate. Hence the user will obtain the engine on calling any
+one of the functions to create it and must preserve it for all subsequent operations. When
+done, to release the resources, <code>drop_client</code> may be called.</p>
+
+<p><a href="https://github.com/maidsafe/safe_ffi">Project github page</a></p>
+</div><h2 id='macros' class='section-header'><a href="#macros">Macros</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='macro' href='macro.ffi_try!.html'
+                               title='safe_ffi::ffi_try!'>ffi_try!</a></td>
+                        <td class='docblock short'>
+                             <p>This macro is intended to be used in all cases where we get Result<T, U> and want to convert it
+to C friendly error code to inform about error conditions accross library boundaries</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.add_service.html'
+                               title='safe_ffi::add_service'>add_service</a></td>
+                        <td class='docblock short'>
+                             <p>Add a new service to the existing (registered) Dns record</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.create_account.html'
+                               title='safe_ffi::create_account'>create_account</a></td>
+                        <td class='docblock short'>
+                             <p>Create a registered client. This or any one of the other companion functions to get a
+client must be called before initiating any operation allowed by this crate. <code>client_handle</code> is
+a pointer to a pointer and must point to a valid pointer not junk, else the consequences are
+undefined.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.create_file.html'
+                               title='safe_ffi::create_file'>create_file</a></td>
+                        <td class='docblock short'>
+                             <p>Create a file. The Name of the file is the final token in the given path. Eg.,
+if given path = <code>/a/b/c/d</code> then <code>d</code> is interpreted as the file intended to be created.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.create_sub_directory.html'
+                               title='safe_ffi::create_sub_directory'>create_sub_directory</a></td>
+                        <td class='docblock short'>
+                             <p>Create a subdirectory. The Name of the subdirectory is the final token in the given path. Eg.,
+if given path = <code>/a/b/c/d</code> then <code>d</code> is interpreted as the subdirectory intended to be created.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.create_unregistered_client.html'
+                               title='safe_ffi::create_unregistered_client'>create_unregistered_client</a></td>
+                        <td class='docblock short'>
+                             <p>Create an unregistered client. This or any one of the other companion functions to get a
+client must be called before initiating any operation allowed by this crate.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.drop_client.html'
+                               title='safe_ffi::drop_client'>drop_client</a></td>
+                        <td class='docblock short'>
+                             <p>Discard and clean up the previously allocated client. Use this only if the client is obtained
+from one of the client obtainment functions in this crate (<code>crate_account</code>, <code>log_in</code>,
+<code>create_unregistered_client</code>). Using <code>client_handle</code> after a call to this functions is
+undefined behaviour.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.get_file_content.html'
+                               title='safe_ffi::get_file_content'>get_file_content</a></td>
+                        <td class='docblock short'>
+                             <p>Read a file. The Name of the file is the final token in the given path. Eg.,
+if given path = <code>/a/b/c/d</code> then <code>d</code> is interpreted as the file intended to be read.
+<code>c_content_buf</code> should be properly and sufficiently pre-allocated.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.get_file_content_from_service_home_dir.html'
+                               title='safe_ffi::get_file_content_from_service_home_dir'>get_file_content_from_service_home_dir</a></td>
+                        <td class='docblock short'>
+                             <p>Get file content from service home directory
+The Name of the file is the final token in the given path. Eg.,
+if given path = <code>/a/b/c/d</code> then <code>d</code> is interpreted as the file intended to be read.
+<code>c_content_buf</code> should be properly and sufficiently pre-allocated.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.get_file_size.html'
+                               title='safe_ffi::get_file_size'>get_file_size</a></td>
+                        <td class='docblock short'>
+                             <p>Get the size of the file. c_size should be properly and sufficiently pre-allocated.
+The Name of the file is the final token in the given path. Eg.,
+if given path = <code>/a/b/c/d</code> then <code>d</code> is interpreted as the file intended to be read.
+<code>c_size</code> should be properly and sufficiently pre-allocated.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.get_file_size_from_service_home_dir.html'
+                               title='safe_ffi::get_file_size_from_service_home_dir'>get_file_size_from_service_home_dir</a></td>
+                        <td class='docblock short'>
+                             <p>Get file size from service home directory
+The Name of the file is the final token in the given path. Eg.,
+if given path = <code>/a/b/c/d</code> then <code>d</code> is interpreted as the file intended to be read.
+<code>c_content_size</code> should be properly and sufficiently pre-allocated.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.log_in.html'
+                               title='safe_ffi::log_in'>log_in</a></td>
+                        <td class='docblock short'>
+                             <p>Log into a registered client. This or any one of the other companion functions to get a
+client must be called before initiating any operation allowed by this crate. <code>client_handle</code> is
+a pointer to a pointer and must point to a valid pointer not junk, else the consequences are
+undefined.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.register_dns.html'
+                               title='safe_ffi::register_dns'>register_dns</a></td>
+                        <td class='docblock short'>
+                             <p>Register Dns</p>
+
+                        </td>
+                    </tr>
+                </table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "safe_ffi";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script async src="../search-index.js"></script>
+</body>
+</html>
