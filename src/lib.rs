@@ -61,9 +61,10 @@ extern crate safe_dns;
 extern crate safe_core;
 extern crate sodiumoxide;
 #[allow(unused_extern_crates)]
-#[macro_use] extern crate maidsafe_utilities;
+#[macro_use]
+extern crate maidsafe_utilities;
 
-#[macro_use] mod macros;
+#[macro_use]mod macros;
 
 mod errors;
 mod implementation;
@@ -88,7 +89,7 @@ use safe_nfs::helper::file_helper::FileHelper;
 /// client must be called before initiating any operation allowed by this crate.
 #[no_mangle]
 #[allow(unsafe_code)]
-pub extern fn create_unregistered_client(client_handle: *mut *const c_void) -> int32_t {
+pub extern "C" fn create_unregistered_client(client_handle: *mut *const c_void) -> int32_t {
     unsafe {
         *client_handle = cast_to_client_ffi_handle(ffi_try!(Client::create_unregistered_client()));
     }
@@ -102,14 +103,18 @@ pub extern fn create_unregistered_client(client_handle: *mut *const c_void) -> i
 /// undefined.
 #[no_mangle]
 #[allow(unsafe_code)]
-pub extern fn create_account(c_keyword    : *const c_char,
-                             c_pin        : *const c_char,
-                             c_password   : *const c_char,
-                             client_handle: *mut *const c_void) -> int32_t {
-    let client = ffi_try!(Client::create_account(ffi_try!(implementation::c_char_ptr_to_string(c_keyword)),
-                                                          ffi_try!(implementation::c_char_ptr_to_string(c_pin)),
-                                                          ffi_try!(implementation::c_char_ptr_to_string(c_password))));
-    unsafe { *client_handle = cast_to_client_ffi_handle(client); }
+pub extern "C" fn create_account(c_keyword: *const c_char,
+                                 c_pin: *const c_char,
+                                 c_password: *const c_char,
+                                 client_handle: *mut *const c_void)
+                                 -> int32_t {
+    let client = ffi_try!(Client::create_account(ffi_try!(
+          implementation::c_char_ptr_to_string(c_keyword)),
+          ffi_try!(implementation::c_char_ptr_to_string(c_pin)),
+          ffi_try!(implementation::c_char_ptr_to_string(c_password))));
+    unsafe {
+        *client_handle = cast_to_client_ffi_handle(client);
+    }
 
     0
 }
@@ -120,14 +125,17 @@ pub extern fn create_account(c_keyword    : *const c_char,
 /// undefined.
 #[no_mangle]
 #[allow(unsafe_code)]
-pub extern fn log_in(c_keyword    : *const c_char,
-                     c_pin        : *const c_char,
-                     c_password   : *const c_char,
-                     client_handle: *mut *const c_void) -> int32_t {
+pub extern "C" fn log_in(c_keyword: *const c_char,
+                         c_pin: *const c_char,
+                         c_password: *const c_char,
+                         client_handle: *mut *const c_void)
+                         -> int32_t {
     let client = ffi_try!(Client::log_in(ffi_try!(implementation::c_char_ptr_to_string(c_keyword)),
-                                                  ffi_try!(implementation::c_char_ptr_to_string(c_pin)),
-                                                  ffi_try!(implementation::c_char_ptr_to_string(c_password))));
-    unsafe { *client_handle = cast_to_client_ffi_handle(client); }
+                                ffi_try!(implementation::c_char_ptr_to_string(c_pin)),
+                                ffi_try!(implementation::c_char_ptr_to_string(c_password))));
+    unsafe {
+        *client_handle = cast_to_client_ffi_handle(client);
+    }
 
     0
 }
@@ -138,23 +146,26 @@ pub extern fn log_in(c_keyword    : *const c_char,
 /// undefined behaviour.
 #[no_mangle]
 #[allow(unsafe_code)]
-pub extern fn drop_client(client_handle: *const c_void) {
+pub extern "C" fn drop_client(client_handle: *const c_void) {
     let _ = unsafe { transmute::<_, Box<Arc<Mutex<Client>>>>(client_handle) };
 }
 
 /// Create a subdirectory. The Name of the subdirectory is the final token in the given path. Eg.,
 /// if given path = `/a/b/c/d` then `d` is interpreted as the subdirectory intended to be created.
 #[no_mangle]
-pub extern fn create_sub_directory(client_handle: *const c_void,
-                                   c_path       : *const c_char,
-                                   is_versioned : bool,
-                                   is_private   : bool) -> int32_t {
+pub extern "C" fn create_sub_directory(client_handle: *const c_void,
+                                       c_path: *const c_char,
+                                       is_versioned: bool,
+                                       is_private: bool)
+                                       -> int32_t {
     let client = cast_from_client_ffi_handle(client_handle);
 
     let mut tokens = ffi_try!(implementation::path_tokeniser(c_path));
 
     let sub_dir_name = ffi_try!(tokens.pop().ok_or(FfiError::InvalidPath));
-    let mut parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(), &tokens, None));
+    let mut parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(),
+                                                                                 &tokens,
+                                                                                 None));
     let dir_helper = DirectoryHelper::new(client);
 
     let access_level = if is_private {
@@ -176,21 +187,22 @@ pub extern fn create_sub_directory(client_handle: *const c_void,
 /// Create a file. The Name of the file is the final token in the given path. Eg.,
 /// if given path = `/a/b/c/d` then `d` is interpreted as the file intended to be created.
 #[no_mangle]
-pub extern fn create_file(client_handle: *const c_void,
-                          c_path       : *const c_char,
-                          c_content    : *const uint8_t,
-                          c_size       : size_t) -> int32_t {
+pub extern "C" fn create_file(client_handle: *const c_void,
+                              c_path: *const c_char,
+                              c_content: *const uint8_t,
+                              c_size: size_t)
+                              -> int32_t {
     let client = cast_from_client_ffi_handle(client_handle);
 
     let mut tokens = ffi_try!(implementation::path_tokeniser(c_path));
 
     let file_name = ffi_try!(tokens.pop().ok_or(FfiError::InvalidPath));
-    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(), &tokens, None));
+    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(),
+                                                                             &tokens,
+                                                                             None));
     let file_helper = FileHelper::new(client);
 
-    let mut writer = ffi_try!(file_helper.create(file_name,
-                                                 vec![],
-                                                 parent_dir_listing));
+    let mut writer = ffi_try!(file_helper.create(file_name, vec![], parent_dir_listing));
 
     writer.write(&implementation::c_uint8_ptr_to_vec(c_content, c_size), 0);
     let _ = ffi_try!(writer.close());
@@ -204,15 +216,18 @@ pub extern fn create_file(client_handle: *const c_void,
 /// `c_size` should be properly and sufficiently pre-allocated.
 #[no_mangle]
 #[allow(unsafe_code)]
-pub extern fn get_file_size(client_handle: *const c_void,
-                            c_path       : *const c_char,
-                            c_size       : *mut uint64_t) -> int32_t {
+pub extern "C" fn get_file_size(client_handle: *const c_void,
+                                c_path: *const c_char,
+                                c_size: *mut uint64_t)
+                                -> int32_t {
     let client = cast_from_client_ffi_handle(client_handle);
 
     let mut tokens = ffi_try!(implementation::path_tokeniser(c_path));
 
     let file_name = ffi_try!(tokens.pop().ok_or(FfiError::InvalidPath));
-    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(), &tokens, None));
+    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(),
+                                                                             &tokens,
+                                                                             None));
 
     let size = ffi_try!(implementation::get_file_size(client, &file_name, &parent_dir_listing));
 
@@ -226,16 +241,21 @@ pub extern fn get_file_size(client_handle: *const c_void,
 /// `c_content_buf` should be properly and sufficiently pre-allocated.
 #[no_mangle]
 #[allow(unsafe_code)]
-pub extern fn get_file_content(client_handle: *const c_void,
-                               c_path       : *const c_char,
-                               c_content_buf: *mut uint8_t) -> int32_t {
+pub extern "C" fn get_file_content(client_handle: *const c_void,
+                                   c_path: *const c_char,
+                                   c_content_buf: *mut uint8_t)
+                                   -> int32_t {
     let client = cast_from_client_ffi_handle(client_handle);
 
     let mut tokens = ffi_try!(implementation::path_tokeniser(c_path));
 
     let file_name = ffi_try!(tokens.pop().ok_or(FfiError::InvalidPath));
-    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(), &tokens, None));
-    let data_vec = ffi_try!(implementation::get_file_content(client, &file_name, &parent_dir_listing));
+    let parent_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(),
+                                                                             &tokens,
+                                                                             None));
+    let data_vec = ffi_try!(implementation::get_file_content(client,
+                                                             &file_name,
+                                                             &parent_dir_listing));
 
     unsafe { ptr::copy(data_vec.as_ptr(), c_content_buf, data_vec.len()) };
 
@@ -244,15 +264,18 @@ pub extern fn get_file_content(client_handle: *const c_void,
 
 /// Register Dns
 #[no_mangle]
-pub extern fn register_dns(client_handle          : *const c_void,
-                           c_long_name            : *const c_char,
-                           c_service_name         : *const c_char,
-                           c_service_home_dir_path: *const c_char) -> int32_t {
+pub extern "C" fn register_dns(client_handle: *const c_void,
+                               c_long_name: *const c_char,
+                               c_service_name: *const c_char,
+                               c_service_home_dir_path: *const c_char)
+                               -> int32_t {
     let client = cast_from_client_ffi_handle(client_handle);
 
     let tokens = ffi_try!(implementation::path_tokeniser(c_service_home_dir_path));
 
-    let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(), &tokens, None));
+    let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(),
+                                                                                   &tokens,
+                                                                                   None));
     let service_home_dir_key = service_home_dir_listing.get_key();
 
     let long_name = ffi_try!(implementation::c_char_ptr_to_string(c_long_name));
@@ -266,7 +289,8 @@ pub extern fn register_dns(client_handle          : *const c_void,
     let record_struct_data = ffi_try!(dns_operations.register_dns(long_name,
                                                                   &public_encryption_key,
                                                                   &secret_encryption_key,
-                                                                  &vec![(service_name, (service_home_dir_key.clone()))],
+                                                                  &vec![(service_name,
+                                                    (service_home_dir_key.clone()))],
                                                                   vec![public_signing_key],
                                                                   &secret_signing_key,
                                                                   None));
@@ -278,15 +302,18 @@ pub extern fn register_dns(client_handle          : *const c_void,
 
 /// Add a new service to the existing (registered) Dns record
 #[no_mangle]
-pub extern fn add_service(client_handle          : *const c_void,
-                          c_long_name            : *const c_char,
-                          c_service_name         : *const c_char,
-                          c_service_home_dir_path: *const c_char) -> int32_t {
+pub extern "C" fn add_service(client_handle: *const c_void,
+                              c_long_name: *const c_char,
+                              c_service_name: *const c_char,
+                              c_service_home_dir_path: *const c_char)
+                              -> int32_t {
     let client = cast_from_client_ffi_handle(client_handle);
 
     let tokens = ffi_try!(implementation::path_tokeniser(c_service_home_dir_path));
 
-    let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(), &tokens, None));
+    let service_home_dir_listing = ffi_try!(implementation::get_final_subdirectory(client.clone(),
+                                                                                   &tokens,
+                                                                                   None));
     let service_home_dir_key = service_home_dir_listing.get_key();
 
     let long_name = ffi_try!(implementation::c_char_ptr_to_string(c_long_name));
@@ -296,7 +323,8 @@ pub extern fn add_service(client_handle          : *const c_void,
 
     let dns_operations = ffi_try!(DnsOperations::new(client.clone()));
     let record_struct_data = ffi_try!(dns_operations.add_service(&long_name,
-                                                                 (service_name, service_home_dir_key.clone()),
+                                                                 (service_name,
+                                                                  service_home_dir_key.clone()),
                                                                  &secret_signing_key,
                                                                  None));
 
@@ -311,19 +339,23 @@ pub extern fn add_service(client_handle          : *const c_void,
 /// `c_content_size` should be properly and sufficiently pre-allocated.
 #[no_mangle]
 #[allow(unsafe_code)]
-pub extern fn get_file_size_from_service_home_dir(client_handle : *const c_void,
-                                                  c_long_name   : *const c_char,
-                                                  c_service_name: *const c_char,
-                                                  c_file_name   : *const c_char,
-                                                  c_content_size: *mut uint64_t) -> int32_t {
+pub extern "C" fn get_file_size_from_service_home_dir(client_handle: *const c_void,
+                                                      c_long_name: *const c_char,
+                                                      c_service_name: *const c_char,
+                                                      c_file_name: *const c_char,
+                                                      c_content_size: *mut uint64_t)
+                                                      -> int32_t {
     let client = cast_from_client_ffi_handle(client_handle);
 
-    let (file_name, service_file_dir_listing) = ffi_try!(get_directory_for_service_file(client.clone(),
-                                                                                        c_long_name,
-                                                                                        c_service_name,
-                                                                                        c_file_name));
+    let (file_name, service_file_dir_listing) =
+        ffi_try!(get_directory_for_service_file(client.clone(),
+                                                c_long_name,
+                                                c_service_name,
+                                                c_file_name));
 
-    let file_size = ffi_try!(implementation::get_file_size(client, &file_name, &service_file_dir_listing));
+    let file_size = ffi_try!(implementation::get_file_size(client,
+                                                           &file_name,
+                                                           &service_file_dir_listing));
 
     unsafe { ptr::write(c_content_size, file_size) };
 
@@ -336,19 +368,23 @@ pub extern fn get_file_size_from_service_home_dir(client_handle : *const c_void,
 /// `c_content_buf` should be properly and sufficiently pre-allocated.
 #[no_mangle]
 #[allow(unsafe_code)]
-pub extern fn get_file_content_from_service_home_dir(client_handle : *const c_void,
-                                                     c_long_name   : *const c_char,
-                                                     c_service_name: *const c_char,
-                                                     c_file_name   : *const c_char,
-                                                     c_content_buf : *mut uint8_t) -> int32_t {
+pub extern "C" fn get_file_content_from_service_home_dir(client_handle: *const c_void,
+                                                         c_long_name: *const c_char,
+                                                         c_service_name: *const c_char,
+                                                         c_file_name: *const c_char,
+                                                         c_content_buf: *mut uint8_t)
+                                                         -> int32_t {
     let client = cast_from_client_ffi_handle(client_handle);
 
-    let (file_name, service_file_dir_listing) = ffi_try!(get_directory_for_service_file(client.clone(),
-                                                                                        c_long_name,
-                                                                                        c_service_name,
-                                                                                        c_file_name));
+    let (file_name, service_file_dir_listing) =
+        ffi_try!(get_directory_for_service_file(client.clone(),
+                                                c_long_name,
+                                                c_service_name,
+                                                c_file_name));
 
-    let data_vec = ffi_try!(implementation::get_file_content(client, &file_name, &service_file_dir_listing));
+    let data_vec = ffi_try!(implementation::get_file_content(client,
+                                                             &file_name,
+                                                             &service_file_dir_listing));
 
     unsafe { ptr::copy(data_vec.as_ptr(), c_content_buf, data_vec.len()) };
 
@@ -363,9 +399,7 @@ fn cast_to_client_ffi_handle(client: Client) -> *const c_void {
 
 #[allow(unsafe_code)]
 fn cast_from_client_ffi_handle(client_handle: *const c_void) -> Arc<Mutex<Client>> {
-    let boxed_client: Box<Arc<Mutex<Client>>> = unsafe {
-        transmute(client_handle)
-    };
+    let boxed_client: Box<Arc<Mutex<Client>>> = unsafe { transmute(client_handle) };
 
     let client = (*boxed_client).clone();
     mem::forget(boxed_client);
@@ -373,10 +407,11 @@ fn cast_from_client_ffi_handle(client_handle: *const c_void) -> Arc<Mutex<Client
     client
 }
 
-fn get_directory_for_service_file(client        : Arc<Mutex<Client>>,
-                                  c_long_name   : *const c_char,
+fn get_directory_for_service_file(client: Arc<Mutex<Client>>,
+                                  c_long_name: *const c_char,
                                   c_service_name: *const c_char,
-                                  c_file_name   : *const c_char) -> Result<(String, DirectoryListing), FfiError> {
+                                  c_file_name: *const c_char)
+                                  -> Result<(String, DirectoryListing), FfiError> {
     let mut tokens = try!(implementation::path_tokeniser(c_file_name));
 
     let file_name = try!(tokens.pop().ok_or(FfiError::InvalidPath));
@@ -388,9 +423,8 @@ fn get_directory_for_service_file(client        : Arc<Mutex<Client>>,
                                                                              &service_name,
                                                                              None));
 
-    Ok((file_name, try!(implementation::get_final_subdirectory(client,
-                                                               &tokens,
-                                                               Some(&service_dir_key)))))
+    Ok((file_name,
+        try!(implementation::get_final_subdirectory(client, &tokens, Some(&service_dir_key)))))
 }
 
 #[cfg(test)]
@@ -485,9 +519,9 @@ mod test {
         let size_of_c_uint8 = mem::size_of::<uint8_t>();
         let size_of_c_uint64 = mem::size_of::<uint64_t>();
 
-        // --------------------------------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------------------
         //                                       NFS Operations
-        // --------------------------------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------------------
 
         // --------------------------------------------------------------------
         // Create Sub-directory /a - c string size with \0 = 3
@@ -495,7 +529,9 @@ mod test {
         let mut c_path = unsafe { libc::malloc(3 * size_of_c_char) } as *mut c_char;
 
         {
-            let cstring_path = unwrap_result!(CString::new("/a").map_err(|error| FfiError::from(error.description())));
+            let cstring_path = unwrap_result!(CString::new("/a").map_err(|error| {
+                FfiError::from(error.description())
+            }));
 
             let path_lenght_for_c = cstring_path.as_bytes_with_nul().len();
             assert_eq!(path_lenght_for_c, 3 * size_of_c_char);
@@ -513,7 +549,9 @@ mod test {
         c_path = unsafe { libc::malloc(8 * size_of_c_char) } as *mut c_char;
 
         {
-            let cstring_path = unwrap_result!(CString::new("/a/last").map_err(|error| FfiError::from(error.description())));
+            let cstring_path = unwrap_result!(CString::new("/a/last").map_err(|error| {
+                FfiError::from(error.description())
+            }));
 
             let path_lenght_for_c = cstring_path.as_bytes_with_nul().len();
             assert_eq!(path_lenght_for_c, 8 * size_of_c_char);
@@ -529,10 +567,15 @@ mod test {
         // --------------------------------------------------------------------
         c_path = unsafe { libc::malloc(17 * size_of_c_char) } as *mut c_char;
 
-        let cstring_content = unwrap_result!(CString::new("This is the file content.").map_err(|error| FfiError::from(error.description())));
+        let cstring_content = unwrap_result!(CString::new("This is the file content.")
+                                                 .map_err(|error| {
+                                                     FfiError::from(error.description())
+                                                 }));
 
         {
-            let cstring_path = unwrap_result!(CString::new("/a/last/file.txt").map_err(|error| FfiError::from(error.description())));
+            let cstring_path = unwrap_result!(CString::new("/a/last/file.txt").map_err(|error| {
+                FfiError::from(error.description())
+            }));
 
             let path_lenght_for_c = cstring_path.as_bytes_with_nul().len();
             assert_eq!(path_lenght_for_c, 17 * size_of_c_char);
@@ -542,8 +585,9 @@ mod test {
 
         assert_eq!(create_file(client_handle,
                                c_path,
-                               cstring_content.as_ptr() as *const uint8_t, cstring_content.as_bytes_with_nul().len()),
-                    0);
+                               cstring_content.as_ptr() as *const uint8_t,
+                               cstring_content.as_bytes_with_nul().len()),
+                   0);
         unsafe { libc::free(c_path as *mut c_void) };
 
         // --------------------------------------------------------------------
@@ -552,7 +596,9 @@ mod test {
         c_path = unsafe { libc::malloc(17 * size_of_c_char) } as *mut c_char;
 
         {
-            let cstring_path = unwrap_result!(CString::new("/a/last/file.txt").map_err(|error| FfiError::from(error.description())));
+            let cstring_path = unwrap_result!(CString::new("/a/last/file.txt").map_err(|error| {
+                FfiError::from(error.description())
+            }));
 
             let path_lenght_for_c = cstring_path.as_bytes_with_nul().len();
             assert_eq!(path_lenght_for_c, 17 * size_of_c_char);
@@ -573,7 +619,9 @@ mod test {
         c_path = unsafe { libc::malloc(17 * size_of_c_char) } as *mut c_char;
 
         {
-            let cstring_path = unwrap_result!(CString::new("/a/last/file.txt").map_err(|error| FfiError::from(error.description())));
+            let cstring_path = unwrap_result!(CString::new("/a/last/file.txt").map_err(|error| {
+                FfiError::from(error.description())
+            }));
 
             let path_lenght_for_c = cstring_path.as_bytes_with_nul().len();
             assert_eq!(path_lenght_for_c, 17 * size_of_c_char);
@@ -583,7 +631,9 @@ mod test {
 
         // Note: This will result in narrowing on < 64 bit systems - but it's Ok for this test as
         //       we are not dealing with files larger than 2^32 bytes.
-        let mut c_content = unsafe { libc::malloc(*c_size as usize * size_of_c_uint8) } as *mut uint8_t;
+        let mut c_content = unsafe {
+            libc::malloc(*c_size as usize * size_of_c_uint8)
+        } as *mut uint8_t;
 
         assert_eq!(get_file_content(client_handle, c_path, c_content), 0);
 
@@ -595,9 +645,9 @@ mod test {
         unsafe { libc::free(c_path as *mut c_void) };
         unsafe { libc::free(c_content as *mut c_void) };
 
-        // --------------------------------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------------------
         //                                       DNS Operations
-        // --------------------------------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------------------
 
         // --------------------------------------------------------------------
         // Create Path String /a/last - c string size with \0 = 8
@@ -605,7 +655,9 @@ mod test {
         c_path = unsafe { libc::malloc(8 * size_of_c_char) } as *mut c_char;
 
         {
-            let cstring_path = unwrap_result!(CString::new("/a/last").map_err(|error| FfiError::from(error.description())));
+            let cstring_path = unwrap_result!(CString::new("/a/last").map_err(|error| {
+                FfiError::from(error.description())
+            }));
 
             let path_lenght_for_c = cstring_path.as_bytes_with_nul().len();
             assert_eq!(path_lenght_for_c, 8 * size_of_c_char);
@@ -619,7 +671,9 @@ mod test {
         let c_path_blog = unsafe { libc::malloc(3 * size_of_c_char) } as *mut c_char;
 
         {
-            let cstring_path = unwrap_result!(CString::new("/a").map_err(|error| FfiError::from(error.description())));
+            let cstring_path = unwrap_result!(CString::new("/a").map_err(|error| {
+                FfiError::from(error.description())
+            }));
 
             let path_lenght_for_c = cstring_path.as_bytes_with_nul().len();
             assert_eq!(path_lenght_for_c, 3 * size_of_c_char);
@@ -633,12 +687,18 @@ mod test {
         let c_file_name_www = unsafe { libc::malloc(9 * size_of_c_char) } as *mut c_char;
 
         {
-            let cstring_file_name = unwrap_result!(CString::new("file.txt").map_err(|error| FfiError::from(error.description())));
+            let cstring_file_name = unwrap_result!(CString::new("file.txt").map_err(|error| {
+                FfiError::from(error.description())
+            }));
 
             let file_name_length_for_c = cstring_file_name.as_bytes_with_nul().len();
             assert_eq!(file_name_length_for_c, 9 * size_of_c_char);
 
-            unsafe { ptr::copy(cstring_file_name.as_ptr(), c_file_name_www, file_name_length_for_c) };
+            unsafe {
+                ptr::copy(cstring_file_name.as_ptr(),
+                          c_file_name_www,
+                          file_name_length_for_c)
+            };
         }
 
         // --------------------------------------------------------------------
@@ -647,12 +707,19 @@ mod test {
         let c_file_name_blog = unsafe { libc::malloc(14 * size_of_c_char) } as *mut c_char;
 
         {
-            let cstring_file_name = unwrap_result!(CString::new("last/file.txt").map_err(|error| FfiError::from(error.description())));
+            let cstring_file_name = unwrap_result!(CString::new("last/file.txt")
+                                                       .map_err(|error| {
+                                                           FfiError::from(error.description())
+                                                       }));
 
             let file_name_length_for_c = cstring_file_name.as_bytes_with_nul().len();
             assert_eq!(file_name_length_for_c, 14 * size_of_c_char);
 
-            unsafe { ptr::copy(cstring_file_name.as_ptr(), c_file_name_blog, file_name_length_for_c) };
+            unsafe {
+                ptr::copy(cstring_file_name.as_ptr(),
+                          c_file_name_blog,
+                          file_name_length_for_c)
+            };
         }
 
         const SIZE_FOR_C: usize = 11;
@@ -667,7 +734,11 @@ mod test {
             let long_name_length_for_c = cstring_long_name.as_bytes_with_nul().len();
             assert_eq!(long_name_length_for_c, SIZE_FOR_C * size_of_c_char);
 
-            unsafe { ptr::copy(cstring_long_name.as_ptr(), c_long_name, long_name_length_for_c) };
+            unsafe {
+                ptr::copy(cstring_long_name.as_ptr(),
+                          c_long_name,
+                          long_name_length_for_c)
+            };
         }
 
         // --------------------------------------------------------------------
@@ -676,12 +747,18 @@ mod test {
         let c_service_name_www = unsafe { libc::malloc(4 * size_of_c_char) } as *mut c_char;
 
         {
-            let cstring_service_name = unwrap_result!(CString::new("www").map_err(|error| FfiError::from(error.description())));
+            let cstring_service_name = unwrap_result!(CString::new("www").map_err(|error| {
+                FfiError::from(error.description())
+            }));
 
             let service_name_length_for_c = cstring_service_name.as_bytes_with_nul().len();
             assert_eq!(service_name_length_for_c, 4 * size_of_c_char);
 
-            unsafe { ptr::copy(cstring_service_name.as_ptr(), c_service_name_www, service_name_length_for_c) };
+            unsafe {
+                ptr::copy(cstring_service_name.as_ptr(),
+                          c_service_name_www,
+                          service_name_length_for_c)
+            };
         }
 
         // --------------------------------------------------------------------
@@ -690,19 +767,27 @@ mod test {
         let c_service_name_blog = unsafe { libc::malloc(5 * size_of_c_char) } as *mut c_char;
 
         {
-            let cstring_service_name = unwrap_result!(CString::new("blog").map_err(|error| FfiError::from(error.description())));
+            let cstring_service_name = unwrap_result!(CString::new("blog").map_err(|error| {
+                FfiError::from(error.description())
+            }));
 
             let service_name_length_for_c = cstring_service_name.as_bytes_with_nul().len();
             assert_eq!(service_name_length_for_c, 5 * size_of_c_char);
 
-            unsafe { ptr::copy(cstring_service_name.as_ptr(), c_service_name_blog, service_name_length_for_c) };
+            unsafe {
+                ptr::copy(cstring_service_name.as_ptr(),
+                          c_service_name_blog,
+                          service_name_length_for_c)
+            };
         }
 
         // Register DNS
-        assert_eq!(register_dns(client_handle, c_long_name, c_service_name_www, c_path), 0);
+        assert_eq!(register_dns(client_handle, c_long_name, c_service_name_www, c_path),
+                   0);
 
         // Add Service
-        assert_eq!(add_service(client_handle, c_long_name, c_service_name_blog, c_path_blog), 0);
+        assert_eq!(add_service(client_handle, c_long_name, c_service_name_blog, c_path_blog),
+                   0);
 
         // --------------------------------------------------------------------
         // Dns Getters - Browser Equivalents
@@ -716,7 +801,8 @@ mod test {
 
         {
             let ptr_to_unregistered_client_handle = &mut unregistered_client_handle;
-            let _ = assert_eq!(create_unregistered_client(ptr_to_unregistered_client_handle), 0);
+            let _ = assert_eq!(create_unregistered_client(ptr_to_unregistered_client_handle),
+                               0);
         }
 
         // Get specific file for www service
