@@ -15,16 +15,22 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-const FFI_ERROR_START_RANGE: i32 = ::safe_dns::errors::DNS_ERROR_START_RANGE - 500;
+use std::fmt;
+
+use safe_core::errors::CoreError;
+use safe_dns::errors::{DnsError, DNS_ERROR_START_RANGE};
+use safe_nfs::errors::NfsError;
+
+const FFI_ERROR_START_RANGE: i32 = DNS_ERROR_START_RANGE - 500;
 
 /// Errors during FFI operations
 pub enum FfiError {
     /// Errors from safe_core
-    CoreError(::safe_core::errors::CoreError),
+    CoreError(CoreError),
     /// Errors from safe_nfs
-    NfsError(::safe_nfs::errors::NfsError),
+    NfsError(NfsError),
     /// Errors from safe_dns
-    DnsError(::safe_dns::errors::DnsError),
+    DnsError(DnsError),
     /// Invalid Path given
     InvalidPath,
     /// Given Path does not exist for the client
@@ -35,8 +41,8 @@ pub enum FfiError {
     Unexpected(String),
 }
 
-impl ::std::fmt::Debug for FfiError {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+impl fmt::Debug for FfiError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             FfiError::CoreError(ref error)  => write!(f, "FfiError::CoreError -> {:?}", error),
             FfiError::NfsError(ref error)   => write!(f, "FfiError::NfsError -> {:?}", error),
@@ -49,20 +55,20 @@ impl ::std::fmt::Debug for FfiError {
     }
 }
 
-impl From<::safe_core::errors::CoreError> for FfiError {
-    fn from(error: ::safe_core::errors::CoreError) -> FfiError {
+impl From<CoreError> for FfiError {
+    fn from(error: CoreError) -> FfiError {
         FfiError::CoreError(error)
     }
 }
 
-impl From<::safe_nfs::errors::NfsError> for FfiError {
-    fn from(error: ::safe_nfs::errors::NfsError) -> FfiError {
+impl From<NfsError> for FfiError {
+    fn from(error: NfsError) -> FfiError {
         FfiError::NfsError(error)
     }
 }
 
-impl From<::safe_dns::errors::DnsError> for FfiError {
-    fn from(error: ::safe_dns::errors::DnsError) -> FfiError {
+impl From<DnsError> for FfiError {
+    fn from(error: DnsError) -> FfiError {
         FfiError::DnsError(error)
     }
 }
