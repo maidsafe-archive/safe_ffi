@@ -17,6 +17,7 @@ safe_core = "~0.5.0"
 safe_dns = "~0.5.0"
 safe_nfs = "~0.5.0"
 sodiumoxide = "~0.0.9"
+rustc-serialize = "~0.3.16"
 
 [features]
 use-mock-routing = ["safe_dns/use-mock-routing", "safe_nfs/use-mock-routing", "safe_core/use-mock-routing"]
