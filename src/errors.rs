@@ -15,10 +15,9 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-use std::io;
 use std::fmt;
 
-use rustc_serialize::json;
+use rustc_serialize::{json, base64};
 
 use safe_core::errors::CoreError;
 use safe_dns::errors::{DNS_ERROR_START_RANGE, DnsError};
@@ -89,6 +88,12 @@ impl From<NfsError> for FfiError {
 impl From<DnsError> for FfiError {
     fn from(error: DnsError) -> FfiError {
         FfiError::DnsError(Box::new(error))
+    }
+}
+
+impl From<base64::FromBase64Error> for FfiError {
+    fn from(_: base64::FromBase64Error) -> FfiError {
+        FfiError::SpecificParseError("Base64 decode error".to_string())
     }
 }
 

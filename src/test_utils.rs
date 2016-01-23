@@ -23,6 +23,7 @@ use safe_core::utility::test_utils;
 use safe_nfs::helper::directory_helper::DirectoryHelper;
 use safe_nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG};
 
+#[allow(unused)]
 pub fn get_parameter_packet(has_safe_drive_access: bool) -> Result<ParameterPacket, FfiError> {
     let client = Arc::new(Mutex::new(try!(test_utils::get_client())));
     let directory_helper = DirectoryHelper::new(client.clone());

@@ -42,7 +42,7 @@
 
 // For explanation of lint checks, run `rustc -W help` or see
 // https://github.com/maidsafe/QA/blob/master/Documentation/Rust%20Lint%20Checks.md
-/*
+
 #![forbid(bad_style, exceeding_bitshifts, mutable_transmutes, no_mangle_const_items,
           unknown_crate_types, warnings)]
 #![deny(deprecated, drop_with_repr_extern, improper_ctypes, missing_docs,
@@ -54,7 +54,7 @@
         unused_qualifications, unused_results, variant_size_differences)]
 #![allow(box_pointers, fat_ptr_transmutes, missing_copy_implementations,
          missing_debug_implementations)]
-         */
+
 
 extern crate libc;
 extern crate routing;
@@ -79,19 +79,28 @@ use safe_nfs::metadata::directory_key::DirectoryKey;
 #[macro_use] mod macros;
 
 mod dns;
+mod nfs;
 mod config;
 mod helper;
 mod test_utils;
+/// Errors thrown by the FFI operations
 pub mod errors;
 
+/// ParameterPacket acts as a holder for the standard parameters that would be needed for performing
+/// operations across the modules like nfs and dns
 #[derive(Clone)]
 pub struct ParameterPacket {
+    /// Client instance used for performing the API operation
     pub client: Arc<Mutex<Client>>,
+    /// Root directory of teh application
     pub app_root_dir_key: DirectoryKey,
+    /// Denotes whether the application has access to SAFEDrive
     pub safe_drive_access: bool,
+    /// SAFEDrive root directory key
     pub safe_drive_dir_key: DirectoryKey,
 }
 
+/// ResponseType tspecifies the standard Response that is to be expected from the ::Action trait
 pub type ResponseType = Result<Option<String>, ::errors::FfiError>;
 
 /// ICommand trait
@@ -158,20 +167,60 @@ pub extern fn drop_client(client_handle: *const libc::c_void) {
     let _ = unsafe { transmute::<_, Box<Arc<Mutex<Client>>>>(client_handle) };
 }
 
+/// General function that can be invoked for performing a API specific operation that wont return any result.
+/// This function would only perform the operation and return 0 or error code
+/// c_payload refers to the JSON payload that can be passed as a JSON string.
+/// The JSON string should have keys module, action, app_root_dir_key, safe_drive_dir_key,
+/// safe_drive_access and data. `data` refers to API specific payload.
 #[no_mangle]
 pub extern fn execute(c_payload    : *const libc::c_char,
-                      client_handle: *const libc::c_void) {
-    let payload: String = helper::c_char_ptr_to_string(c_payload).unwrap();
-    let json_request = json::Json::from_str(&payload).unwrap();
+                      client_handle: *const libc::c_void) -> libc::int32_t {
+    let payload: String = ffi_try!(helper::c_char_ptr_to_string(c_payload));
+    let json_request = ffi_try!(parse_result!(json::Json::from_str(&payload), "JSON parse error"));
     let mut json_decoder = json::Decoder::new(json_request);
 
     let client = cast_from_client_ffi_handle(client_handle);
-    let (module, action, parameter_packet) = get_parameter_packet(client, &mut json_decoder).unwrap();
-    module_parser(module, action, parameter_packet, &mut json_decoder);
+    let (module, action, parameter_packet) = ffi_try!(get_parameter_packet(client, &mut json_decoder));
+    let result = module_parser(module, action, parameter_packet, &mut json_decoder);
+    let _ = ffi_try!(result);
+
+    0
 }
 
-fn get_parameter_packet<D>(client: Arc<Mutex<Client>>, json_decoder: &mut D) -> Result<(String, String, ParameterPacket), ::errors::FfiError>
-where D: Decoder, D::Error: ::std::fmt::Debug
+/// General function that can be invoked for performing a API specific operation that will return Vec<u8> result.
+/// This function would perform the operation and the result of operation is written in the c_result
+/// and also return 0 or error code as return value of the function
+/// c_payload refers to the JSON payload that can be passed as a JSON string.
+/// The JSON string should have keys module, action, app_root_dir_key, safe_drive_dir_key,
+/// safe_drive_access and data. `data` refers to API specific payload.
+#[no_mangle]
+#[allow(unsafe_code)]
+pub extern fn execute_for_content(c_payload    : *const libc::c_char,
+                                  client_handle: *const libc::c_void,
+                                  c_result     : *mut *const libc::c_void) -> libc::int32_t {
+    let payload: String = ffi_try!(helper::c_char_ptr_to_string(c_payload));
+    let json_request = ffi_try!(parse_result!(json::Json::from_str(&payload), "JSON parse error"));
+    let mut json_decoder = json::Decoder::new(json_request);
+
+    let client = cast_from_client_ffi_handle(client_handle);
+    let (module, action, parameter_packet) = ffi_try!(get_parameter_packet(client, &mut json_decoder));
+    let result = module_parser(module, action, parameter_packet, &mut json_decoder);
+    let data = match ffi_try!(result) {
+        Some(response) => response,
+        None => "".to_string()
+    };
+
+    unsafe {
+        std::ptr::copy_nonoverlapping(data.as_ptr(), c_result as *mut u8, data.len())
+    };
+
+    0
+}
+
+fn get_parameter_packet<D>(client: Arc<Mutex<Client>>,
+                           json_decoder: &mut D) ->
+                           Result<(String, String, ParameterPacket), ::errors::FfiError>
+   where D: Decoder, D::Error: ::std::fmt::Debug
 {
     let module: String = try!(parse_result!(json_decoder.read_struct_field("module", 0, |d| {
         Decodable::decode(d)
@@ -189,8 +238,8 @@ where D: Decoder, D::Error: ::std::fmt::Debug
         Decodable::decode(d)
     }), ""));
 
-    let serialised_app_dir_key = &base64_app_dir_key[..].from_base64().unwrap();
-    let serialised_safe_drive_key = &base64_safe_drive_dir_key[..].from_base64().unwrap();
+    let serialised_app_dir_key: Vec<u8> = try!(parse_result!(base64_app_dir_key[..].from_base64(), ""));
+    let serialised_safe_drive_key: Vec<u8> = try!(parse_result!(base64_safe_drive_dir_key[..].from_base64(), ""));
 
     let safe_drive_dir_key: DirectoryKey = try!(deserialise(&serialised_safe_drive_key));
     let app_root_dir_key: DirectoryKey = try!(deserialise(&serialised_app_dir_key));
@@ -214,10 +263,9 @@ fn module_parser<D>(module: String,
 {
     match &module[..] {
         "dns" => dns::action_dispatcher(action, parameter_packet, decoder),
-        "nfs" => {unimplemented!()},
+        "nfs" => nfs::action_dispatcher(action, parameter_packet, decoder),
          _    => {unimplemented!()},
-    };
-    Ok(None)
+    }
 }
 
 #[allow(unsafe_code)]

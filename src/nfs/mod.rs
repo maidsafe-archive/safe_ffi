@@ -20,9 +20,14 @@ use rustc_serialize::Decoder;
 use rustc_serialize::Decodable;
 use errors::FfiError;
 
-mod register_dns;
-mod add_service;
-
+mod create_dir;
+mod create_file;
+mod delete_dir;
+mod delete_file;
+mod get_dir;
+mod get_file;
+mod modify_dir;
+mod modify_file;
 
 pub fn action_dispatcher<D>(action: String,
                             params: ::ParameterPacket,
@@ -40,15 +45,51 @@ fn get_action<D>(action: String, decoder: &mut D) -> Result<Box<::Action>, FfiEr
           D::Error: fmt::Debug
 {
     Ok(match &action[..] {
-        "register-dns" => {
+        "create-dir" => {
             Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
-                                            register_dns::RegisterDns::decode(d)
+                                            create_dir::CreateDir::decode(d)
                                         }),
                                         "")))
         }
-        "add-service" => {
+        "create-file" => {
             Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
-                                            add_service::AddService::decode(d)
+                                            create_file::CreateFile::decode(d)
+                                        }),
+                                        "")))
+        }
+        "delete-dir" => {
+            Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
+                                            delete_dir::DeleteDir::decode(d)
+                                        }),
+                                        "")))
+        }
+        "delete-file" => {
+            Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
+                                            delete_file::DeleteFile::decode(d)
+                                        }),
+                                        "")))
+        }
+        "get-dir" => {
+            Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
+                                            get_dir::GetDir::decode(d)
+                                        }),
+                                        "")))
+        }
+        "get-file" => {
+            Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
+                                            get_file::GetFile::decode(d)
+                                        }),
+                                        "")))
+        }
+        "modify-dir" => {
+            Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
+                                            modify_dir::ModifyDir::decode(d)
+                                        }),
+                                        "")))
+        }
+        "modify-file" => {
+            Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
+                                            modify_file::ModifyFile::decode(d)
                                         }),
                                         "")))
         }

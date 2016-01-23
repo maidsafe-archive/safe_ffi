@@ -14,6 +14,7 @@
 //
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
+#![allow(unused)]
 
 pub const SAFE_DRIVE_DIR_NAME: &'static str = "SAFEDrive";
 pub const LAUNCHER_NONCE_LENGTH: usize = 13;

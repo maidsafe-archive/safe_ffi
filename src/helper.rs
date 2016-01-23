@@ -38,11 +38,6 @@ pub fn c_char_ptr_to_string(c_char_ptr: *const c_char) -> Result<String, FfiErro
                 .map_err(|error| FfiError::from(error.description()))))
 }
 
-pub fn path_tokeniser(c_path: *const ::libc::c_char) -> Result<Vec<String>, FfiError> {
-    let string_path = try!(c_char_ptr_to_string(c_path));
-    Ok(string_path.split("/").filter(|a| !a.is_empty()).map(|a| a.to_string()).collect())
-}
-
 pub fn tokenise_path(path: &str, keep_empty_splits: bool) -> Vec<String> {
     path.split(|element| element == '/')
         .filter(|token| keep_empty_splits || token.len() != 0)
@@ -72,32 +67,4 @@ pub fn get_final_subdirectory(client: Arc<Mutex<Client>>,
     }
 
     Ok(current_dir_listing)
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-    use std::error::Error;
-    use errors::FfiError;
-    use std::ffi::CString;
-
-    #[test]
-    fn parse_path() {
-        let path_0 = unwrap_result!(CString::new("/abc/d/ef")
-                                        .map_err(|error| FfiError::from(error.description())));
-        let path_1 = unwrap_result!(CString::new("/abc/d/ef/")
-                                        .map_err(|error| FfiError::from(error.description())));
-        let path_2 = unwrap_result!(CString::new("///abc///d/ef////")
-                                        .map_err(|error| FfiError::from(error.description())));
-
-        let expected = vec!["abc".to_string(), "d".to_string(), "ef".to_string()];
-
-        let tokenised_0 = unwrap_result!(path_tokeniser(path_0.as_ptr()));
-        let tokenised_1 = unwrap_result!(path_tokeniser(path_1.as_ptr()));
-        let tokenised_2 = unwrap_result!(path_tokeniser(path_2.as_ptr()));
-
-        assert_eq!(tokenised_0, expected);
-        assert_eq!(tokenised_1, expected);
-        assert_eq!(tokenised_2, expected);
-    }
 }
