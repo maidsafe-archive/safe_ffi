@@ -26,11 +26,6 @@ use safe_nfs::directory_listing::DirectoryListing;
 use safe_nfs::metadata::directory_key::DirectoryKey;
 use safe_nfs::helper::directory_helper::DirectoryHelper;
 
-// #[allow(unsafe_code)]
-// pub fn c_uint8_ptr_to_vec(c_uint8_ptr: *const ::libc::uint8_t, c_size: ::libc::size_t) -> Vec<u8> {
-// unsafe { ::std::slice::from_raw_parts(c_uint8_ptr, c_size).to_vec() }
-// }
-
 #[allow(unsafe_code)]
 pub fn c_char_ptr_to_string(c_char_ptr: *const c_char) -> Result<String, FfiError> {
     let cstr = unsafe { CStr::from_ptr(c_char_ptr) };

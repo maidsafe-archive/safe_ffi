@@ -107,7 +107,7 @@ struct FileContentParams {
 #[cfg(test)]
 mod test {
     use super::{ModifyFile, FileContentParams, OptionalParams};
-    use {Action, ParameterPacket, test_utils};    
+    use {Action, ParameterPacket, test_utils};
     use rustc_serialize::base64::ToBase64;
     use safe_nfs::helper::directory_helper::DirectoryHelper;
     use safe_nfs::helper::file_helper::FileHelper;

@@ -81,7 +81,7 @@ impl Action for CreateDir {
 #[cfg(test)]
 mod test {
     use super::*;
-    use {Action, test_utils};    
+    use {Action, test_utils};
     use safe_nfs::helper::directory_helper::DirectoryHelper;
 
     #[test]

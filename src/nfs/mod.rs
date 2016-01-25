@@ -70,9 +70,9 @@ fn get_action<D>(action: String, decoder: &mut D) -> Result<Box<::Action>, FfiEr
                                         "")))
         }
         "get-dir" => {
-            Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
-                                            get_dir::GetDir::decode(d)
-                                        }),
+            Box::new(try!(parse_result!(decoder.read_struct_field("data",
+                                                                  0,
+                                                                  |d| get_dir::GetDir::decode(d)),
                                         "")))
         }
         "get-file" => {

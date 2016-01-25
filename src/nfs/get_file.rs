@@ -130,7 +130,7 @@ struct Metadata {
 }
 
 #[cfg(test)]
-mod test {    
+mod test {
     use {Action, ParameterPacket, test_utils};
     use safe_nfs::helper::file_helper::FileHelper;
     use safe_nfs::helper::directory_helper::DirectoryHelper;
