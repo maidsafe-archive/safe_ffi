@@ -22,6 +22,7 @@ use errors::FfiError;
 
 mod register_dns;
 mod add_service;
+mod get_service_directory;
 
 
 pub fn action_dispatcher<D>(action: String,

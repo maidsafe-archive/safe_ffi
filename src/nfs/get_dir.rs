@@ -17,13 +17,10 @@
 
 use errors::FfiError;
 use {helper, ParameterPacket, ResponseType, Action};
-use safe_nfs::metadata::directory_metadata::DirectoryMetadata;
-use safe_nfs::metadata::file_metadata::FileMetadata;
 
 #[derive(RustcDecodable, Debug)]
 pub struct GetDir {
     dir_path: String,
-    timeout_ms: i64,
     is_path_shared: bool,
 }
 
@@ -43,94 +40,12 @@ impl Action for GetDir {
         let dir_fetched = try!(helper::get_final_subdirectory(params.client.clone(),
                                                               &tokens,
                                                               Some(start_dir_key)));
-        let dir_info = get_directory_info(dir_fetched.get_metadata());
-        let mut sub_dirs: Vec<DirectoryInfo> =
-            Vec::with_capacity(dir_fetched.get_sub_directories().len());
-        for metadata in dir_fetched.get_sub_directories() {
-            sub_dirs.push(get_directory_info(metadata));
-        }
 
-        let mut files: Vec<FileInfo> = Vec::with_capacity(dir_fetched.get_files().len());
-        for file in dir_fetched.get_files() {
-            files.push(get_file_info(file.get_metadata()));
-        }
-
-        let response = GetDirResponse {
-            info: dir_info,
-            files: files,
-            sub_directories: sub_dirs,
-        };
+        let response = helper::convert_to_dir_response(dir_fetched);
 
         Ok(Some(try!(::rustc_serialize::json::encode(&response))))
     }
 }
-
-fn get_directory_info(dir_metadata: &DirectoryMetadata) -> DirectoryInfo {
-    use rustc_serialize::base64::ToBase64;
-
-    let dir_key = dir_metadata.get_key();
-    let created_time = dir_metadata.get_created_time().to_timespec();
-    let modified_time = dir_metadata.get_modified_time().to_timespec();
-    DirectoryInfo {
-        name: dir_metadata.get_name().clone(),
-        is_private: *dir_key.get_access_level() == ::safe_nfs::AccessLevel::Private,
-        is_versioned: dir_key.is_versioned(),
-        user_metadata: (*dir_metadata.get_user_metadata())
-                           .to_base64(::config::get_base64_config()),
-        creation_time_sec: created_time.sec,
-        creation_time_nsec: created_time.nsec as i64,
-        modification_time_sec: modified_time.sec,
-        modification_time_nsec: modified_time.nsec as i64,
-    }
-}
-
-fn get_file_info(file_metadata: &FileMetadata) -> FileInfo {
-    use rustc_serialize::base64::ToBase64;
-
-    let created_time = file_metadata.get_created_time().to_timespec();
-    let modified_time = file_metadata.get_modified_time().to_timespec();
-    FileInfo {
-        name: file_metadata.get_name().clone(),
-        size: file_metadata.get_size() as i64,
-        user_metadata: (*file_metadata.get_user_metadata())
-                           .to_base64(::config::get_base64_config()),
-        creation_time_sec: created_time.sec,
-        creation_time_nsec: created_time.nsec as i64,
-        modification_time_sec: modified_time.sec,
-        modification_time_nsec: modified_time.nsec as i64,
-    }
-}
-
-#[derive(RustcEncodable, Debug)]
-struct GetDirResponse {
-    info: DirectoryInfo,
-    files: Vec<FileInfo>,
-    sub_directories: Vec<DirectoryInfo>,
-}
-
-#[derive(RustcEncodable, Debug)]
-struct DirectoryInfo {
-    name: String,
-    is_private: bool,
-    is_versioned: bool,
-    user_metadata: String,
-    creation_time_sec: i64,
-    creation_time_nsec: i64,
-    modification_time_sec: i64,
-    modification_time_nsec: i64,
-}
-
-#[derive(RustcEncodable, Debug)]
-struct FileInfo {
-    name: String,
-    size: i64,
-    user_metadata: String,
-    creation_time_sec: i64,
-    creation_time_nsec: i64,
-    modification_time_sec: i64,
-    modification_time_nsec: i64,
-}
-
 
 #[cfg(test)]
 mod test {
@@ -159,7 +74,6 @@ mod test {
 
         let mut request = super::GetDir {
             dir_path: format!("/{}", TEST_DIR_NAME),
-            timeout_ms: 1000,
             is_path_shared: false,
         };
 

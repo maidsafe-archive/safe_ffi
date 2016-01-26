@@ -15,8 +15,6 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-// TODO(Spandan) needs a get timeout - Modify Rfc
-
 use std::collections::BTreeMap;
 
 use rustc_serialize::json;
@@ -67,7 +65,6 @@ impl Action for GetFile {
 
         let file_helper = FileHelper::new(params.client);
         let mut reader = file_helper.read(&file);
-        // TODO(Krishna) This is WRONG - see rfc.
         let mut size = self.length as u64;
         if size == 0 {
             size = reader.size();
