@@ -66,6 +66,7 @@ extern crate rustc_serialize;
 #[allow(unused_extern_crates)]
 #[macro_use] extern crate maidsafe_utilities;
 
+use errors::FfiError;
 use rustc_serialize::json;
 use std::sync::{Arc, Mutex};
 use rustc_serialize::Decoder;
@@ -74,7 +75,7 @@ use rustc_serialize::Decodable;
 use libc::{c_void, int32_t, c_char};
 use std::mem::{forget, transmute};
 use rustc_serialize::base64::FromBase64;
-use maidsafe_utilities::serialisation::deserialise;
+use maidsafe_utilities::serialisation::{serialise, deserialise};
 use safe_nfs::metadata::directory_key::DirectoryKey;
 
 #[macro_use] mod macros;
@@ -156,6 +157,36 @@ pub extern fn log_in(c_keyword    : *const c_char,
     unsafe { *client_handle = cast_to_client_ffi_handle(client); }
 
     0
+}
+
+/// Returns Key size
+#[no_mangle]
+#[allow(unsafe_code)]
+pub extern fn get_safe_drive_key_size(c_size: *mut int32_t,
+                                      client_handle: *const c_void) -> int32_t {
+      let client = cast_from_client_ffi_handle(client_handle);
+      let dir_key = ffi_try!(helper::get_safe_drive_key(client));
+      let serialised_data = ffi_try!(serialise(&dir_key).map_err(|e| FfiError::from(e)));
+      unsafe {
+          std::ptr::write(c_size, serialised_data.len() as i32);
+      }
+
+      0
+}
+
+/// Returns Key as base64 string
+#[no_mangle]
+#[allow(unsafe_code)]
+pub extern fn get_safe_drive_key(c_key: *mut u8,
+                                 client_handle: *const c_void) -> int32_t {
+      let client = cast_from_client_ffi_handle(client_handle);
+      let dir_key = ffi_try!(helper::get_safe_drive_key(client));
+      let serialised_data = ffi_try!(serialise(&dir_key).map_err(|e| FfiError::from(e)));
+      unsafe {
+          std::ptr::copy(serialised_data.as_ptr(), c_key, serialised_data.len());
+      }
+
+      0
 }
 
 /// Discard and clean up the previously allocated client. Use this only if the client is obtained

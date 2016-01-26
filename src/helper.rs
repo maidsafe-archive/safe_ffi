@@ -21,7 +21,10 @@ use std::sync::{Arc, Mutex};
 use libc::c_char;
 use std::ffi::CStr;
 use errors::FfiError;
+use safe_nfs::AccessLevel;
 use safe_core::client::Client;
+use config::SAFE_DRIVE_DIR_NAME;
+use safe_nfs::UNVERSIONED_DIRECTORY_LISTING_TAG;
 use safe_nfs::directory_listing::DirectoryListing;
 use safe_nfs::metadata::directory_key::DirectoryKey;
 use safe_nfs::helper::directory_helper::DirectoryHelper;
@@ -38,6 +41,28 @@ pub fn tokenise_path(path: &str, keep_empty_splits: bool) -> Vec<String> {
         .filter(|token| keep_empty_splits || token.len() != 0)
         .map(|token| token.to_string())
         .collect()
+}
+
+
+pub fn get_safe_drive_key(client: Arc<Mutex<Client>>) -> Result<DirectoryKey, FfiError> {
+    let safe_drive_dir_name = SAFE_DRIVE_DIR_NAME.to_string();
+    let dir_helper = DirectoryHelper::new(client);
+    let mut root_dir = try!(dir_helper.get_user_root_directory_listing());
+    let dir_metadata = match root_dir.find_sub_directory(&safe_drive_dir_name).map(|d| d.clone()) {
+        Some(metadata) => metadata,
+        None => {
+            let (created_dir, _) = try!(dir_helper.create(safe_drive_dir_name,
+                                                          UNVERSIONED_DIRECTORY_LISTING_TAG,
+                                                          Vec::new(),
+                                                          false,
+                                                          AccessLevel::Private,
+                                                          Some(&mut root_dir)));
+            created_dir.get_metadata().clone()
+        }
+    };
+
+    let key = dir_metadata.get_key().clone();
+    Ok(key)
 }
 
 pub fn get_final_subdirectory(client: Arc<Mutex<Client>>,
