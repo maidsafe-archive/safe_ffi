@@ -15,14 +15,11 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-use std::collections::BTreeMap;
-
 use rustc_serialize::json;
 
 use errors::FfiError;
+use nfs::file_response::get_response;
 use {helper, ParameterPacket, ResponseType, Action};
-use safe_nfs::helper::file_helper::FileHelper;
-use safe_nfs::metadata::file_metadata::FileMetadata;
 
 #[derive(RustcDecodable, Debug)]
 pub struct GetFile {
@@ -35,8 +32,7 @@ pub struct GetFile {
 
 impl Action for GetFile {
     fn execute(&mut self, params: ParameterPacket) -> ResponseType {
-        use rustc_serialize::json::ToJson;
-        use rustc_serialize::base64::ToBase64;
+        use rustc_serialize::json::ToJson;        
 
         if self.is_path_shared && !params.safe_drive_access {
             return Err(FfiError::PermissionDenied);
@@ -57,74 +53,16 @@ impl Action for GetFile {
         let file = try!(file_dir.find_file(&file_name)
                                 .ok_or(::errors::FfiError::InvalidPath));
 
-        let file_metadata = if self.include_metadata {
-            Some(get_file_metadata(file.get_metadata()))
-        } else {
-            None
-        };
-
-        let file_helper = FileHelper::new(params.client);
-        let mut reader = file_helper.read(&file);
-        let mut size = self.length as u64;
-        if size == 0 {
-            size = reader.size();
-        };
-        let response = GetFileResponse {
-            content: try!(reader.read(self.offset as u64, size))
-                         .to_base64(::config::get_base64_config()),
-            metadata: file_metadata,
-        };
+        let response = try!(get_response(file,
+                                         params.client,
+                                         self.offset,
+                                         self.length,
+                                         self.include_metadata));
 
         Ok(Some(try!(json::encode(&response.to_json()))))
     }
 }
 
-fn get_file_metadata(file_metadata: &FileMetadata) -> Metadata {
-    use rustc_serialize::base64::ToBase64;
-
-    let created_time = file_metadata.get_created_time().to_timespec();
-    let modified_time = file_metadata.get_modified_time().to_timespec();
-    Metadata {
-        name: file_metadata.get_name().clone(),
-        size: file_metadata.get_size() as i64,
-        user_metadata: (*file_metadata.get_user_metadata())
-                           .to_base64(::config::get_base64_config()),
-        creation_time_sec: created_time.sec,
-        creation_time_nsec: created_time.nsec as i64,
-        modification_time_sec: modified_time.sec,
-        modification_time_nsec: modified_time.nsec as i64,
-    }
-}
-
-#[derive(Debug)]
-struct GetFileResponse {
-    content: String,
-    metadata: Option<Metadata>,
-}
-
-impl json::ToJson for GetFileResponse {
-    fn to_json(&self) -> json::Json {
-        let mut response_tree = BTreeMap::new();
-        let _ = response_tree.insert("content".to_string(), self.content.to_json());
-        if let Some(ref metadata) = self.metadata {
-            let json_metadata_str = unwrap_result!(json::encode(metadata));
-            let _ = response_tree.insert("metadata".to_string(), json_metadata_str.to_json());
-        }
-
-        json::Json::Object(response_tree)
-    }
-}
-
-#[derive(RustcEncodable, Debug)]
-struct Metadata {
-    name: String,
-    size: i64,
-    user_metadata: String,
-    creation_time_sec: i64,
-    creation_time_nsec: i64,
-    modification_time_sec: i64,
-    modification_time_nsec: i64,
-}
 
 #[cfg(test)]
 mod test {

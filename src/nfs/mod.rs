@@ -28,6 +28,8 @@ mod get_dir;
 mod get_file;
 mod modify_dir;
 mod modify_file;
+pub mod directory_response;
+pub mod file_response;
 
 pub fn action_dispatcher<D>(action: String,
                             params: ::ParameterPacket,

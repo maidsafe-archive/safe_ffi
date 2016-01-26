@@ -15,8 +15,9 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-use {helper, ParameterPacket, ResponseType, Action};
+use {ParameterPacket, ResponseType, Action};
 use safe_dns::dns_operations::DnsOperations;
+use nfs::directory_response::get_response;
 
 #[derive(RustcDecodable, Debug)]
 pub struct GetServiceDirectory {
@@ -30,7 +31,7 @@ impl Action for GetServiceDirectory {
         let directory_key = try!(dns_operations.get_service_home_directory_key(&self.long_name,
                                                                                &self.service_name,
                                                                                None));
-        let response = try!(helper::get_dir_response(params.client.clone(), directory_key));
+        let response = try!(get_response(params.client, directory_key));
         Ok(Some(try!(::rustc_serialize::json::encode(&response))))
     }
 }

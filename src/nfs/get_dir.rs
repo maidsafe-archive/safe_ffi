@@ -17,6 +17,7 @@
 
 use errors::FfiError;
 use {helper, ParameterPacket, ResponseType, Action};
+use nfs::directory_response::convert_to_response;
 
 #[derive(RustcDecodable, Debug)]
 pub struct GetDir {
@@ -41,7 +42,7 @@ impl Action for GetDir {
                                                               &tokens,
                                                               Some(start_dir_key)));
 
-        let response = helper::convert_to_dir_response(dir_fetched);
+        let response = convert_to_response(dir_fetched);
 
         Ok(Some(try!(::rustc_serialize::json::encode(&response))))
     }

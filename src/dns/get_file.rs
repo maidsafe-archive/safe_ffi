@@ -15,14 +15,18 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-use {helper, ParameterPacket, ResponseType, Action};
+use safe_nfs::helper::DirectoryHelper;
 use safe_dns::dns_operations::DnsOperations;
+use {helper, ParameterPacket, ResponseType, Action};
+use nfs::file_response::get_response;
 
 #[derive(RustcDecodable, Debug)]
 pub struct GetFile {
-    pub long_name: String,
-    pub service_name: String,
-    pub path: String    
+    offset: i64,
+    length: i64,
+    file_path: String,
+    is_path_shared: bool,
+    include_metadata: bool,
 }
 
 impl Action for Getfile {
@@ -31,63 +35,17 @@ impl Action for Getfile {
         let directory_key = try!(dns_operations.get_service_home_directory_key(&self.long_name,
                                                                                &self.service_name,
                                                                                None));
-        let response = try!(helper::get_dir_response(params.client.clone(), directory_key));
+
+        let dir_helper = DirectoryHelper::new(params.client.clone());
+        let file_dir = try!(dir_helper.get(directory_key));
+        let file = try!(file_dir.find_file(&file_name)
+                                .ok_or(::errors::FfiError::InvalidPath));
+        let response = try!(get_response(file,
+                                         params.client,
+                                         self.offset,
+                                         self.length,
+                                         self.include_metadata));
+
         Ok(Some(try!(::rustc_serialize::json::encode(&response))))
     }
 }
-
-/*
-#[cfg(test)]
-mod test {
-    use super::*;
-    use dns::add_service::AddService;
-    use dns::register_dns::RegisterDns;
-    use Action;
-    use test_utils;
-    use safe_core::utility;
-    use safe_nfs::helper::directory_helper::DirectoryHelper;
-    use safe_nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG};
-
-    const TEST_DIR_NAME: &'static str = "test_dir";
-
-    #[test]
-    fn add_dns_service() {
-        let parameter_packet = unwrap_result!(test_utils::get_parameter_packet(false));
-
-        let dir_helper = DirectoryHelper::new(parameter_packet.client.clone());
-        let mut app_root_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
-        let _ = unwrap_result!(dir_helper.create(TEST_DIR_NAME.to_string(),
-                                                 UNVERSIONED_DIRECTORY_LISTING_TAG,
-                                                 Vec::new(),
-                                                 false,
-                                                 AccessLevel::Public,
-                                                 Some(&mut app_root_dir)));
-        let public_name = unwrap_result!(utility::generate_random_string(10));
-        let mut register_request = RegisterDns {
-            long_name: public_name.clone(),
-            service_name: "www".to_string(),
-            is_path_shared: false,
-            service_home_dir_path: format!("/{}", TEST_DIR_NAME).to_string(),
-        };
-        assert!(register_request.execute(parameter_packet.clone()).is_ok());
-
-        let mut request = AddService {
-            long_name: public_name.clone(),
-            service_name: "blog".to_string(),
-            is_path_shared: false,
-            service_home_dir_path: format!("/{}", TEST_DIR_NAME).to_string(),
-        };
-
-        assert!(request.execute(parameter_packet.clone()).is_ok());
-
-        let mut get_service_directory_request = GetServiceDirectory {
-            long_name: public_name,
-            service_name: "www".to_string(),
-        };
-        let response = get_service_directory_request.execute(parameter_packet);
-        assert!(response.is_ok());
-        let response_json = unwrap_result!(response);
-        assert!(response_json.is_some());
-    }
-}
-*/
