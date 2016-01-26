@@ -15,13 +15,17 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-use safe_nfs::helper::DirectoryHelper;
+use errors::FfiError;
+use rustc_serialize::json;
+use nfs::file_response::get_response;
 use safe_dns::dns_operations::DnsOperations;
 use {helper, ParameterPacket, ResponseType, Action};
-use nfs::file_response::get_response;
+use safe_nfs::helper::directory_helper::DirectoryHelper;
 
 #[derive(RustcDecodable, Debug)]
 pub struct GetFile {
+    long_name: String,
+    service_name: String,
     offset: i64,
     length: i64,
     file_path: String,
@@ -29,15 +33,16 @@ pub struct GetFile {
     include_metadata: bool,
 }
 
-impl Action for Getfile {
+impl Action for GetFile {
     fn execute(&mut self, params: ParameterPacket) -> ResponseType {
         let dns_operations = try!(DnsOperations::new(params.client.clone()));
         let directory_key = try!(dns_operations.get_service_home_directory_key(&self.long_name,
                                                                                &self.service_name,
                                                                                None));
-
+        let mut tokens = helper::tokenise_path(&self.file_path, false);
+        let file_name = try!(tokens.pop().ok_or(FfiError::InvalidPath));
         let dir_helper = DirectoryHelper::new(params.client.clone());
-        let file_dir = try!(dir_helper.get(directory_key));
+        let file_dir = try!(dir_helper.get(&directory_key));
         let file = try!(file_dir.find_file(&file_name)
                                 .ok_or(::errors::FfiError::InvalidPath));
         let response = try!(get_response(file,
@@ -46,6 +51,6 @@ impl Action for Getfile {
                                          self.length,
                                          self.include_metadata));
 
-        Ok(Some(try!(::rustc_serialize::json::encode(&response))))
+        Ok(Some(try!(json::encode(&response))))
     }
 }

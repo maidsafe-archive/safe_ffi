@@ -26,7 +26,7 @@ use safe_core::client::Client;
 use safe_nfs::helper::file_helper::FileHelper;
 use safe_nfs::metadata::file_metadata::FileMetadata;
 
-#[derive(Debug)]
+#[derive(RustcEncodable, Debug)]
 pub struct GetFileResponse {
     content: String,
     metadata: Option<Metadata>,

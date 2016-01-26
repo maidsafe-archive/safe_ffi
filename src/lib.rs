@@ -188,17 +188,12 @@ pub extern fn execute(c_payload    : *const c_char,
     0
 }
 
-/// General function that can be invoked for performing a API specific operation that will return Vec<u8> result.
-/// This function would perform the operation and the result of operation is written in the c_result
-/// and also return 0 or error code as return value of the function
-/// c_payload refers to the JSON payload that can be passed as a JSON string.
-/// The JSON string should have keys module, action, app_root_dir_key, safe_drive_dir_key,
-/// safe_drive_access and data. `data` refers to API specific payload.
+/// General function that can be invoked for getting the size of the response
 #[no_mangle]
 #[allow(unsafe_code)]
-pub extern fn execute_for_content(c_payload    : *const c_char,
+pub extern fn execute_for_size(c_payload    : *const c_char,
                                   client_handle: *const c_void,
-                                  c_result     : *mut *const c_void) -> int32_t {
+                                  c_size     : *mut int32_t) -> int32_t {
     let payload: String = ffi_try!(helper::c_char_ptr_to_string(c_payload));
     let json_request = ffi_try!(parse_result!(json::Json::from_str(&payload), "JSON parse error"));
     let mut json_decoder = json::Decoder::new(json_request);
@@ -212,16 +207,40 @@ pub extern fn execute_for_content(c_payload    : *const c_char,
     };
 
     unsafe {
-        std::ptr::copy_nonoverlapping(data.as_ptr(), c_result as *mut u8, data.len())
+        std::ptr::write(c_size, data.len() as i32)
     };
 
     0
 }
 
-/// Discard the content_handle which was used to collect thr Reposnse message
+/// General function that can be invoked for performing a API specific operation that will return Vec<u8> result.
+/// This function would perform the operation and the result of operation is written in the c_result
+/// and also return 0 or error code as return value of the function
+/// c_payload refers to the JSON payload that can be passed as a JSON string.
+/// The JSON string should have keys module, action, app_root_dir_key, safe_drive_dir_key,
+/// safe_drive_access and data. `data` refers to API specific payload.
 #[no_mangle]
-pub extern fn drop_content_handle(content_handle: *const c_void) {
-    forget(content_handle);
+#[allow(unsafe_code)]
+pub extern fn execute_for_content(c_payload    : *const c_char,
+                                  client_handle: *const c_void,
+                                  c_result     : *mut u8) -> int32_t {
+    let payload: String = ffi_try!(helper::c_char_ptr_to_string(c_payload));
+    let json_request = ffi_try!(parse_result!(json::Json::from_str(&payload), "JSON parse error"));
+    let mut json_decoder = json::Decoder::new(json_request);
+
+    let client = cast_from_client_ffi_handle(client_handle);
+    let (module, action, parameter_packet) = ffi_try!(get_parameter_packet(client, &mut json_decoder));
+    let result = module_parser(module, action, parameter_packet, &mut json_decoder);
+    let data = match ffi_try!(result) {
+        Some(response) => response,
+        None => "".to_string()
+    };
+
+    unsafe {
+        std::ptr::copy(data.as_ptr(), c_result, data.len())
+    };
+
+    0
 }
 
 fn get_parameter_packet<D>(client: Arc<Mutex<Client>>,

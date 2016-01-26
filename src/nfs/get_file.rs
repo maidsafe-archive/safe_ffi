@@ -15,9 +15,8 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-use rustc_serialize::json;
-
 use errors::FfiError;
+use rustc_serialize::json;
 use nfs::file_response::get_response;
 use {helper, ParameterPacket, ResponseType, Action};
 
@@ -32,7 +31,7 @@ pub struct GetFile {
 
 impl Action for GetFile {
     fn execute(&mut self, params: ParameterPacket) -> ResponseType {
-        use rustc_serialize::json::ToJson;        
+        use rustc_serialize::json::ToJson;
 
         if self.is_path_shared && !params.safe_drive_access {
             return Err(FfiError::PermissionDenied);

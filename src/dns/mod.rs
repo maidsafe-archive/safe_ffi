@@ -20,10 +20,14 @@ use rustc_serialize::Decoder;
 use rustc_serialize::Decodable;
 use errors::FfiError;
 
-mod register_dns;
+mod get_file;
+mod delete_dns;
 mod add_service;
+mod register_dns;
+mod get_services;
+mod get_long_names;
+mod delete_service;
 mod get_service_directory;
-
 
 pub fn action_dispatcher<D>(action: String,
                             params: ::ParameterPacket,
@@ -50,6 +54,39 @@ fn get_action<D>(action: String, decoder: &mut D) -> Result<Box<::Action>, FfiEr
         "add-service" => {
             Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
                                             add_service::AddService::decode(d)
+                                        }),
+                                        "")))
+        }
+        "get-home-dir" => {
+            Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
+                                            get_service_directory::GetServiceDirectory::decode(d)
+                                        }),
+                                        "")))
+        }
+        "get-file" => {
+            Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
+                                            get_file::GetFile::decode(d)
+                                        }),
+                                        "")))
+        }
+        "get-long-names" => {
+            Box::new(get_long_names::GetLongNames)
+        }
+        "get-services" => {
+            Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
+                                            get_services::GetServices::decode(d)
+                                        }),
+                                        "")))
+        }
+        "delete-dns" => {
+            Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
+                                            delete_dns::DeleteDns::decode(d)
+                                        }),
+                                        "")))
+        }
+        "delete-service" => {
+            Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
+                                            delete_service::DeleteService::decode(d)
                                         }),
                                         "")))
         }
