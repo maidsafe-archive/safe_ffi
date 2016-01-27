@@ -43,7 +43,6 @@ pub fn tokenise_path(path: &str, keep_empty_splits: bool) -> Vec<String> {
         .collect()
 }
 
-
 pub fn get_safe_drive_key(client: Arc<Mutex<Client>>) -> Result<DirectoryKey, FfiError> {
     let safe_drive_dir_name = SAFE_DRIVE_DIR_NAME.to_string();
     let dir_helper = DirectoryHelper::new(client);
