@@ -146,21 +146,37 @@ impl ConfigHandler {
         (&self)
          -> Result<(Vec<LauncherConfiguration>, DirectoryListing), FfiError> {
         let dir_helper = DirectoryHelper::new(self.client.clone());
-        let dir_listing = try!(dir_helper.get_configuration_directory_listing(
+        let mut dir_listing = try!(dir_helper.get_configuration_directory_listing(
             LAUNCHER_GLOBAL_DIRECTORY_NAME.to_string()));
 
         let global_configs = {
-            let file = unwrap_option!(dir_listing.get_files()
-                                                 .iter()
-                                                 .find(|file| {
-                                                     file.get_name() ==
-                                                     LAUNCHER_GLOBAL_CONFIG_FILE_NAME
-                                                 }),
-                                      "Logic Error - Launcher start-up should ensure the file \
-                                       must be present at this stage - Report bug.");
-
             let file_helper = FileHelper::new(self.client.clone());
-            let mut reader = file_helper.read(file);
+            let file = match dir_listing.get_files()
+                                        .iter()
+                                        .find(|file| {
+                                            file.get_name() == LAUNCHER_GLOBAL_CONFIG_FILE_NAME
+                                        })
+                                        .map(|f| f.clone()) {
+                Some(file) => file,
+                None => {
+                    dir_listing =
+                        try!(try!(file_helper.create(LAUNCHER_GLOBAL_CONFIG_FILE_NAME.to_string(),
+                                                Vec::new(),
+                                                dir_listing))
+                                 .close())
+                            .0;
+                    unwrap_option!(dir_listing.get_files()
+                                              .iter()
+                                              .find(|file| {
+                                                  file.get_name() ==
+                                                  LAUNCHER_GLOBAL_CONFIG_FILE_NAME
+                                              })
+                                              .map(|f| f.clone()),
+                                   "Error")
+                        .clone()
+                }
+            };
+            let mut reader = file_helper.read(&file);
 
             let size = reader.size();
 

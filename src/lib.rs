@@ -172,77 +172,46 @@ pub extern "C" fn log_in(c_keyword: *const c_char,
 /// Returns key size
 #[no_mangle]
 #[allow(unsafe_code)]
-pub extern "C" fn get_app_dir_key_size(c_app_name: *const c_char,
-                                       c_app_id: *const c_char,
-                                       c_vendor: *const c_char,
-                                       c_size: *mut int32_t,
-                                       client_handle: *const c_void)
-                                       -> int32_t {
-       let client = cast_from_client_ffi_handle(client_handle);
-       let app_name: String = ffi_try!(helper::c_char_ptr_to_string(c_app_name));
-       let app_id: String = ffi_try!(helper::c_char_ptr_to_string(c_app_id));
-       let vendor: String = ffi_try!(helper::c_char_ptr_to_string(c_vendor));
-       let handler = launcher_config_handler::ConfigHandler::new(client);
-       let dir_key = ffi_try!(handler.get_app_dir_key(app_name, app_id, vendor));
-       let serialised_data = ffi_try!(serialise(&dir_key).map_err(|e| FfiError::from(e)));
-       unsafe {
-           std::ptr::write(c_size, serialised_data.len() as i32);
-       }
-
-       0
-}
-
-/// Returns key size
-#[no_mangle]
-#[allow(unsafe_code)]
 pub extern "C" fn get_app_dir_key(c_app_name: *const c_char,
                                c_app_id: *const c_char,
                                c_vendor: *const c_char,
-                               c_key: *mut u8,
+                               c_size: *mut int32_t,
+                               c_capacity: *mut int32_t,
+                               c_result: *mut int32_t,
                                client_handle: *const c_void)
-                               -> int32_t {
+                               -> *const u8 {
        let client = cast_from_client_ffi_handle(client_handle);
-       let app_name: String = ffi_try!(helper::c_char_ptr_to_string(c_app_name));
-       let app_id: String = ffi_try!(helper::c_char_ptr_to_string(c_app_id));
-       let vendor: String = ffi_try!(helper::c_char_ptr_to_string(c_vendor));
+       let app_name: String = ffi_ptr_try!(helper::c_char_ptr_to_string(c_app_name), c_result);
+       let app_id: String = ffi_ptr_try!(helper::c_char_ptr_to_string(c_app_id), c_result);
+       let vendor: String = ffi_ptr_try!(helper::c_char_ptr_to_string(c_vendor), c_result);
        let handler = launcher_config_handler::ConfigHandler::new(client);
-       let dir_key = ffi_try!(handler.get_app_dir_key(app_name, app_id, vendor));
-       let serialised_data = ffi_try!(serialise(&dir_key).map_err(|e| FfiError::from(e)));
+       let dir_key = ffi_ptr_try!(handler.get_app_dir_key(app_name, app_id, vendor), c_result);
+       let serialised_data = ffi_ptr_try!(serialise(&dir_key).map_err(|e| FfiError::from(e)), c_result);
+
        unsafe {
-           std::ptr::copy(serialised_data.as_ptr(), c_key, serialised_data.len());
+           std::ptr::write(c_size, serialised_data.len() as i32);
+           std::ptr::write(c_capacity, serialised_data.capacity() as i32);
        }
 
-       0
-}
-
-/// Returns Key size
-#[no_mangle]
-#[allow(unsafe_code)]
-pub extern "C" fn get_safe_drive_key_size(c_size: *mut int32_t,
-                                          client_handle: *const c_void)
-                                          -> int32_t {
-    let client = cast_from_client_ffi_handle(client_handle);
-    let dir_key = ffi_try!(helper::get_safe_drive_key(client));
-    let serialised_data = ffi_try!(serialise(&dir_key).map_err(|e| FfiError::from(e)));
-    unsafe {
-        std::ptr::write(c_size, serialised_data.len() as i32);
-    }
-
-    0
+       serialised_data.as_ptr()
 }
 
 /// Returns Key as base64 string
 #[no_mangle]
 #[allow(unsafe_code)]
-pub extern "C" fn get_safe_drive_key(c_key: *mut u8, client_handle: *const c_void) -> int32_t {
+pub extern "C" fn get_safe_drive_key(c_size: *mut int32_t,
+                                     c_capacity: *mut int32_t,
+                                     c_result: *mut int32_t,
+                                     client_handle: *const c_void) -> *const u8 {
     let client = cast_from_client_ffi_handle(client_handle);
-    let dir_key = ffi_try!(helper::get_safe_drive_key(client));
-    let serialised_data = ffi_try!(serialise(&dir_key).map_err(|e| FfiError::from(e)));
+    let dir_key = ffi_ptr_try!(helper::get_safe_drive_key(client), c_result);
+    let serialised_data = ffi_ptr_try!(serialise(&dir_key).map_err(|e| FfiError::from(e)), c_result);
     unsafe {
-        std::ptr::copy(serialised_data.as_ptr(), c_key, serialised_data.len());
+        std::ptr::write(c_size, serialised_data.len() as i32);
+        std::ptr::write(c_capacity, serialised_data.capacity() as i32);
     }
 
-    0
+    serialised_data.as_ptr()
 }
 
 /// Discard and clean up the previously allocated client. Use this only if the client is obtained
@@ -275,59 +244,50 @@ pub extern "C" fn execute(c_payload: *const c_char, client_handle: *const c_void
     0
 }
 
-/// General function that can be invoked for getting the size of the response
-#[no_mangle]
-#[allow(unsafe_code)]
-pub extern "C" fn execute_for_size(c_payload: *const c_char,
-                                   client_handle: *const c_void,
-                                   c_size: *mut int32_t)
-                                   -> int32_t {
-    let payload: String = ffi_try!(helper::c_char_ptr_to_string(c_payload));
-    let json_request = ffi_try!(parse_result!(json::Json::from_str(&payload), "JSON parse error"));
-    let mut json_decoder = json::Decoder::new(json_request);
-
-    let client = cast_from_client_ffi_handle(client_handle);
-    let (module, action, parameter_packet) = ffi_try!(get_parameter_packet(client,
-                                                                           &mut json_decoder));
-    let result = module_parser(module, action, parameter_packet, &mut json_decoder);
-    let data = match ffi_try!(result) {
-        Some(response) => response,
-        None => "".to_string(),
-    };
-
-    unsafe { std::ptr::write(c_size, data.len() as i32) };
-
-    0
-}
-
-/// General function that can be invoked for performing a API specific operation that will return Vec<u8> result.
-/// This function would perform the operation and the result of operation is written in the c_result
-/// and also return 0 or error code as return value of the function
-/// c_payload refers to the JSON payload that can be passed as a JSON string.
-/// The JSON string should have keys module, action, app_root_dir_key, safe_drive_dir_key,
-/// safe_drive_access and data. `data` refers to API specific payload.
+/// General function that can be invoked for getting the result for a module specific operation
 #[no_mangle]
 #[allow(unsafe_code)]
 pub extern "C" fn execute_for_content(c_payload: *const c_char,
-                                      client_handle: *const c_void,
-                                      c_result: *mut u8)
-                                      -> int32_t {
-    let payload: String = ffi_try!(helper::c_char_ptr_to_string(c_payload));
-    let json_request = ffi_try!(parse_result!(json::Json::from_str(&payload), "JSON parse error"));
+                                      c_size: *mut int32_t,
+                                      c_capacity: *mut int32_t,
+                                      c_result: *mut int32_t,
+                                      client_handle: *const c_void)
+                                      -> *const u8 {
+    let payload: String = ffi_ptr_try!(helper::c_char_ptr_to_string(c_payload), c_result);
+    let json_request = ffi_ptr_try!(parse_result!(json::Json::from_str(&payload), "JSON parse error"), c_result);
     let mut json_decoder = json::Decoder::new(json_request);
 
     let client = cast_from_client_ffi_handle(client_handle);
-    let (module, action, parameter_packet) = ffi_try!(get_parameter_packet(client,
-                                                                           &mut json_decoder));
-    let result = module_parser(module, action, parameter_packet, &mut json_decoder);
-    let data = match ffi_try!(result) {
-        Some(response) => response,
-        None => "".to_string(),
+    let (module, action, parameter_packet) = ffi_ptr_try!(get_parameter_packet(client, &mut json_decoder), c_result);
+    let result = ffi_ptr_try!(module_parser(module, action, parameter_packet, &mut json_decoder), c_result);
+    let data = match result {
+        Some(response) => response.into_bytes(),
+        None => Vec::with_capacity(0),
     };
 
-    unsafe { std::ptr::copy(data.as_ptr(), c_result, data.len()) };
+    unsafe {
+        std::ptr::write(c_size, data.len() as i32);
+        std::ptr::write(c_capacity, data.capacity() as i32);
+     };
 
-    0
+    let ptr = data.as_ptr();
+    ::std::mem::forget(data);
+
+    ptr
+}
+
+#[no_mangle]
+#[allow(unsafe_code)]
+/// Drop the vector returned as a result of the execute_for_content fn
+pub fn drop_vector(ptr: *mut u8, size: int32_t, capacity: int32_t) {
+    let _ = unsafe { Vec::from_raw_parts(ptr, size as usize, capacity as usize) };
+}
+
+#[no_mangle]
+#[allow(unsafe_code)]
+/// Drop the null pointer returned as error from the execute_for_content fn
+pub fn drop_null_ptr(ptr: *mut u8) {
+    let _ = unsafe { libc::free(ptr as *mut libc::c_void) };
 }
 
 fn get_parameter_packet<D>(client: Arc<Mutex<Client>>,
@@ -470,7 +430,15 @@ mod test {
             }
 
             assert!(client_handle != 0 as *const c_void);
+            // let size_of_c_uint64 = ::std::mem::size_of::<::libc::int32_t>();
+            // let c_size = unsafe { ::libc::malloc(size_of_c_uint64) } as *mut ::libc::int32_t;
+            // let app_name = ::std::ffi::CString::new("demo").unwrap();
+            // let app_id = ::std::ffi::CString::new("k.demo").unwrap();
+            // let vendor = ::std::ffi::CString::new("krish").unwrap();
+            // let _ = get_app_dir_key_size(app_name.as_ptr(), app_id.as_ptr(), vendor.as_ptr(), c_size, client_handle);
+            // unsafe { assert_eq!(*c_size, 20); }
             drop_client(client_handle);
         }
     }
+
 }
