@@ -186,14 +186,17 @@ pub extern "C" fn get_app_dir_key(c_app_name: *const c_char,
        let vendor: String = ffi_ptr_try!(helper::c_char_ptr_to_string(c_vendor), c_result);
        let handler = launcher_config_handler::ConfigHandler::new(client);
        let dir_key = ffi_ptr_try!(handler.get_app_dir_key(app_name, app_id, vendor), c_result);
-       let serialised_data = ffi_ptr_try!(serialise(&dir_key).map_err(|e| FfiError::from(e)), c_result);
-
+       let mut serialised_data = ffi_ptr_try!(serialise(&dir_key).map_err(|e| FfiError::from(e)), c_result);
+       serialised_data.shrink_to_fit();
        unsafe {
            std::ptr::write(c_size, serialised_data.len() as i32);
            std::ptr::write(c_capacity, serialised_data.capacity() as i32);
        }
 
-       serialised_data.as_ptr()
+       let ptr = serialised_data.as_ptr();
+       ::std::mem::forget(serialised_data);
+
+       ptr
 }
 
 /// Returns Key as base64 string
@@ -205,13 +208,16 @@ pub extern "C" fn get_safe_drive_key(c_size: *mut int32_t,
                                      client_handle: *const c_void) -> *const u8 {
     let client = cast_from_client_ffi_handle(client_handle);
     let dir_key = ffi_ptr_try!(helper::get_safe_drive_key(client), c_result);
-    let serialised_data = ffi_ptr_try!(serialise(&dir_key).map_err(|e| FfiError::from(e)), c_result);
+    let mut serialised_data = ffi_ptr_try!(serialise(&dir_key).map_err(|e| FfiError::from(e)), c_result);
+    serialised_data.shrink_to_fit();
     unsafe {
         std::ptr::write(c_size, serialised_data.len() as i32);
         std::ptr::write(c_capacity, serialised_data.capacity() as i32);
     }
+    let ptr = serialised_data.as_ptr();
+    ::std::mem::forget(serialised_data);
 
-    serialised_data.as_ptr()
+    ptr
 }
 
 /// Discard and clean up the previously allocated client. Use this only if the client is obtained
@@ -280,14 +286,16 @@ pub extern "C" fn execute_for_content(c_payload: *const c_char,
 #[allow(unsafe_code)]
 /// Drop the vector returned as a result of the execute_for_content fn
 pub fn drop_vector(ptr: *mut u8, size: int32_t, capacity: int32_t) {
-    let _ = unsafe { Vec::from_raw_parts(ptr, size as usize, capacity as usize) };
+    let _ = unsafe {
+        Vec::from_raw_parts(ptr, size as usize, capacity as usize)
+    };
 }
 
 #[no_mangle]
 #[allow(unsafe_code)]
 /// Drop the null pointer returned as error from the execute_for_content fn
 pub fn drop_null_ptr(ptr: *mut u8) {
-    let _ = unsafe { libc::free(ptr as *mut libc::c_void) };
+    let _ = unsafe { libc::free(ptr as *mut c_void) };
 }
 
 fn get_parameter_packet<D>(client: Arc<Mutex<Client>>,
@@ -432,11 +440,15 @@ mod test {
             assert!(client_handle != 0 as *const c_void);
             // let size_of_c_uint64 = ::std::mem::size_of::<::libc::int32_t>();
             // let c_size = unsafe { ::libc::malloc(size_of_c_uint64) } as *mut ::libc::int32_t;
-            // let app_name = ::std::ffi::CString::new("demo").unwrap();
-            // let app_id = ::std::ffi::CString::new("k.demo").unwrap();
-            // let vendor = ::std::ffi::CString::new("krish").unwrap();
-            // let _ = get_app_dir_key_size(app_name.as_ptr(), app_id.as_ptr(), vendor.as_ptr(), c_size, client_handle);
-            // unsafe { assert_eq!(*c_size, 20); }
+            // let c_capacity = unsafe { ::libc::malloc(size_of_c_uint64) } as *mut ::libc::int32_t;
+            // let c_result = unsafe { ::libc::malloc(size_of_c_uint64) } as *mut ::libc::int32_t;
+            // let ptr = get_safe_drive_key(c_size, c_capacity, c_result, client_handle);
+            // // assert!(c_result == 0);
+            // unsafe {
+            //     drop_vector(ptr, *c_size, *c_capacity);
+            // }
+
+
             drop_client(client_handle);
         }
     }
