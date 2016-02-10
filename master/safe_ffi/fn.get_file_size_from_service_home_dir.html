@@ -9,6 +9,7 @@
 
     <title>safe_ffi::get_file_size_from_service_home_dir - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
 
     <link rel="shortcut icon" href="http://maidsafe.net/img/favicon.ico">
@@ -45,8 +46,8 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-555' class='srclink' href='../src/safe_ffi/lib.rs.html#300-317' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub extern fn get_file_size_from_service_home_dir(client_handle: <a href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*const <a class='enum' href='../libc/enum.c_void.html' title='libc::c_void'>c_void</a></a>, c_long_name: <a href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*const <a class='type' href='../libc/unix/notbsd/linux/other/b64/x86_64/type.c_char.html' title='libc::unix::notbsd::linux::other::b64::x86_64::c_char'>c_char</a></a>, c_service_name: <a href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*const <a class='type' href='../libc/unix/notbsd/linux/other/b64/x86_64/type.c_char.html' title='libc::unix::notbsd::linux::other::b64::x86_64::c_char'>c_char</a></a>, c_file_name: <a href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*const <a class='type' href='../libc/unix/notbsd/linux/other/b64/x86_64/type.c_char.html' title='libc::unix::notbsd::linux::other::b64::x86_64::c_char'>c_char</a></a>, c_content_size: <a href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*mut <a class='type' href='../libc/type.uint64_t.html' title='libc::uint64_t'>uint64_t</a></a>) -&gt; <a class='type' href='../libc/type.int32_t.html' title='libc::int32_t'>int32_t</a></pre><div class='docblock'><p>Get file size from service home directory
+        </span><a id='src-555' class='srclink' href='../src/safe_ffi/lib.rs.html#304-321' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub extern fn get_file_size_from_service_home_dir(client_handle: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*const <a class='enum' href='../libc/enum.c_void.html' title='libc::c_void'>c_void</a></a>, c_long_name: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*const <a class='type' href='../libc/unix/notbsd/linux/other/b64/x86_64/type.c_char.html' title='libc::unix::notbsd::linux::other::b64::x86_64::c_char'>c_char</a></a>, c_service_name: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*const <a class='type' href='../libc/unix/notbsd/linux/other/b64/x86_64/type.c_char.html' title='libc::unix::notbsd::linux::other::b64::x86_64::c_char'>c_char</a></a>, c_file_name: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*const <a class='type' href='../libc/unix/notbsd/linux/other/b64/x86_64/type.c_char.html' title='libc::unix::notbsd::linux::other::b64::x86_64::c_char'>c_char</a></a>, c_content_size: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*mut <a class='type' href='../libc/type.uint64_t.html' title='libc::uint64_t'>uint64_t</a></a>) -&gt; <a class='type' href='../libc/type.int32_t.html' title='libc::int32_t'>int32_t</a></pre><div class='docblock'><p>Get file size from service home directory
 The Name of the file is the final token in the given path. Eg.,
 if given path = <code>/a/b/c/d</code> then <code>d</code> is interpreted as the file intended to be read.
 <code>c_content_size</code> should be properly and sufficiently pre-allocated.</p>
@@ -109,6 +110,6 @@ if given path = <code>/a/b/c/d</code> then <code>d</code> is interpreted as the 
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     
-    <script async src="../search-index.js"></script>
+    <script defer src="../search-index.js"></script>
 </body>
 </html>

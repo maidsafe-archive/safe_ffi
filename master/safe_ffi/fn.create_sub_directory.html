@@ -9,6 +9,7 @@
 
     <title>safe_ffi::create_sub_directory - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
 
     <link rel="shortcut icon" href="http://maidsafe.net/img/favicon.ico">
@@ -45,8 +46,8 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-220' class='srclink' href='../src/safe_ffi/lib.rs.html#134-160' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub extern fn create_sub_directory(client_handle: <a href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*const <a class='enum' href='../libc/enum.c_void.html' title='libc::c_void'>c_void</a></a>, c_path: <a href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*const <a class='type' href='../libc/unix/notbsd/linux/other/b64/x86_64/type.c_char.html' title='libc::unix::notbsd::linux::other::b64::x86_64::c_char'>c_char</a></a>, is_versioned: <a href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>, is_private: <a href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='type' href='../libc/type.int32_t.html' title='libc::int32_t'>int32_t</a></pre><div class='docblock'><p>Create a subdirectory. The Name of the subdirectory is the final token in the given path. Eg.,
+        </span><a id='src-220' class='srclink' href='../src/safe_ffi/lib.rs.html#138-164' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub extern fn create_sub_directory(client_handle: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*const <a class='enum' href='../libc/enum.c_void.html' title='libc::c_void'>c_void</a></a>, c_path: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*const <a class='type' href='../libc/unix/notbsd/linux/other/b64/x86_64/type.c_char.html' title='libc::unix::notbsd::linux::other::b64::x86_64::c_char'>c_char</a></a>, is_versioned: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>, is_private: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='type' href='../libc/type.int32_t.html' title='libc::int32_t'>int32_t</a></pre><div class='docblock'><p>Create a subdirectory. The Name of the subdirectory is the final token in the given path. Eg.,
 if given path = <code>/a/b/c/d</code> then <code>d</code> is interpreted as the subdirectory intended to be created.</p>
 </div></section>
     <section id='search' class="content hidden"></section>
@@ -107,6 +108,6 @@ if given path = <code>/a/b/c/d</code> then <code>d</code> is interpreted as the 
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     
-    <script async src="../search-index.js"></script>
+    <script defer src="../search-index.js"></script>
 </body>
 </html>
