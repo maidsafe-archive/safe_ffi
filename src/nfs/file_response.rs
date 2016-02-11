@@ -54,15 +54,15 @@ pub fn get_response(file: &File,
     } else {
         None
     };
-
+    let start_position = offset as u64;
     let file_helper = FileHelper::new(client);
     let mut reader = file_helper.read(&file);
     let mut size = length as u64;
     if size == 0 {
-        size = reader.size();
+        size = reader.size() - start_position;
     };
     Ok(GetFileResponse {
-        content: try!(reader.read(offset as u64, size)).to_base64(::config::get_base64_config()),
+        content: try!(reader.read(start_position, size)).to_base64(::config::get_base64_config()),
         metadata: file_metadata,
     })
 }

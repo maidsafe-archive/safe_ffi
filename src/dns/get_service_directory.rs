@@ -17,7 +17,7 @@
 
 use {ParameterPacket, ResponseType, Action};
 use safe_dns::dns_operations::DnsOperations;
-use nfs::directory_response::get_response;
+use nfs::directory_response;
 
 #[derive(RustcDecodable, Debug)]
 pub struct GetServiceDirectory {
@@ -31,7 +31,7 @@ impl Action for GetServiceDirectory {
         let directory_key = try!(dns_operations.get_service_home_directory_key(&self.long_name,
                                                                                &self.service_name,
                                                                                None));
-        let response = try!(get_response(params.client, directory_key));
+        let response = try!(directory_response::get_response(params.client, directory_key));
         Ok(Some(try!(::rustc_serialize::json::encode(&response))))
     }
 }

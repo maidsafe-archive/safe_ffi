@@ -191,6 +191,7 @@ pub extern "C" fn get_app_dir_key(c_app_name: *const c_char,
        unsafe {
            std::ptr::write(c_size, serialised_data.len() as i32);
            std::ptr::write(c_capacity, serialised_data.capacity() as i32);
+           std::ptr::write(c_result, 0);
        }
 
        let ptr = serialised_data.as_ptr();
@@ -213,6 +214,7 @@ pub extern "C" fn get_safe_drive_key(c_size: *mut int32_t,
     unsafe {
         std::ptr::write(c_size, serialised_data.len() as i32);
         std::ptr::write(c_capacity, serialised_data.capacity() as i32);
+        std::ptr::write(c_result, 0);
     }
     let ptr = serialised_data.as_ptr();
     ::std::mem::forget(serialised_data);
@@ -240,7 +242,6 @@ pub extern "C" fn execute(c_payload: *const c_char, client_handle: *const c_void
     let payload: String = ffi_try!(helper::c_char_ptr_to_string(c_payload));
     let json_request = ffi_try!(parse_result!(json::Json::from_str(&payload), "JSON parse error"));
     let mut json_decoder = json::Decoder::new(json_request);
-
     let client = cast_from_client_ffi_handle(client_handle);
     let (module, action, parameter_packet) = ffi_try!(get_parameter_packet(client,
                                                                            &mut json_decoder));
@@ -262,7 +263,6 @@ pub extern "C" fn execute_for_content(c_payload: *const c_char,
     let payload: String = ffi_ptr_try!(helper::c_char_ptr_to_string(c_payload), c_result);
     let json_request = ffi_ptr_try!(parse_result!(json::Json::from_str(&payload), "JSON parse error"), c_result);
     let mut json_decoder = json::Decoder::new(json_request);
-
     let client = cast_from_client_ffi_handle(client_handle);
     let (module, action, parameter_packet) = ffi_ptr_try!(get_parameter_packet(client, &mut json_decoder), c_result);
     let result = ffi_ptr_try!(module_parser(module, action, parameter_packet, &mut json_decoder), c_result);
@@ -274,8 +274,8 @@ pub extern "C" fn execute_for_content(c_payload: *const c_char,
     unsafe {
         std::ptr::write(c_size, data.len() as i32);
         std::ptr::write(c_capacity, data.capacity() as i32);
+        std::ptr::write(c_result, 0);
      };
-
     let ptr = data.as_ptr();
     ::std::mem::forget(data);
 
@@ -443,9 +443,11 @@ mod test {
             // let c_capacity = unsafe { ::libc::malloc(size_of_c_uint64) } as *mut ::libc::int32_t;
             // let c_result = unsafe { ::libc::malloc(size_of_c_uint64) } as *mut ::libc::int32_t;
             // let ptr = get_safe_drive_key(c_size, c_capacity, c_result, client_handle);
-            // // assert!(c_result == 0);
             // unsafe {
-            //     drop_vector(ptr, *c_size, *c_capacity);
+            //     let res = *c_result;
+            //     assert_eq!(res, 0);
+            //     let t = *ptr as *mut u8;
+            //     drop_vector(t, *c_size, *c_capacity);
             // }
 
 
