@@ -33,9 +33,9 @@ impl Action for DeleteDir {
         let dir_helper = DirectoryHelper::new(params.client);
 
         let mut parent_dir = if self.is_path_shared {
-            try!(dir_helper.get(&params.safe_drive_dir_key))
+            try!(dir_helper.get(&try!(params.safe_drive_dir_key.ok_or(FfiError::from("Safe Drive directory key is not present")))))
         } else {
-            try!(dir_helper.get(&params.app_root_dir_key))
+            try!(dir_helper.get(&try!(params.app_root_dir_key.ok_or(FfiError::from("Application directory key is not present")))))
         };
 
         let _ = try!(dir_helper.delete(&mut parent_dir, &dir_to_delete));
@@ -56,7 +56,8 @@ mod test {
         let parameter_packet = unwrap_result!(test_utils::get_parameter_packet(false));
 
         let dir_helper = DirectoryHelper::new(parameter_packet.client.clone());
-        let mut app_root_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
+        let app_root_dir_key = unwrap_option!(parameter_packet.clone().app_root_dir_key, "");
+        let mut app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
         let _ = unwrap_result!(dir_helper.create("test_dir".to_string(),
                                                  UNVERSIONED_DIRECTORY_LISTING_TAG,
                                                  Vec::new(),
@@ -70,12 +71,12 @@ mod test {
             is_path_shared: false,
         };
         assert!(request.execute(parameter_packet.clone()).is_err());
-        app_root_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
+        app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
         assert_eq!(app_root_dir.get_sub_directories().len(), 1);
         assert!(app_root_dir.find_sub_directory(&"test_dir".to_string()).is_some());
         request.dir_path = "/test_dir".to_string();
         assert!(request.execute(parameter_packet.clone()).is_ok());
-        app_root_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
+        app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
         assert_eq!(app_root_dir.get_sub_directories().len(), 0);
         assert!(request.execute(parameter_packet.clone()).is_err());
     }

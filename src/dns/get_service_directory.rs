@@ -55,7 +55,7 @@ mod test {
         let parameter_packet = unwrap_result!(test_utils::get_parameter_packet(false));
 
         let dir_helper = DirectoryHelper::new(parameter_packet.client.clone());
-        let mut app_root_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
+        let mut app_root_dir = unwrap_result!(dir_helper.get(&unwrap_option!(parameter_packet.clone().app_root_dir_key, "")));
         let _ = unwrap_result!(dir_helper.create(TEST_DIR_NAME.to_string(),
                                                  UNVERSIONED_DIRECTORY_LISTING_TAG,
                                                  Vec::new(),

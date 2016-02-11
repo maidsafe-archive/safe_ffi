@@ -93,16 +93,36 @@ pub mod errors;
 
 /// ParameterPacket acts as a holder for the standard parameters that would be needed for performing
 /// operations across the modules like nfs and dns
-#[derive(Clone)]
 pub struct ParameterPacket {
     /// Client instance used for performing the API operation
     pub client: Arc<Mutex<Client>>,
-    /// Root directory of teh application
-    pub app_root_dir_key: DirectoryKey,
+    /// Root directory of the application
+    pub app_root_dir_key: Option<DirectoryKey>,
     /// Denotes whether the application has access to SAFEDrive
     pub safe_drive_access: bool,
     /// SAFEDrive root directory key
-    pub safe_drive_dir_key: DirectoryKey,
+    pub safe_drive_dir_key: Option<DirectoryKey>,
+}
+
+impl Clone for ParameterPacket {
+    fn clone(&self) -> ParameterPacket {
+        let app_root_dir_key = if let Some(ref key) = self.app_root_dir_key {
+            Some(key.clone())
+        } else {
+            None
+        };
+        let safe_drive_dir_key = if let Some(ref key) = self.safe_drive_dir_key {
+            Some(key.clone())
+        } else {
+            None
+        };
+        ParameterPacket {
+            client: self.client.clone(),
+            app_root_dir_key: app_root_dir_key,
+            safe_drive_access: self.safe_drive_access,
+            safe_drive_dir_key: safe_drive_dir_key
+        }
+    }
 }
 
 /// ResponseType tspecifies the standard Response that is to be expected from the ::Action trait
@@ -304,6 +324,7 @@ fn get_parameter_packet<D>(client: Arc<Mutex<Client>>,
     where D: Decoder,
           D::Error: ::std::fmt::Debug
 {
+
     let module: String = try!(parse_result!(json_decoder.read_struct_field("module", 0, |d| {
                                                 Decodable::decode(d)
                                             }),
@@ -312,30 +333,37 @@ fn get_parameter_packet<D>(client: Arc<Mutex<Client>>,
                                                 Decodable::decode(d)
                                             }),
                                             ""));
-    let base64_safe_drive_dir_key: String =
-        try!(parse_result!(json_decoder.read_struct_field("safe_drive_dir_key",
-                                                          2,
-                                                          |d| Decodable::decode(d)),
-                           ""));
-    let base64_app_dir_key: String =
-        try!(parse_result!(json_decoder.read_struct_field("app_dir_key",
-                                                          3,
-                                                          |d| Decodable::decode(d)),
-                           ""));
+    let base64_safe_drive_dir_key: Option<String> =
+        json_decoder.read_struct_field("safe_drive_dir_key",
+                                            2,
+                                            |d| Decodable::decode(d)).ok();
+    let base64_app_dir_key: Option<String> =
+            json_decoder.read_struct_field("app_dir_key",
+                                            3,
+                                            |d| Decodable::decode(d)).ok();
     let safe_drive_access: bool =
         try!(parse_result!(json_decoder.read_struct_field("safe_drive_access",
                                                           4,
                                                           |d| Decodable::decode(d)),
                            ""));
 
-    let serialised_app_dir_key: Vec<u8> = try!(parse_result!(base64_app_dir_key[..].from_base64(),
-                                                             ""));
-    let serialised_safe_drive_key: Vec<u8> = try!(parse_result!(base64_safe_drive_dir_key[..]
-                                                                    .from_base64(),
-                                                                ""));
+    let app_root_dir_key: Option<DirectoryKey> = if let Some(app_dir_key) = base64_app_dir_key {
+        let serialised_app_dir_key: Vec<u8> = try!(parse_result!(app_dir_key[..].from_base64(),
+                                                                 ""));
+       let dir_key: DirectoryKey = try!(deserialise(&serialised_app_dir_key));
+       Some(dir_key)
+   } else {
+       None
+   };
 
-    let safe_drive_dir_key: DirectoryKey = try!(deserialise(&serialised_safe_drive_key));
-    let app_root_dir_key: DirectoryKey = try!(deserialise(&serialised_app_dir_key));
+    let safe_drive_dir_key: Option<DirectoryKey> = if let Some(safe_dir_key) = base64_safe_drive_dir_key {
+        let serialised_safe_drive_key: Vec<u8> = try!(parse_result!(safe_dir_key[..].from_base64(),
+                                                                 ""));
+       let dir_key: DirectoryKey = try!(deserialise(&serialised_safe_drive_key));
+       Some(dir_key)
+   } else {
+       None
+   };
 
     Ok((module,
         action,

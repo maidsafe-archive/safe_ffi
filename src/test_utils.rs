@@ -42,8 +42,8 @@ pub fn get_parameter_packet(has_safe_drive_access: bool) -> Result<ParameterPack
                                                      Some(&mut user_root_dir)));
     Ok(ParameterPacket {
         client: client,
-        app_root_dir_key: test_app.get_key().clone(),
+        app_root_dir_key: Some(test_app.get_key().clone()),
         safe_drive_access: has_safe_drive_access,
-        safe_drive_dir_key: safe_drive.get_key().clone(),
+        safe_drive_dir_key: Some(safe_drive.get_key().clone()),
     })
 }

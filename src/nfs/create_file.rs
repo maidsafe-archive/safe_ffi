@@ -35,9 +35,9 @@ impl Action for CreateFile {
         };
 
         let start_dir_key = if self.is_path_shared {
-            &params.safe_drive_dir_key
+            try!(params.safe_drive_dir_key.ok_or(FfiError::from("Safe Drive directory key is not present")))
         } else {
-            &params.app_root_dir_key
+            try!(params.app_root_dir_key.ok_or(FfiError::from("Application directory key is not present")))
         };
 
         let mut tokens = helper::tokenise_path(&self.file_path, false);
@@ -45,7 +45,7 @@ impl Action for CreateFile {
 
         let file_directory = try!(helper::get_final_subdirectory(params.client.clone(),
                                                                  &tokens,
-                                                                 Some(start_dir_key)));
+                                                                 Some(&start_dir_key)));
 
         let file_helper = FileHelper::new(params.client);
         let bin_metadata = try!(parse_result!(self.user_metadata.from_base64(),
@@ -76,7 +76,7 @@ mod test {
         assert!(request.execute(parameter_packet.clone()).is_ok());
 
         let dir_helper = DirectoryHelper::new(parameter_packet.client);
-        let app_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
+        let app_dir = unwrap_result!(dir_helper.get(&unwrap_option!(parameter_packet.app_root_dir_key, "")));
         assert!(app_dir.find_file(&"test.txt".to_string()).is_some());
     }
 }

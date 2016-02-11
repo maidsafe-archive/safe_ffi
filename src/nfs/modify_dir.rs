@@ -39,15 +39,15 @@ impl Action for ModifyDir {
         }
 
         let start_dir_key = if self.is_path_shared {
-            &params.safe_drive_dir_key
+            try!(params.safe_drive_dir_key.ok_or(FfiError::from("Safe Drive directory key is not present")))
         } else {
-            &params.app_root_dir_key
+            try!(params.app_root_dir_key.ok_or(FfiError::from("Application directory key is not present")))
         };
 
         let tokens = helper::tokenise_path(&self.dir_path, false);
         let mut dir_to_modify = try!(helper::get_final_subdirectory(params.client.clone(),
                                                                     &tokens,
-                                                                    Some(start_dir_key)));
+                                                                    Some(&start_dir_key)));
 
         let directory_helper = DirectoryHelper::new(params.client);
         if let Some(ref name) = self.new_values.name {
@@ -84,8 +84,9 @@ mod test {
     const METADATA_BASE64: &'static str = "c2FtcGxlIHRleHQ=";
 
     fn create_test_dir(parameter_packet: &ParameterPacket) {
+        let app_root_dir_key = unwrap_option!(parameter_packet.clone().app_root_dir_key, "");
         let dir_helper = DirectoryHelper::new(parameter_packet.client.clone());
-        let mut app_root_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
+        let mut app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
         let _ = unwrap_result!(dir_helper.create(TEST_DIR_NAME.to_string(),
                                                  UNVERSIONED_DIRECTORY_LISTING_TAG,
                                                  Vec::new(),
@@ -111,11 +112,11 @@ mod test {
             is_path_shared: false,
         };
 
+        let app_root_dir_key = unwrap_option!(parameter_packet.clone().app_root_dir_key, "");
         let dir_helper = DirectoryHelper::new(parameter_packet.client.clone());
-        let mut app_root_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
+        let mut app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
         assert_eq!(app_root_dir.get_sub_directories().len(), 1);
         assert!(app_root_dir.find_sub_directory(&TEST_DIR_NAME.to_string()).is_some());
-        let app_root_dir_key = parameter_packet.app_root_dir_key.clone();
         assert!(request.execute(parameter_packet).is_ok());
         app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
         assert_eq!(app_root_dir.get_sub_directories().len(), 1);
@@ -140,8 +141,9 @@ mod test {
             is_path_shared: false,
         };
 
+        let app_root_dir_key = unwrap_option!(parameter_packet.clone().app_root_dir_key, "");
         let dir_helper = DirectoryHelper::new(parameter_packet.client.clone());
-        let app_root_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
+        let app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
         let directory_key =
             unwrap_option!(app_root_dir.find_sub_directory(&TEST_DIR_NAME.to_string()),
                            "Directory not found")

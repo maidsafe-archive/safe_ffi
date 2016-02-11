@@ -32,15 +32,15 @@ impl Action for GetDir {
         }
 
         let start_dir_key = if self.is_path_shared {
-            &params.safe_drive_dir_key
+            try!(params.safe_drive_dir_key.ok_or(FfiError::from("Safe Drive directory key is not present")))
         } else {
-            &params.app_root_dir_key
+            try!(params.app_root_dir_key.ok_or(FfiError::from("Application directory key is not present")))
         };
 
         let tokens = helper::tokenise_path(&self.dir_path, false);
         let dir_fetched = try!(helper::get_final_subdirectory(params.client.clone(),
                                                               &tokens,
-                                                              Some(start_dir_key)));
+                                                              Some(&start_dir_key)));
 
         let response = convert_to_response(dir_fetched);
 
@@ -57,8 +57,9 @@ mod test {
     const TEST_DIR_NAME: &'static str = "test_dir";
 
     fn create_test_dir(parameter_packet: &ParameterPacket) {
+        let app_dir_key = unwrap_option!(parameter_packet.clone().app_root_dir_key, "");
         let dir_helper = DirectoryHelper::new(parameter_packet.client.clone());
-        let mut app_root_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
+        let mut app_root_dir = unwrap_result!(dir_helper.get(&app_dir_key));
         let _ = unwrap_result!(dir_helper.create(TEST_DIR_NAME.to_string(),
                                                  UNVERSIONED_DIRECTORY_LISTING_TAG,
                                                  Vec::new(),

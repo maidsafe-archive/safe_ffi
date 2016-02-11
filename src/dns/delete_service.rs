@@ -20,8 +20,8 @@ use {ParameterPacket, ResponseType, Action};
 
 #[derive(RustcDecodable, Debug)]
 pub struct DeleteService {
-    long_name: String,
-    service_name: String,
+    pub long_name: String,
+    pub service_name: String,
 }
 
 impl Action for DeleteService {

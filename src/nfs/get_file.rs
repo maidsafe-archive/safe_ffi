@@ -41,14 +41,14 @@ impl Action for GetFile {
         let file_name = try!(tokens.pop().ok_or(FfiError::InvalidPath));
 
         let start_dir_key = if self.is_path_shared {
-            &params.safe_drive_dir_key
+            try!(params.safe_drive_dir_key.ok_or(FfiError::from("Safe Drive directory key is not present")))
         } else {
-            &params.app_root_dir_key
+            try!(params.app_root_dir_key.ok_or(FfiError::from("Application directory key is not present")))
         };
 
         let file_dir = try!(helper::get_final_subdirectory(params.client.clone(),
                                                            &tokens,
-                                                           Some(start_dir_key)));
+                                                           Some(&start_dir_key)));
         let file = try!(file_dir.find_file(&file_name)
                                 .ok_or(::errors::FfiError::InvalidPath));
 
@@ -72,9 +72,10 @@ mod test {
     const TEST_FILE_NAME: &'static str = "test_file.txt";
 
     fn create_test_file(parameter_packet: &ParameterPacket) {
+        let app_dir_key = unwrap_option!(parameter_packet.clone().app_root_dir_key, "");
         let file_helper = FileHelper::new(parameter_packet.client.clone());
         let dir_helper = DirectoryHelper::new(parameter_packet.client.clone());
-        let app_root_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
+        let app_root_dir = unwrap_result!(dir_helper.get(&app_dir_key));
         let mut writer = unwrap_result!(file_helper.create(TEST_FILE_NAME.to_string(),
                                                            Vec::new(),
                                                            app_root_dir));

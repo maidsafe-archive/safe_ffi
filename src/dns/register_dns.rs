@@ -38,14 +38,14 @@ impl ::Action for RegisterDns {
         let tokens = ::helper::tokenise_path(&self.service_home_dir_path, false);
 
         let start_dir_key = if self.is_path_shared {
-            &params.safe_drive_dir_key
+            try!(params.safe_drive_dir_key.ok_or(FfiError::from("Safe Drive directory key is not present")))
         } else {
-            &params.app_root_dir_key
+            try!(params.app_root_dir_key.ok_or(FfiError::from("Application directory key is not present")))
         };
 
         let dir_to_map = try!(::helper::get_final_subdirectory(params.client.clone(),
                                                                &tokens,
-                                                               Some(start_dir_key)));
+                                                               Some(&start_dir_key)));
 
         let (msg_public_key, msg_secret_key) = box_::gen_keypair();
         let services = vec![(self.service_name.clone(), (dir_to_map.get_key().clone()))];
@@ -85,7 +85,7 @@ mod test {
         let parameter_packet = unwrap_result!(get_parameter_packet(false));
 
         let dir_helper = DirectoryHelper::new(parameter_packet.client.clone());
-        let mut app_root_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
+        let mut app_root_dir = unwrap_result!(dir_helper.get(&unwrap_option!(parameter_packet.clone().app_root_dir_key, "")));
         let _ = unwrap_result!(dir_helper.create(TEST_DIR_NAME.to_string(),
                                                  UNVERSIONED_DIRECTORY_LISTING_TAG,
                                                  Vec::new(),

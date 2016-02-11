@@ -41,16 +41,15 @@ impl Action for ModifyFile {
         }
 
         let start_dir_key = if self.is_path_shared {
-            &params.safe_drive_dir_key
+            try!(params.safe_drive_dir_key.ok_or(FfiError::from("Safe Drive directory key is not present")))
         } else {
-            &params.app_root_dir_key
+            try!(params.app_root_dir_key.ok_or(FfiError::from("Application directory key is not present")))
         };
-
         let mut tokens = helper::tokenise_path(&self.file_path, false);
         let file_name = try!(tokens.pop().ok_or(FfiError::InvalidPath));
         let mut dir_of_file = try!(helper::get_final_subdirectory(params.client.clone(),
                                                                   &tokens,
-                                                                  Some(start_dir_key)));
+                                                                  Some(&start_dir_key)));
 
         let mut file = try!(dir_of_file.find_file(&file_name)
                                        .map(|file| file.clone())
@@ -116,9 +115,10 @@ mod test {
     const METADATA_BASE64: &'static str = "c2FtcGxlIHRleHQ=";
 
     fn create_test_file(parameter_packet: &ParameterPacket) {
+        let app_root_dir_key = unwrap_option!(parameter_packet.clone().app_root_dir_key, "");
         let file_helper = FileHelper::new(parameter_packet.client.clone());
         let dir_helper = DirectoryHelper::new(parameter_packet.client.clone());
-        let app_root_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
+        let app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
         let writer = unwrap_result!(file_helper.create(TEST_FILE_NAME.to_string(),
                                                        Vec::new(),
                                                        app_root_dir));
@@ -143,11 +143,12 @@ mod test {
             is_path_shared: false,
         };
 
+        let app_root_dir_key = unwrap_option!(parameter_packet.clone().app_root_dir_key, "");
         let dir_helper = DirectoryHelper::new(parameter_packet.client.clone());
-        let mut app_root_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
+        let mut app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
         assert_eq!(app_root_dir.get_files().len(), 1);
         assert!(app_root_dir.find_file(&TEST_FILE_NAME.to_string()).is_some());
-        let app_root_dir_key = parameter_packet.app_root_dir_key.clone();
+
         assert!(request.execute(parameter_packet).is_ok());
         app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
         assert_eq!(app_root_dir.get_files().len(), 1);
@@ -173,12 +174,12 @@ mod test {
             is_path_shared: false,
         };
 
+        let app_root_dir_key = unwrap_option!(parameter_packet.clone().app_root_dir_key, "");
         let dir_helper = DirectoryHelper::new(parameter_packet.client.clone());
-        let app_root_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
+        let app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
         let file = unwrap_option!(app_root_dir.find_file(&TEST_FILE_NAME.to_string()),
                                   "File not found");
-        assert_eq!(file.get_metadata().get_user_metadata().len(), 0);
-        let app_root_dir_key = parameter_packet.app_root_dir_key.clone();
+        assert_eq!(file.get_metadata().get_user_metadata().len(), 0);        
         assert!(request.execute(parameter_packet).is_ok());
         let app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
         let file = unwrap_option!(app_root_dir.find_file(&TEST_FILE_NAME.to_string()),
@@ -213,12 +214,12 @@ mod test {
             is_path_shared: false,
         };
 
+        let app_root_dir_key = unwrap_option!(parameter_packet.clone().app_root_dir_key, "");
         let dir_helper = DirectoryHelper::new(parameter_packet.client.clone());
-        let app_root_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
+        let app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
         let file = unwrap_option!(app_root_dir.find_file(&TEST_FILE_NAME.to_string()),
                                   "File not found");
         assert_eq!(file.get_metadata().get_size(), 0);
-        let app_root_dir_key = parameter_packet.app_root_dir_key.clone();
         assert!(request.execute(parameter_packet.clone()).is_ok());
         let app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
         let file = unwrap_option!(app_root_dir.find_file(&TEST_FILE_NAME.to_string()),

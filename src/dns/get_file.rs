@@ -24,13 +24,13 @@ use safe_nfs::helper::directory_helper::DirectoryHelper;
 
 #[derive(RustcDecodable, Debug)]
 pub struct GetFile {
-    long_name: String,
-    service_name: String,
-    offset: i64,
-    length: i64,
-    file_path: String,
-    is_path_shared: bool,
-    include_metadata: bool,
+    pub long_name: String,
+    pub service_name: String,
+    pub offset: i64,
+    pub length: i64,
+    pub file_path: String,
+    pub is_path_shared: bool,
+    pub include_metadata: bool,
 }
 
 impl Action for GetFile {

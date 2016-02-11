@@ -41,14 +41,14 @@ impl Action for CreateDir {
         let dir_to_create = try!(tokens.pop().ok_or(FfiError::InvalidPath));
 
         let start_dir_key = if self.is_path_shared {
-            &params.safe_drive_dir_key
+            try!(params.safe_drive_dir_key.ok_or(FfiError::from("Safe Drive directory key is not present")))
         } else {
-            &params.app_root_dir_key
+            try!(params.app_root_dir_key.ok_or(FfiError::from("Application directory key is not present")))
         };
 
         let mut parent_sub_dir = try!(helper::get_final_subdirectory(params.client.clone(),
                                                                      &tokens,
-                                                                     Some(start_dir_key)));
+                                                                     Some(&start_dir_key)));
 
         let dir_helper = DirectoryHelper::new(params.client);
 
@@ -109,8 +109,8 @@ mod test {
         request.dir_path = "/test_dir/secondlevel".to_string();
         assert!(request.execute(parameter_packet.clone()).is_ok());
 
-        let dir_helper = DirectoryHelper::new(parameter_packet.client);
-        let app_dir = unwrap_result!(dir_helper.get(&parameter_packet.app_root_dir_key));
+        let dir_helper = DirectoryHelper::new(parameter_packet.clone().client);
+        let app_dir = unwrap_result!(dir_helper.get(&unwrap_option!(parameter_packet.clone().app_root_dir_key, "")));
         assert!(app_dir.find_sub_directory(&"test_dir".to_string()).is_some());
         assert!(app_dir.find_sub_directory(&"test_dir2".to_string()).is_some());
         assert_eq!(app_dir.get_sub_directories().len(), 2);
