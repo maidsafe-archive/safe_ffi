@@ -88,6 +88,7 @@ fn get_directory_info(dir_metadata: &DirectoryMetadata) -> DirectoryInfo {
     let dir_key = dir_metadata.get_key();
     let created_time = dir_metadata.get_created_time().to_timespec();
     let modified_time = dir_metadata.get_modified_time().to_timespec();
+    
     DirectoryInfo {
         name: dir_metadata.get_name().clone(),
         is_private: *dir_key.get_access_level() == ::safe_nfs::AccessLevel::Private,

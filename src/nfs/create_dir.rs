@@ -63,7 +63,7 @@ impl Action for CreateDir {
         } else {
             UNVERSIONED_DIRECTORY_LISTING_TAG
         };
-
+        
         let bin_metadata = try!(parse_result!(self.user_metadata.from_base64(),
                                               "Faild Converting from Base64."));
 

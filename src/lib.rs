@@ -281,10 +281,12 @@ pub extern "C" fn execute_for_content(c_payload: *const c_char,
                                       client_handle: *const c_void)
                                       -> *const u8 {
     let payload: String = ffi_ptr_try!(helper::c_char_ptr_to_string(c_payload), c_result);
+    println!("{:?}", payload);
     let json_request = ffi_ptr_try!(parse_result!(json::Json::from_str(&payload), "JSON parse error"), c_result);
-    let mut json_decoder = json::Decoder::new(json_request);
+    let mut json_decoder = json::Decoder::new(json_request.clone());
     let client = cast_from_client_ffi_handle(client_handle);
     let (module, action, parameter_packet) = ffi_ptr_try!(get_parameter_packet(client, &mut json_decoder), c_result);
+    json_decoder = json::Decoder::new(json_request.clone());
     let result = ffi_ptr_try!(module_parser(module, action, parameter_packet, &mut json_decoder), c_result);
     let data = match result {
         Some(response) => response.into_bytes(),
@@ -337,16 +339,21 @@ fn get_parameter_packet<D>(client: Arc<Mutex<Client>>,
         json_decoder.read_struct_field("safe_drive_dir_key",
                                             2,
                                             |d| Decodable::decode(d)).ok();
+
     let base64_app_dir_key: Option<String> =
             json_decoder.read_struct_field("app_dir_key",
                                             3,
                                             |d| Decodable::decode(d)).ok();
-    let safe_drive_access: bool =
+                                            println!("{:?}", base64_app_dir_key);
+                                            println!("{:?}", base64_safe_drive_dir_key);
+    let safe_drive_access: bool = if base64_safe_drive_dir_key.is_none() {
+        false
+    } else {
         try!(parse_result!(json_decoder.read_struct_field("safe_drive_access",
                                                           4,
                                                           |d| Decodable::decode(d)),
-                           ""));
-
+                           ""))
+    };
     let app_root_dir_key: Option<DirectoryKey> = if let Some(app_dir_key) = base64_app_dir_key {
         let serialised_app_dir_key: Vec<u8> = try!(parse_result!(app_dir_key[..].from_base64(),
                                                                  ""));

@@ -29,13 +29,15 @@ pub struct GetFile {
     pub offset: i64,
     pub length: i64,
     pub file_path: String,
-    pub is_path_shared: bool,
     pub include_metadata: bool,
 }
 
 impl Action for GetFile {
     fn execute(&mut self, params: ParameterPacket) -> ResponseType {
-        let dns_operations = try!(DnsOperations::new(params.client.clone()));
+        let dns_operations = match params.app_root_dir_key {
+            Some(_) => try!(DnsOperations::new(params.client.clone())),
+            None => DnsOperations::new_unregistered(params.client.clone())
+        };
         let directory_key = try!(dns_operations.get_service_home_directory_key(&self.long_name,
                                                                                &self.service_name,
                                                                                None));

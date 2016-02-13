@@ -27,10 +27,14 @@ pub struct GetServiceDirectory {
 
 impl Action for GetServiceDirectory {
     fn execute(&mut self, params: ParameterPacket) -> ResponseType {
-        let dns_operations = try!(DnsOperations::new(params.client.clone()));
+        let dns_operations = match params.app_root_dir_key {
+            Some(_) => try!(DnsOperations::new(params.client.clone())),
+            None => DnsOperations::new_unregistered(params.client.clone())
+        };
         let directory_key = try!(dns_operations.get_service_home_directory_key(&self.long_name,
                                                                                &self.service_name,
                                                                                None));
+        println!("Key {:?}", directory_key);
         let response = try!(directory_response::get_response(params.client, directory_key));
         Ok(Some(try!(::rustc_serialize::json::encode(&response))))
     }
@@ -51,7 +55,7 @@ mod test {
     const TEST_DIR_NAME: &'static str = "test_dir";
 
     #[test]
-    fn add_dns_service() {
+    fn get_service_directory() {
         let parameter_packet = unwrap_result!(test_utils::get_parameter_packet(false));
 
         let dir_helper = DirectoryHelper::new(parameter_packet.client.clone());
@@ -84,7 +88,8 @@ mod test {
             long_name: public_name,
             service_name: "www".to_string(),
         };
-        let response = get_service_directory_request.execute(parameter_packet);
+        let parameter_packet_unregistered = unwrap_result!(test_utils::get_unregistered_parameter_packet());
+        let response = get_service_directory_request.execute(parameter_packet_unregistered);
         assert!(response.is_ok());
         let response_json = unwrap_result!(response);
         assert!(response_json.is_some());
