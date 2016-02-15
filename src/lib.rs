@@ -252,7 +252,8 @@ pub extern "C" fn drop_client(client_handle: *const c_void) {
     let _ = unsafe { transmute::<_, Box<Arc<Mutex<Client>>>>(client_handle) };
 }
 
-/// General function that can be invoked for performing a API specific operation that wont return any result.
+/// General function that can be invoked for performing a API specific operation that will return
+/// only result to indicate whether the operation was successful or not.
 /// This function would only perform the operation and return 0 or error code
 /// c_payload refers to the JSON payload that can be passed as a JSON string.
 /// The JSON string should have keys module, action, app_root_dir_key, safe_drive_dir_key,
@@ -271,7 +272,10 @@ pub extern "C" fn execute(c_payload: *const c_char, client_handle: *const c_void
     0
 }
 
-/// General function that can be invoked for getting the result for a module specific operation
+/// General function that can be invoked for getting data as a resut for an operation.
+/// The function return a pointer to a U8 vecotr. The size of the U8 vector and its capacity is written
+/// to the out params c_size & c_capacity. The size and capcity would be required for droping the vector
+/// The result of the execution is returned in the c_result out param
 #[no_mangle]
 #[allow(unsafe_code)]
 pub extern "C" fn execute_for_content(c_payload: *const c_char,
@@ -281,7 +285,6 @@ pub extern "C" fn execute_for_content(c_payload: *const c_char,
                                       client_handle: *const c_void)
                                       -> *const u8 {
     let payload: String = ffi_ptr_try!(helper::c_char_ptr_to_string(c_payload), c_result);
-    println!("{:?}", payload);
     let json_request = ffi_ptr_try!(parse_result!(json::Json::from_str(&payload), "JSON parse error"), c_result);
     let mut json_decoder = json::Decoder::new(json_request.clone());
     let client = cast_from_client_ffi_handle(client_handle);
@@ -344,8 +347,6 @@ fn get_parameter_packet<D>(client: Arc<Mutex<Client>>,
             json_decoder.read_struct_field("app_dir_key",
                                             3,
                                             |d| Decodable::decode(d)).ok();
-                                            println!("{:?}", base64_app_dir_key);
-                                            println!("{:?}", base64_safe_drive_dir_key);
     let safe_drive_access: bool = if base64_safe_drive_dir_key.is_none() {
         false
     } else {
