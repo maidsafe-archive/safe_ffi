@@ -293,6 +293,8 @@ pub extern "C" fn execute_for_content(c_payload: *const c_char,
     let mut json_decoder = json::Decoder::new(json_request.clone());
     let client = cast_from_client_ffi_handle(client_handle);
     let (module, action, parameter_packet) = ffi_ptr_try!(get_parameter_packet(client, &mut json_decoder), c_result);
+    // TODO Krishna: Avoid parsing it twice (line 292). for get_parameter_packet pass the json
+    // object and iterate. parse based on keys
     json_decoder = json::Decoder::new(json_request.clone());
     let result = ffi_ptr_try!(module_parser(module, action, parameter_packet, &mut json_decoder), c_result);
     let data = match result {
