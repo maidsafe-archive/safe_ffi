@@ -26,6 +26,8 @@ mod delete_dir;
 mod delete_file;
 mod get_dir;
 mod get_file;
+mod move_dir;
+mod move_file;
 mod modify_dir;
 mod modify_file;
 pub mod directory_response;
@@ -94,7 +96,20 @@ fn get_action<D>(action: String, decoder: &mut D) -> Result<Box<::Action>, FfiEr
                                             modify_file::ModifyFile::decode(d)
                                         }),
                                         "")))
+        },
+        "move-dir" => {
+            Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
+                                            move_dir::MoveDirectory::decode(d)
+                                        }),
+                                        "")))
         }
+        "move-file" => {
+            Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
+                                            move_file::MoveFile::decode(d)
+                                        }),
+                                        "")))
+        }
+
         _ => {
             return Err(FfiError::SpecificParseError(format!("Unsupported action {:?} for this \
                                                              endpoint.",
