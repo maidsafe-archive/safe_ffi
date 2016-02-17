@@ -264,7 +264,7 @@ pub extern "C" fn drop_client(client_handle: *const c_void) {
 /// safe_drive_access and data. `data` refers to API specific payload.
 #[no_mangle]
 pub extern "C" fn execute(c_payload: *const c_char, client_handle: *const c_void) -> int32_t {
-    let payload: String = ffi_try!(helper::c_char_ptr_to_string(c_payload));
+    let payload: String = ffi_try!(helper::c_char_ptr_to_string(c_payload));    
     let json_request = ffi_try!(parse_result!(json::Json::from_str(&payload), "JSON parse error"));
     let mut json_decoder = json::Decoder::new(json_request);
     let client = cast_from_client_ffi_handle(client_handle);

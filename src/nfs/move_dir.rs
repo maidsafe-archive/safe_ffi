@@ -56,7 +56,6 @@ impl Action for MoveDirectory {
         if (self.is_src_path_shared || self.is_dest_path_shared) && !params.safe_drive_access {
             return Err(FfiError::PermissionDenied);
         }
-
         let directory_helper = DirectoryHelper::new(params.client.clone());
         let mut src_dir = try!(self.get_directory(&params,
                                                   self.is_src_path_shared,
@@ -67,6 +66,7 @@ impl Action for MoveDirectory {
         if dest_dir.find_sub_directory(src_dir.get_metadata().get_name()).is_some() {
             return Err(FfiError::from(DirectoryAlreadyExistsWithSameName));
         }
+        let org_parent_of_src_dir = src_dir.get_metadata().get_key().clone();
         if self.retain_source {
             let name = src_dir.get_metadata().get_name().clone();
             let user_metadata = src_dir.get_metadata().get_user_metadata().clone();
@@ -106,10 +106,7 @@ impl Action for MoveDirectory {
         let _ = try!(directory_helper.update(&dest_dir));
         let _ = try!(directory_helper.update(&src_dir));
         if !self.retain_source {
-            let mut parent_of_src_dir = try!(directory_helper.get(try!(src_dir.get_metadata()
-                                                      .get_parent_dir_key()
-                                                      .ok_or(FfiError::from("Parent Directory \
-                                                                             not found")))));
+            let mut parent_of_src_dir = try!(directory_helper.get(&org_parent_of_src_dir));
             try!(parent_of_src_dir.remove_sub_directory(dest_dir.get_metadata()
                                                                 .get_name()));
             let _ = try!(directory_helper.update(&parent_of_src_dir));

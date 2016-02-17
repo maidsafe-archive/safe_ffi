@@ -27,6 +27,7 @@ mod register_dns;
 mod get_services;
 mod get_long_names;
 mod delete_service;
+mod register_public_id;
 mod get_service_directory;
 
 pub fn action_dispatcher<D>(action: String,
@@ -45,6 +46,12 @@ fn get_action<D>(action: String, decoder: &mut D) -> Result<Box<::Action>, FfiEr
           D::Error: fmt::Debug
 {
     Ok(match &action[..] {
+        "register-public-id" => {
+            Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
+                                            register_public_id::RegisterPublicId::decode(d)
+                                        }),
+                                        "")))
+        }
         "register-dns" => {
             Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
                                             register_dns::RegisterDns::decode(d)
