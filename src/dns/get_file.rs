@@ -43,8 +43,12 @@ impl Action for GetFile {
                                                                                None));
         let mut tokens = helper::tokenise_path(&self.file_path, false);
         let file_name = try!(tokens.pop().ok_or(FfiError::InvalidPath));
-        let dir_helper = DirectoryHelper::new(params.client.clone());
-        let file_dir = try!(dir_helper.get(&directory_key));
+        let file_dir = if tokens.len() > 0 {
+            try!(helper::get_final_subdirectory(params.client.clone(), &tokens, Some(&directory_key)))
+        } else {
+            let dir_helper = DirectoryHelper::new(params.client.clone());
+            try!(dir_helper.get(&directory_key))
+        };
         let file = try!(file_dir.find_file(&file_name)
                                 .ok_or(::errors::FfiError::InvalidPath));
         let response = try!(get_response(file,

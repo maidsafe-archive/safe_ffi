@@ -28,16 +28,26 @@ pub struct DeleteDir {
 impl Action for DeleteDir {
     fn execute(&mut self, params: ParameterPacket) -> ResponseType {
         let mut tokens = helper::tokenise_path(&self.dir_path, false);
+        let dir_helper = DirectoryHelper::new(params.client.clone());
         let dir_to_delete = try!(tokens.pop().ok_or(FfiError::InvalidPath));
-
-        let dir_helper = DirectoryHelper::new(params.client);
-
-        let mut parent_dir = if self.is_path_shared {
-            try!(dir_helper.get(&try!(params.safe_drive_dir_key.ok_or(FfiError::from("Safe Drive directory key is not present")))))
+        let root_dir = if self.is_path_shared {
+            try!(dir_helper.get(&try!(params.safe_drive_dir_key
+                                            .ok_or(FfiError::from("Safe Drive directory key \
+                                                                   is not present")))))
         } else {
-            try!(dir_helper.get(&try!(params.app_root_dir_key.ok_or(FfiError::from("Application directory key is not present")))))
+            try!(dir_helper.get(&try!(params.app_root_dir_key
+                                            .ok_or(FfiError::from("Application directory key \
+                                                                   is not present")))))
         };
 
+        let mut parent_dir = if tokens.len() == 0 {
+            root_dir
+        } else {
+            try!(helper::get_final_subdirectory(params.client,
+                                                &tokens,
+                                                Some(root_dir.get_metadata()
+                                                             .get_key())))
+        };
         let _ = try!(dir_helper.delete(&mut parent_dir, &dir_to_delete));
 
         Ok(None)
