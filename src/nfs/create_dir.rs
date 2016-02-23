@@ -41,9 +41,11 @@ impl Action for CreateDir {
         let dir_to_create = try!(tokens.pop().ok_or(FfiError::InvalidPath));
 
         let start_dir_key = if self.is_path_shared {
-            try!(params.safe_drive_dir_key.ok_or(FfiError::from("Safe Drive directory key is not present")))
+            try!(params.safe_drive_dir_key
+                       .ok_or(FfiError::from("Safe Drive directory key is not present")))
         } else {
-            try!(params.app_root_dir_key.ok_or(FfiError::from("Application directory key is not present")))
+            try!(params.app_root_dir_key
+                       .ok_or(FfiError::from("Application directory key is not present")))
         };
 
         let mut parent_sub_dir = try!(helper::get_final_subdirectory(params.client.clone(),
@@ -63,7 +65,7 @@ impl Action for CreateDir {
         } else {
             UNVERSIONED_DIRECTORY_LISTING_TAG
         };
-        
+
         let bin_metadata = try!(parse_result!(self.user_metadata.from_base64(),
                                               "Faild Converting from Base64."));
 
@@ -110,7 +112,10 @@ mod test {
         assert!(request.execute(parameter_packet.clone()).is_ok());
 
         let dir_helper = DirectoryHelper::new(parameter_packet.clone().client);
-        let app_dir = unwrap_result!(dir_helper.get(&unwrap_option!(parameter_packet.clone().app_root_dir_key, "")));
+        let app_dir =
+            unwrap_result!(dir_helper.get(&unwrap_option!(parameter_packet.clone()
+                                                                          .app_root_dir_key,
+                                                          "")));
         assert!(app_dir.find_sub_directory(&"test_dir".to_string()).is_some());
         assert!(app_dir.find_sub_directory(&"test_dir2".to_string()).is_some());
         assert_eq!(app_dir.get_sub_directories().len(), 2);

@@ -76,9 +76,7 @@ fn get_action<D>(action: String, decoder: &mut D) -> Result<Box<::Action>, FfiEr
                                         }),
                                         "")))
         }
-        "get-long-names" => {
-            Box::new(get_long_names::GetLongNames)
-        }
+        "get-long-names" => Box::new(get_long_names::GetLongNames),
         "get-services" => {
             Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
                                             get_services::GetServices::decode(d)

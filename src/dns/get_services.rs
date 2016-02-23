@@ -21,7 +21,7 @@ use {ParameterPacket, ResponseType, Action};
 
 #[derive(RustcDecodable, Debug)]
 pub struct GetServices {
-    pub long_name: String
+    pub long_name: String,
 }
 
 impl Action for GetServices {

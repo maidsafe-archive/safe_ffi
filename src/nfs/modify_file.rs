@@ -41,9 +41,11 @@ impl Action for ModifyFile {
         }
 
         let start_dir_key = if self.is_path_shared {
-            try!(params.safe_drive_dir_key.ok_or(FfiError::from("Safe Drive directory key is not present")))
+            try!(params.safe_drive_dir_key
+                       .ok_or(FfiError::from("Safe Drive directory key is not present")))
         } else {
-            try!(params.app_root_dir_key.ok_or(FfiError::from("Application directory key is not present")))
+            try!(params.app_root_dir_key
+                       .ok_or(FfiError::from("Application directory key is not present")))
         };
         let mut tokens = helper::tokenise_path(&self.file_path, false);
         let file_name = try!(tokens.pop().ok_or(FfiError::InvalidPath));
@@ -179,7 +181,7 @@ mod test {
         let app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
         let file = unwrap_option!(app_root_dir.find_file(&TEST_FILE_NAME.to_string()),
                                   "File not found");
-        assert_eq!(file.get_metadata().get_user_metadata().len(), 0);        
+        assert_eq!(file.get_metadata().get_user_metadata().len(), 0);
         assert!(request.execute(parameter_packet).is_ok());
         let app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
         let file = unwrap_option!(app_root_dir.find_file(&TEST_FILE_NAME.to_string()),

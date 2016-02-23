@@ -36,7 +36,7 @@ impl Action for GetFile {
     fn execute(&mut self, params: ParameterPacket) -> ResponseType {
         let dns_operations = match params.app_root_dir_key {
             Some(_) => try!(DnsOperations::new(params.client.clone())),
-            None => DnsOperations::new_unregistered(params.client.clone())
+            None => DnsOperations::new_unregistered(params.client.clone()),
         };
         let directory_key = try!(dns_operations.get_service_home_directory_key(&self.long_name,
                                                                                &self.service_name,
@@ -44,7 +44,9 @@ impl Action for GetFile {
         let mut tokens = helper::tokenise_path(&self.file_path, false);
         let file_name = try!(tokens.pop().ok_or(FfiError::InvalidPath));
         let file_dir = if tokens.len() > 0 {
-            try!(helper::get_final_subdirectory(params.client.clone(), &tokens, Some(&directory_key)))
+            try!(helper::get_final_subdirectory(params.client.clone(),
+                                                &tokens,
+                                                Some(&directory_key)))
         } else {
             let dir_helper = DirectoryHelper::new(params.client.clone());
             try!(dir_helper.get(&directory_key))

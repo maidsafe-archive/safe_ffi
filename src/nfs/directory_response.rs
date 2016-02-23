@@ -55,8 +55,8 @@ struct FileInfo {
 }
 
 pub fn get_response(client: Arc<Mutex<Client>>,
-                        directory_key: DirectoryKey)
-                        -> Result<GetDirResponse, FfiError> {
+                    directory_key: DirectoryKey)
+                    -> Result<GetDirResponse, FfiError> {
     let dir_helper = DirectoryHelper::new(client);
     let dir_listing = try!(dir_helper.get(&directory_key));
     Ok(convert_to_response(dir_listing))
@@ -88,7 +88,7 @@ fn get_directory_info(dir_metadata: &DirectoryMetadata) -> DirectoryInfo {
     let dir_key = dir_metadata.get_key();
     let created_time = dir_metadata.get_created_time().to_timespec();
     let modified_time = dir_metadata.get_modified_time().to_timespec();
-    
+
     DirectoryInfo {
         name: dir_metadata.get_name().clone(),
         is_private: *dir_key.get_access_level() == ::safe_nfs::AccessLevel::Private,

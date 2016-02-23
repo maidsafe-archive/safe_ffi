@@ -37,9 +37,11 @@ impl Action for AddService {
         let tokens = helper::tokenise_path(&self.service_home_dir_path, false);
 
         let start_dir_key = if self.is_path_shared {
-            try!(params.safe_drive_dir_key.ok_or(FfiError::from("Safe Drive directory key is not present")))
+            try!(params.safe_drive_dir_key
+                       .ok_or(FfiError::from("Safe Drive directory key is not present")))
         } else {
-            try!(params.app_root_dir_key.ok_or(FfiError::from("Application directory key is not present")))
+            try!(params.app_root_dir_key
+                       .ok_or(FfiError::from("Application directory key is not present")))
         };
 
         let dir_to_map = try!(helper::get_final_subdirectory(params.client.clone(),
