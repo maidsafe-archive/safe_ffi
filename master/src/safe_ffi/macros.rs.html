@@ -9,6 +9,7 @@
 
     <title>macros.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
     <link rel="shortcut icon" href="http://maidsafe.net/img/favicon.ico">
@@ -88,6 +89,42 @@
 <span id="46">46</span>
 <span id="47">47</span>
 <span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -106,25 +143,6 @@
 <span class='comment'>// Please review the Licences for the specific language governing permissions and limitations</span>
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
-<span class='doccomment'>/// This macro is intended to be used in all cases where we get Result&lt;T, U&gt; and want to convert it</span>
-<span class='doccomment'>/// to C friendly error code to inform about error conditions accross library boundaries</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// #Examples</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// ```</span>
-<span class='doccomment'>/// # #[macro_use] extern crate safe_ffi;</span>
-<span class='doccomment'>/// # #[macro_use] extern crate safe_core;</span>
-<span class='doccomment'>/// fn f() -&gt; i32 {</span>
-<span class='doccomment'>///     let some_result: Result&lt;String, safe_core::errors::CoreError&gt; = Ok(&quot;Hello&quot;.to_string());</span>
-<span class='doccomment'>///     let string_length = ffi_try!(some_result).len();</span>
-<span class='doccomment'>///     assert_eq!(string_length, 5);</span>
-<span class='doccomment'>///     0</span>
-<span class='doccomment'>/// }</span>
-<span class='doccomment'>/// # fn main() {</span>
-<span class='doccomment'>/// # let _error_code = f();</span>
-<span class='doccomment'>/// # }</span>
-<span class='doccomment'>/// ```</span>
-<span class='attribute'>#[<span class='ident'>macro_export</span>]</span>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>ffi_try</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>result</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {
         <span class='kw'>match</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>result</span> {
@@ -135,6 +153,61 @@
                 <span class='kw'>return</span> <span class='ident'>error</span>.<span class='ident'>into</span>()
             },
         }
+    }
+}
+
+<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>ffi_ptr_try</span> {
+    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>result</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>out</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {
+        <span class='kw'>match</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>result</span> {
+            <span class='prelude-val'>Ok</span>(<span class='ident'>value</span>)  <span class='op'>=&gt;</span> <span class='ident'>value</span>,
+            <span class='prelude-val'>Err</span>(<span class='ident'>error</span>) <span class='op'>=&gt;</span> {
+                <span class='kw'>let</span> <span class='ident'>decorator</span> <span class='op'>=</span> ::<span class='ident'>std</span>::<span class='ident'>iter</span>::<span class='ident'>repeat</span>(<span class='string'>&#39;-&#39;</span>).<span class='ident'>take</span>(<span class='number'>50</span>).<span class='ident'>collect</span>::<span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>();
+                <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;\n\n {}\n| {:?}\n {}\n\n&quot;</span>, <span class='ident'>decorator</span>, <span class='ident'>error</span>, <span class='ident'>decorator</span>);
+                <span class='kw'>unsafe</span>{ ::<span class='ident'>std</span>::<span class='ident'>ptr</span>::<span class='ident'>write</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>out</span>, <span class='ident'>error</span>.<span class='ident'>into</span>()) };
+                <span class='kw'>return</span> ::<span class='ident'>std</span>::<span class='ident'>ptr</span>::<span class='ident'>null</span>();
+            },
+        }
+    }
+}
+
+
+<span class='doccomment'>/// This macro is intended to be used in all cases where we get an Err out of Result&lt;T, U&gt; and want</span>
+<span class='doccomment'>/// to package it into `safe_ffi::errors::FfiError::SpecificParseError(String)`. This is</span>
+<span class='doccomment'>/// useful because there may be miscellaneous erros while parsing through a valid JSON due to JSON</span>
+<span class='doccomment'>/// not conforming to certain mandatory requirements. This can then be communicated back to the</span>
+<span class='doccomment'>/// JSON sending client.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// #Examples</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// ```</span>
+<span class='doccomment'>/// # #[macro_use] extern crate safe_ffi;</span>
+<span class='doccomment'>/// #[derive(Debug)]</span>
+<span class='doccomment'>/// enum SomeSpecialError {</span>
+<span class='doccomment'>///     Zero,</span>
+<span class='doccomment'>///     One,</span>
+<span class='doccomment'>/// }</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// fn f() -&gt; Result&lt;String, SomeSpecialError&gt; {</span>
+<span class='doccomment'>///     Err(SomeSpecialError::One)</span>
+<span class='doccomment'>/// }</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// fn g() -&gt; Result&lt;(), safe_ffi::errors::FfiError&gt; {</span>
+<span class='doccomment'>///     let _module = try!(parse_result!(f(), &quot;&quot;));</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>///     Ok(())</span>
+<span class='doccomment'>/// }</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// fn main() {</span>
+<span class='doccomment'>///     if let Err(err) = g() {</span>
+<span class='doccomment'>///         println!(&quot;{:?}&quot;, err);</span>
+<span class='doccomment'>///     }</span>
+<span class='doccomment'>/// }</span>
+<span class='doccomment'>/// ```</span>
+<span class='attribute'>#[<span class='ident'>macro_export</span>]</span>
+<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>parse_result</span> {
+    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>output</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>err_statement</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {
+        <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>output</span>.<span class='ident'>map_err</span>(<span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>crate</span>::<span class='ident'>errors</span>::<span class='ident'>FfiError</span>::<span class='ident'>SpecificParseError</span>(
+            <span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{} {:?}&quot;</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>err_statement</span>.<span class='ident'>to_string</span>(), <span class='ident'>e</span>)))
     }
 }
 </pre>
@@ -197,6 +270,6 @@
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script defer src="../../search-index.js"></script>
 </body>
 </html>
