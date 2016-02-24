@@ -27,3 +27,58 @@ macro_rules! ffi_try {
         }
     }
 }
+
+macro_rules! ffi_ptr_try {
+    ($result:expr, $out:expr) => {
+        match $result {
+            Ok(value)  => value,
+            Err(error) => {
+                let decorator = ::std::iter::repeat('-').take(50).collect::<String>();
+                println!("\n\n {}\n| {:?}\n {}\n\n", decorator, error, decorator);
+                unsafe{ ::std::ptr::write($out, error.into()) };
+                return ::std::ptr::null();
+            },
+        }
+    }
+}
+
+
+/// This macro is intended to be used in all cases where we get an Err out of Result<T, U> and want
+/// to package it into `safe_ffi::errors::FfiError::SpecificParseError(String)`. This is
+/// useful because there may be miscellaneous erros while parsing through a valid JSON due to JSON
+/// not conforming to certain mandatory requirements. This can then be communicated back to the
+/// JSON sending client.
+///
+/// #Examples
+///
+/// ```
+/// # #[macro_use] extern crate safe_ffi;
+/// #[derive(Debug)]
+/// enum SomeSpecialError {
+///     Zero,
+///     One,
+/// }
+///
+/// fn f() -> Result<String, SomeSpecialError> {
+///     Err(SomeSpecialError::One)
+/// }
+///
+/// fn g() -> Result<(), safe_ffi::errors::FfiError> {
+///     let _module = try!(parse_result!(f(), ""));
+///
+///     Ok(())
+/// }
+///
+/// fn main() {
+///     if let Err(err) = g() {
+///         println!("{:?}", err);
+///     }
+/// }
+/// ```
+#[macro_export]
+macro_rules! parse_result {
+    ($output:expr, $err_statement:expr) => {
+        $output.map_err(|e| $crate::errors::FfiError::SpecificParseError(
+            format!("{} {:?}", $err_statement.to_string(), e)))
+    }
+}

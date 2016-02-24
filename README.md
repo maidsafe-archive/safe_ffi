@@ -36,6 +36,4 @@ cargo test
 
 ## Todo Items
 
-### [0.0.1]
-- [X] [MAID-1321](https://maidsafe.atlassian.net/browse/MAID-1321) safe_ffi - Make reading for file relative to service home dir
-- [X] [MAID-1322](https://maidsafe.atlassian.net/browse/MAID-1322) safe_ffi - changes according to other crates and update test cases
+- [ ] Expand scope of test cases
