@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/maidsafe_utilities-0.2.0/src/serialisation.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/maidsafe_utilities-0.2.1/src/serialisation.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>serialisation.rs.html -- source</title>
@@ -111,6 +111,10 @@
 <span id="68">68</span>
 <span id="69">69</span>
 <span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -132,15 +136,25 @@
 <span class='kw'>use</span> <span class='ident'>cbor</span>::{<span class='ident'>Encoder</span>, <span class='ident'>Decoder</span>};
 <span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::{<span class='ident'>Encodable</span>, <span class='ident'>Decodable</span>};
 
-<span class='doccomment'>/// Wrapper for Serialisation Errors. This is present because cbor code paths don&#39;t always return a</span>
-<span class='doccomment'>/// Result - they return an Option too.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>SerialisationError</span> {
-    <span class='doccomment'>/// Encapsulated Cbor Error</span>
-    <span class='ident'>CborError</span>(::<span class='ident'>cbor</span>::<span class='ident'>CborError</span>),
-    <span class='doccomment'>/// To convert Option to a Result when deserialisation is unsuccessful and returns an</span>
-    <span class='doccomment'>/// `Option::None`</span>
-    <span class='ident'>UnsuccessfulDecode</span>,
+<span class='macro'>quick_error</span><span class='macro'>!</span> {
+    <span class='doccomment'>/// Wrapper for Serialisation Errors. This is present because cbor code paths don&#39;t always return a</span>
+    <span class='doccomment'>/// Result - they return an Option too.</span>
+    <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
+    <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>SerialisationError</span> {
+        <span class='doccomment'>/// Encapsulated Cbor Error</span>
+        <span class='ident'>CborError</span>(<span class='ident'>err</span>: ::<span class='ident'>cbor</span>::<span class='ident'>CborError</span>) {
+            <span class='ident'>description</span>(<span class='string'>&quot;Cbor error&quot;</span>)
+            <span class='ident'>display</span>(<span class='string'>&quot;Cbor error: {}&quot;</span>, <span class='ident'>err</span>)
+            <span class='ident'>cause</span>(<span class='ident'>err</span>)
+            <span class='ident'>from</span>()
+        }
+        <span class='doccomment'>/// To convert Option to a Result when deserialisation is unsuccessful and returns an</span>
+        <span class='doccomment'>/// `Option::None`</span>
+        <span class='ident'>UnsuccessfulDecode</span> {
+            <span class='ident'>description</span>(<span class='string'>&quot;Unsuccessful decode.&quot;</span>)
+            <span class='ident'>display</span>(<span class='string'>&quot;Unsuccessful decode. `deserialise` returned `None`&quot;</span>)
+        }
+    }
 }
 
 <span class='doccomment'>/// Function to serialise an Encodable type</span>
@@ -158,12 +172,6 @@
 {
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>decoder</span> <span class='op'>=</span> <span class='ident'>Decoder</span>::<span class='ident'>from_bytes</span>(<span class='ident'>data</span>);
     <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>decoder</span>.<span class='ident'>decode</span>().<span class='ident'>next</span>().<span class='ident'>ok_or</span>(<span class='ident'>SerialisationError</span>::<span class='ident'>UnsuccessfulDecode</span>))))
-}
-
-<span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span>::<span class='ident'>cbor</span>::<span class='ident'>CborError</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>SerialisationError</span> {
-    <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>orig_error</span>: ::<span class='ident'>cbor</span>::<span class='ident'>CborError</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
-        <span class='ident'>SerialisationError</span>::<span class='ident'>CborError</span>(<span class='ident'>orig_error</span>)
-    }
 }
 
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>

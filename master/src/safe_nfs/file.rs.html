@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_nfs-0.6.0/src/file.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_nfs-0.6.1/src/file.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>file.rs.html -- source</title>
@@ -166,7 +166,7 @@
 <span class='kw'>use</span> <span class='ident'>errors</span>::<span class='ident'>NfsError</span>;
 <span class='kw'>use</span> <span class='ident'>metadata</span>::<span class='ident'>file_metadata</span>::<span class='ident'>FileMetadata</span>;
 <span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>utility</span>;
-<span class='kw'>use</span> <span class='ident'>self_encryption</span>::<span class='ident'>datamap</span>::<span class='ident'>DataMap</span>;
+<span class='kw'>use</span> <span class='ident'>self_encryption</span>::<span class='ident'>DataMap</span>;
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
 
 <span class='doccomment'>/// Representation of a File to be put into the network. Could be text, music, video etc any kind</span>
@@ -231,7 +231,7 @@
     <span class='kw'>use</span> <span class='ident'>super</span>::<span class='op'>*</span>;
     <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::{<span class='ident'>serialise</span>, <span class='ident'>deserialise</span>};
     <span class='kw'>use</span> <span class='ident'>metadata</span>::<span class='ident'>file_metadata</span>::<span class='ident'>FileMetadata</span>;
-    <span class='kw'>use</span> <span class='ident'>self_encryption</span>::<span class='ident'>datamap</span>::<span class='ident'>DataMap</span>;
+    <span class='kw'>use</span> <span class='ident'>self_encryption</span>::<span class='ident'>DataMap</span>;
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>serialise_deserialise</span>() {

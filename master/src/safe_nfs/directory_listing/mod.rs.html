@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_nfs-0.6.0/src/directory_listing/mod.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_nfs-0.6.1/src/directory_listing/mod.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>mod.rs.html -- source</title>
@@ -399,7 +399,6 @@
 <span id="356">356</span>
 <span id="357">357</span>
 <span id="358">358</span>
-<span id="359">359</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -431,8 +430,7 @@
 <span class='kw'>use</span> <span class='ident'>metadata</span>::<span class='ident'>directory_metadata</span>::<span class='ident'>DirectoryMetadata</span>;
 <span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>client</span>::<span class='ident'>Client</span>;
 <span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>SelfEncryptionStorage</span>;
-<span class='kw'>use</span> <span class='ident'>self_encryption</span>::<span class='ident'>datamap</span>::<span class='ident'>DataMap</span>;
-<span class='kw'>use</span> <span class='ident'>self_encryption</span>::<span class='ident'>SelfEncryptor</span>;
+<span class='kw'>use</span> <span class='ident'>self_encryption</span>::{<span class='ident'>DataMap</span>, <span class='ident'>SelfEncryptor</span>};
 
 <span class='doccomment'>/// DirectoryListing is the representation of a deserialised Directory in the network</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Ord</span>, <span class='ident'>Clone</span>)]</span>
@@ -631,7 +629,7 @@
     <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::{<span class='ident'>serialise</span>, <span class='ident'>deserialise</span>};
     <span class='kw'>use</span> <span class='ident'>metadata</span>::<span class='ident'>file_metadata</span>::<span class='ident'>FileMetadata</span>;
     <span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>test_utils</span>;
-    <span class='kw'>use</span> <span class='ident'>self_encryption</span>::<span class='ident'>datamap</span>::<span class='ident'>DataMap</span>;
+    <span class='kw'>use</span> <span class='ident'>self_encryption</span>::<span class='ident'>DataMap</span>;
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>serialise_and_deserialise_directory_listing</span>() {

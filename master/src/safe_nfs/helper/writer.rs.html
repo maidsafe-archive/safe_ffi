@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_nfs-0.6.0/src/helper/writer.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_nfs-0.6.1/src/helper/writer.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>writer.rs.html -- source</title>
@@ -136,7 +136,6 @@
 <span id="93">93</span>
 <span id="94">94</span>
 <span id="95">95</span>
-<span id="96">96</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -162,8 +161,7 @@
 <span class='kw'>use</span> <span class='ident'>file</span>::<span class='ident'>File</span>;
 <span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>client</span>::<span class='ident'>Client</span>;
 <span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>SelfEncryptionStorage</span>;
-<span class='kw'>use</span> <span class='ident'>self_encryption</span>::<span class='ident'>datamap</span>::<span class='ident'>DataMap</span>;
-<span class='kw'>use</span> <span class='ident'>self_encryption</span>::<span class='ident'>SelfEncryptor</span>;
+<span class='kw'>use</span> <span class='ident'>self_encryption</span>::{<span class='ident'>DataMap</span>, <span class='ident'>SelfEncryptor</span>};
 
 <span class='doccomment'>/// Mode of the writter</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Mode</span> {
@@ -213,7 +211,7 @@
     <span class='doccomment'>/// Returns the update DirectoryListing which owns the file and also the updated</span>
     <span class='doccomment'>/// DirectoryListing of the file&#39;s parent</span>
     <span class='doccomment'>/// Returns (files&#39;s parent_directory, Option&lt;file&#39;s parent_directory&#39;s parent&gt;)</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>close</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(<span class='ident'>DirectoryListing</span>, <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>DirectoryListing</span><span class='op'>&gt;</span>), <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>close</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(<span class='ident'>DirectoryListing</span>, <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>DirectoryListing</span><span class='op'>&gt;</span>), <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>file</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>file</span>;
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>directory</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>parent_directory</span>;
         <span class='kw'>let</span> <span class='ident'>size</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>self_encryptor</span>.<span class='ident'>len</span>();

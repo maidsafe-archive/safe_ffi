@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/self_encryption-0.2.5/src/encryption.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/self_encryption-0.2.6/src/encryption.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>encryption.rs.html -- source</title>
@@ -127,23 +127,22 @@
 <span class='comment'>// Please review the Licences for the specific language governing permissions and limitations</span>
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
-<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>sodiumoxide</span>;
-
-<span class='comment'>/* use self::rand::{ Rng, OsRng }; */</span>
 <span class='comment'>// TODO(dirvine) Look at aessafe 256X8 cbc it should be very much faster  :01/03/2015</span>
+
+<span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>secretbox</span>::{<span class='self'>self</span>, <span class='ident'>KEYBYTES</span>, <span class='ident'>NONCEBYTES</span>};
 
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>secretbox</span>::<span class='ident'>Key</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>secretbox</span>::<span class='ident'>Nonce</span> <span class='kw'>as</span> <span class='ident'>Iv</span>;
 
-<span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>KEY_SIZE</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>secretbox</span>::<span class='ident'>KEYBYTES</span>;
-<span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>IV_SIZE</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>secretbox</span>::<span class='ident'>NONCEBYTES</span>;
+<span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>KEY_SIZE</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='ident'>KEYBYTES</span>;
+<span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>IV_SIZE</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='ident'>NONCEBYTES</span>;
 
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>encrypt</span>(<span class='ident'>data</span>: <span class='kw-2'>&amp;</span>[<span class='ident'>u8</span>], <span class='ident'>key</span>: <span class='kw-2'>&amp;</span><span class='ident'>Key</span>, <span class='ident'>iv</span>: <span class='kw-2'>&amp;</span><span class='ident'>Iv</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span> {
-    <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>secretbox</span>::<span class='ident'>seal</span>(<span class='ident'>data</span>, <span class='ident'>iv</span>, <span class='ident'>key</span>)
+    <span class='ident'>secretbox</span>::<span class='ident'>seal</span>(<span class='ident'>data</span>, <span class='ident'>iv</span>, <span class='ident'>key</span>)
 }
 
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>decrypt</span>(<span class='ident'>encrypted_data</span>: <span class='kw-2'>&amp;</span>[<span class='ident'>u8</span>], <span class='ident'>key</span>: <span class='kw-2'>&amp;</span><span class='ident'>Key</span>, <span class='ident'>iv</span>: <span class='kw-2'>&amp;</span><span class='ident'>Iv</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>, ()<span class='op'>&gt;</span> {
-    <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>secretbox</span>::<span class='ident'>open</span>(<span class='ident'>encrypted_data</span>, <span class='ident'>iv</span>, <span class='ident'>key</span>)
+    <span class='ident'>secretbox</span>::<span class='ident'>open</span>(<span class='ident'>encrypted_data</span>, <span class='ident'>iv</span>, <span class='ident'>key</span>)
 }
 
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
@@ -154,16 +153,17 @@
     <span class='kw'>use</span> <span class='ident'>super</span>::<span class='op'>*</span>;
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>test_hash_sha_512</span>() {
+    <span class='kw'>fn</span> <span class='ident'>hash_sha512</span>() {
         <span class='kw'>let</span> <span class='ident'>input</span> <span class='op'>=</span> [<span class='string'>&#39;a&#39;</span> <span class='kw'>as</span> <span class='ident'>u8</span>, <span class='string'>&#39;b&#39;</span> <span class='kw'>as</span> <span class='ident'>u8</span>, <span class='string'>&#39;c&#39;</span> <span class='kw'>as</span> <span class='ident'>u8</span>];
         <span class='kw'>let</span> <span class='ident'>sha512</span>::<span class='ident'>Digest</span>(<span class='ident'>name</span>) <span class='op'>=</span> <span class='ident'>sha512</span>::<span class='ident'>hash</span>(<span class='kw-2'>&amp;</span><span class='ident'>input</span>);
         <span class='kw'>let</span> <span class='ident'>hex</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span><span class='ident'>name</span>.<span class='ident'>to_vec</span>()[..].<span class='ident'>to_hex</span>();
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>hex</span>, <span class='string'>&quot;ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a\
-                         2192992a274fc1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f&quot;</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>hex</span>,
+                   <span class='string'>&quot;ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a2192992a274fc\
+                    1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f&quot;</span>);
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>test_salsa20poly1305</span>() {
+    <span class='kw'>fn</span> <span class='ident'>salsa20poly1305</span>() {
         <span class='kw'>let</span> <span class='ident'>message</span> <span class='op'>=</span> <span class='string'>&quot;Hello World!&quot;</span>;
 
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>key</span> <span class='op'>=</span> [<span class='number'>0u8</span>; <span class='ident'>KEY_SIZE</span>];
@@ -173,7 +173,7 @@
         <span class='ident'>randombytes_into</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>iv</span>);
 
         <span class='kw'>let</span> <span class='ident'>encrypted_data</span> <span class='op'>=</span> <span class='ident'>encrypt</span>(<span class='ident'>message</span>.<span class='ident'>as_bytes</span>(), <span class='kw-2'>&amp;</span><span class='ident'>Key</span>(<span class='ident'>key</span>), <span class='kw-2'>&amp;</span><span class='ident'>Iv</span>(<span class='ident'>iv</span>));
-        <span class='kw'>let</span> <span class='ident'>decrypted_data</span> <span class='op'>=</span> <span class='ident'>decrypt</span>(<span class='kw-2'>&amp;</span><span class='ident'>encrypted_data</span>[..], <span class='kw-2'>&amp;</span><span class='ident'>Key</span>(<span class='ident'>key</span>), <span class='kw-2'>&amp;</span><span class='ident'>Iv</span>(<span class='ident'>iv</span>)).<span class='ident'>unwrap</span>();
+        <span class='kw'>let</span> <span class='ident'>decrypted_data</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>decrypt</span>(<span class='kw-2'>&amp;</span><span class='ident'>encrypted_data</span>[..], <span class='kw-2'>&amp;</span><span class='ident'>Key</span>(<span class='ident'>key</span>), <span class='kw-2'>&amp;</span><span class='ident'>Iv</span>(<span class='ident'>iv</span>)));
 
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>message</span>.<span class='ident'>as_bytes</span>() <span class='op'>==</span> <span class='kw-2'>&amp;</span><span class='ident'>decrypted_data</span>[..]);
     }
