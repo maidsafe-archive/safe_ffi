@@ -239,7 +239,7 @@ mod test {
        // Uploading in smaller chunks
        let file_size = 358415;
        let batch_size = 100;
-       let mut i =0;
+       let mut i = 0;
        while i < file_size {
            i += batch_size;
            let content = FileContentParams {
