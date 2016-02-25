@@ -228,13 +228,41 @@ mod test {
                                   "File not found");
         let file_size = file.get_metadata().get_size();
         assert!(file_size > 0);
-        let file_helper =
-            ::safe_nfs::helper::file_helper::FileHelper::new(parameter_packet.client.clone());
+        let file_helper = FileHelper::new(parameter_packet.client.clone());
         let mut reader = file_helper.read(file);
         let size = reader.size();
         assert_eq!(size, file_size);
         let data = unwrap_result!(reader.read(0, size));
-        assert_eq!(data.to_base64(::config::get_base64_config()),
-                   METADATA_BASE64.to_string());
+        assert_eq!(data.to_base64(::config::get_base64_config()), METADATA_BASE64.to_string());
+       // Uploading in smaller chunks
+       let file_size = 8011;
+       let batch_size = 1000;
+       let mut i = 0;
+
+       while i < file_size {
+           let content = FileContentParams {
+               bytes: METADATA_BASE64.to_string(),
+               offset: Some(i), // offset: Some(i * batch_size),
+           };
+
+           let values = OptionalParams {
+               name: None,
+               content: Some(content),
+               user_metadata: None,
+           };
+
+           request = ModifyFile {
+               file_path: format!("/{}", TEST_FILE_NAME),
+               new_values: values,
+               is_path_shared: false,
+           };
+           assert!(request.execute(parameter_packet.clone()).is_ok());
+           i += batch_size;
+       }
+
+       let app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
+       let file = unwrap_option!(app_root_dir.find_file(&TEST_FILE_NAME.to_string()).map(|a| a.clone()),
+                                 "File not found");
+       assert_eq!(file.get_datamap().len(), file_size);
     }
 }
