@@ -236,5 +236,34 @@ mod test {
         let data = unwrap_result!(reader.read(0, size));
         assert_eq!(data.to_base64(::config::get_base64_config()),
                    METADATA_BASE64.to_string());
+       // Uploading in smaller chunks
+       let file_size = 358415;
+       let batch_size = 100;
+       let mut i =0;
+       while i < file_size {
+           i += batch_size;
+           let content = FileContentParams {
+               bytes: METADATA_BASE64.to_string(),
+               offset: Some(i * batch_size),
+           };
+
+           let values = OptionalParams {
+               name: None,
+               content: Some(content),
+               user_metadata: None,
+           };
+
+           request = ModifyFile {
+               file_path: format!("/{}", TEST_FILE_NAME),
+               new_values: values,
+               is_path_shared: false,
+           };
+           assert!(request.execute(parameter_packet.clone()).is_ok());
+       }
+
+       let app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
+       let file = unwrap_option!(app_root_dir.find_file(&TEST_FILE_NAME.to_string()).map(|a| a.clone()),
+                                 "File not found");
+       assert_eq!(file.get_datamap().len(), file_size);
     }
 }
