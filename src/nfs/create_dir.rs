@@ -112,8 +112,7 @@ mod test {
         assert!(request.execute(parameter_packet.clone()).is_ok());
 
         let dir_helper = DirectoryHelper::new(parameter_packet.clone().client);
-        let app_dir =
-            unwrap_result!(dir_helper.get(&unwrap_option!(parameter_packet.clone()
+        let app_dir = unwrap_result!(dir_helper.get(&unwrap_option!(parameter_packet.clone()
                                                                           .app_root_dir_key,
                                                           "")));
         assert!(app_dir.find_sub_directory(&"test_dir".to_string()).is_some());
