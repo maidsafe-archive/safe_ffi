@@ -79,7 +79,7 @@ use rustc_serialize::Decoder;
 use safe_core::client::Client;
 use rustc_serialize::Decodable;
 use libc::{c_void, int32_t, c_char};
-use std::mem::{forget, transmute};
+use std::mem;
 use rustc_serialize::base64::FromBase64;
 use maidsafe_utilities::serialisation::{serialise, deserialise};
 use maidsafe_utilities::thread::RaiiThreadJoiner;
@@ -87,7 +87,6 @@ use safe_nfs::metadata::directory_key::DirectoryKey;
 use safe_core::translated_events::NetworkEvent;
 use std::sync::mpsc;
 use std::sync::mpsc::Sender;
-use std::mem;
 
 #[macro_use]mod macros;
 
@@ -212,11 +211,13 @@ pub extern "C" fn log_in(c_keyword: *const c_char,
     0
 }
 
+/// Register an observer to network events like Connected, Disconnected etc. as provided by the
+/// core module
 #[no_mangle]
 #[allow(unsafe_code)]
 pub extern "C" fn register_network_event_observer(handle: *const c_void,
                                                   callback: extern "C" fn(i32)) {
-    let mut ffi_handle: Box<FfiHandle> = unsafe { transmute(handle) };
+    let mut ffi_handle: Box<FfiHandle> = unsafe { mem::transmute(handle) };
 
     unwrap_result!(ffi_handle.network_event_observers.lock()).push(callback);
 
@@ -230,8 +231,9 @@ pub extern "C" fn register_network_event_observer(handle: *const c_void,
         let raii_joiner = RaiiThreadJoiner::new(thread!("FfiNetworkEventObserver", move || {
             for it in rx.iter() {
                 let ref cbs = *unwrap_result!(callbacks.lock());
+                let event_ffi_val = it.into();
                 for cb in cbs {
-                    cb(it.into());
+                    cb(event_ffi_val);
                 }
             }
         }));
@@ -270,7 +272,7 @@ pub extern "C" fn get_app_dir_key(c_app_name: *const c_char,
     }
 
     let ptr = serialised_data.as_ptr();
-    ::std::mem::forget(serialised_data);
+    mem::forget(serialised_data);
 
     ptr
 }
@@ -294,7 +296,7 @@ pub extern "C" fn get_safe_drive_key(c_size: *mut int32_t,
         std::ptr::write(c_result, 0);
     }
     let ptr = serialised_data.as_ptr();
-    ::std::mem::forget(serialised_data);
+    mem::forget(serialised_data);
 
     ptr
 }
@@ -306,7 +308,7 @@ pub extern "C" fn get_safe_drive_key(c_size: *mut int32_t,
 #[no_mangle]
 #[allow(unsafe_code)]
 pub extern "C" fn drop_client(client_handle: *const c_void) {
-    let _ = unsafe { transmute::<_, Box<Arc<Mutex<Client>>>>(client_handle) };
+    let _ = unsafe { mem::transmute::<_, Box<Arc<Mutex<Client>>>>(client_handle) };
 }
 
 /// General function that can be invoked for performing a API specific operation that will return
@@ -366,7 +368,7 @@ pub extern "C" fn execute_for_content(c_payload: *const c_char,
         std::ptr::write(c_result, 0);
     };
     let ptr = data.as_ptr();
-    ::std::mem::forget(data);
+    mem::forget(data);
 
     ptr
 }
@@ -472,15 +474,15 @@ fn cast_to_ffi_handle(client: Client) -> *const c_void {
         network_event_observers: Arc::new(Mutex::new(Vec::with_capacity(3))),
     });
 
-    unsafe { transmute(ffi_handle) }
+    unsafe { mem::transmute(ffi_handle) }
 }
 
 #[allow(unsafe_code)]
 fn cast_from_ffi_handle(handle: *const c_void) -> Arc<Mutex<Client>> {
-    let ffi_handle: Box<FfiHandle> = unsafe { transmute(handle) };
+    let ffi_handle: Box<FfiHandle> = unsafe { mem::transmute(handle) };
 
     let client = ffi_handle.client.clone();
-    forget(ffi_handle);
+    mem::forget(ffi_handle);
 
     client
 }
