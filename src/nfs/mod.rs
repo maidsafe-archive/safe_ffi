@@ -96,7 +96,7 @@ fn get_action<D>(action: String, decoder: &mut D) -> Result<Box<::Action>, FfiEr
                                             modify_file::ModifyFile::decode(d)
                                         }),
                                         "")))
-        },
+        }
         "move-dir" => {
             Box::new(try!(parse_result!(decoder.read_struct_field("data", 0, |d| {
                                             move_dir::MoveDirectory::decode(d)
