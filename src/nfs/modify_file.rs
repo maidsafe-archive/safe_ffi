@@ -17,8 +17,8 @@
 
 use errors::FfiError;
 use {helper, ParameterPacket, ResponseType, Action};
-use safe_nfs::helper::file_helper::FileHelper;
-use safe_nfs::helper::writer::Mode;
+use safe_core::nfs::helper::file_helper::FileHelper;
+use safe_core::nfs::helper::writer::Mode;
 
 #[derive(RustcDecodable, Debug)]
 pub struct ModifyFile {
@@ -110,8 +110,8 @@ mod test {
     use super::{ModifyFile, FileContentParams, OptionalParams};
     use {Action, ParameterPacket, test_utils};
     use rustc_serialize::base64::ToBase64;
-    use safe_nfs::helper::directory_helper::DirectoryHelper;
-    use safe_nfs::helper::file_helper::FileHelper;
+    use safe_core::nfs::helper::directory_helper::DirectoryHelper;
+    use safe_core::nfs::helper::file_helper::FileHelper;
 
     const TEST_FILE_NAME: &'static str = "test_file.txt";
     const METADATA_BASE64: &'static str = "c2FtcGxlIHRleHQ=";

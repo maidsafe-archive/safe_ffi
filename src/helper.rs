@@ -21,13 +21,13 @@ use std::sync::{Arc, Mutex};
 use libc::c_char;
 use std::ffi::CStr;
 use errors::FfiError;
-use safe_nfs::AccessLevel;
-use safe_core::client::Client;
+use safe_core::nfs::AccessLevel;
+use safe_core::core::client::Client;
 use config::SAFE_DRIVE_DIR_NAME;
-use safe_nfs::UNVERSIONED_DIRECTORY_LISTING_TAG;
-use safe_nfs::directory_listing::DirectoryListing;
-use safe_nfs::metadata::directory_key::DirectoryKey;
-use safe_nfs::helper::directory_helper::DirectoryHelper;
+use safe_core::nfs::UNVERSIONED_DIRECTORY_LISTING_TAG;
+use safe_core::nfs::directory_listing::DirectoryListing;
+use safe_core::nfs::metadata::directory_key::DirectoryKey;
+use safe_core::nfs::helper::directory_helper::DirectoryHelper;
 
 #[allow(unsafe_code)]
 pub fn c_char_ptr_to_string(c_char_ptr: *const c_char) -> Result<String, FfiError> {

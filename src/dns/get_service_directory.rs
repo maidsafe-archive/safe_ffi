@@ -16,7 +16,7 @@
 // relating to use of the SAFE Network Software.
 
 use {ParameterPacket, ResponseType, Action};
-use safe_dns::dns_operations::DnsOperations;
+use safe_core::dns::dns_operations::DnsOperations;
 use nfs::directory_response;
 
 #[derive(RustcDecodable, Debug)]
@@ -48,9 +48,9 @@ mod test {
     use dns::register_dns::RegisterDns;
     use Action;
     use test_utils;
-    use safe_core::utility;
-    use safe_nfs::helper::directory_helper::DirectoryHelper;
-    use safe_nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG};
+    use safe_core::core::utility;
+    use safe_core::nfs::helper::directory_helper::DirectoryHelper;
+    use safe_core::nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG};
 
     const TEST_DIR_NAME: &'static str = "test_dir";
 

@@ -62,8 +62,6 @@
 
 extern crate libc;
 extern crate routing;
-extern crate safe_nfs;
-extern crate safe_dns;
 extern crate xor_name;
 extern crate safe_core;
 extern crate sodiumoxide;
@@ -76,15 +74,15 @@ use errors::FfiError;
 use rustc_serialize::json;
 use std::sync::{Arc, Mutex};
 use rustc_serialize::Decoder;
-use safe_core::client::Client;
+use safe_core::core::client::Client;
 use rustc_serialize::Decodable;
 use libc::{c_void, int32_t, c_char};
 use std::mem;
 use rustc_serialize::base64::FromBase64;
 use maidsafe_utilities::serialisation::{serialise, deserialise};
 use maidsafe_utilities::thread::RaiiThreadJoiner;
-use safe_nfs::metadata::directory_key::DirectoryKey;
-use safe_core::translated_events::NetworkEvent;
+use safe_core::nfs::metadata::directory_key::DirectoryKey;
+use safe_core::core::translated_events::NetworkEvent;
 use std::sync::mpsc;
 use std::sync::mpsc::Sender;
 
@@ -495,7 +493,7 @@ mod test {
     use std::error::Error;
 
     fn generate_random_cstring(len: usize) -> Result<::std::ffi::CString, ::errors::FfiError> {
-        let mut cstring_vec = try!(::safe_core::utility::generate_random_vector::<u8>(len));
+        let mut cstring_vec = try!(::safe_core::core::utility::generate_random_vector::<u8>(len));
         // Avoid internal nulls and ensure valid ASCII (thus valid utf8)
         for it in cstring_vec.iter_mut() {
             *it %= 128;

@@ -19,9 +19,9 @@ use std::fmt;
 
 use rustc_serialize::{json, base64};
 
-use safe_core::errors::CoreError;
-use safe_dns::errors::{DNS_ERROR_START_RANGE, DnsError};
-use safe_nfs::errors::NfsError;
+use safe_core::core::errors::CoreError;
+use safe_core::dns::errors::{DNS_ERROR_START_RANGE, DnsError};
+use safe_core::nfs::errors::NfsError;
 
 use maidsafe_utilities::serialisation::SerialisationError;
 

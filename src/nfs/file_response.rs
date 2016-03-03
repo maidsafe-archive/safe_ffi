@@ -20,11 +20,11 @@ use std::collections::BTreeMap;
 use rustc_serialize::base64::ToBase64;
 
 use errors::FfiError;
-use safe_nfs::file::File;
+use safe_core::nfs::file::File;
 use std::sync::{Arc, Mutex};
-use safe_core::client::Client;
-use safe_nfs::helper::file_helper::FileHelper;
-use safe_nfs::metadata::file_metadata::FileMetadata;
+use safe_core::core::client::Client;
+use safe_core::nfs::helper::file_helper::FileHelper;
+use safe_core::nfs::metadata::file_metadata::FileMetadata;
 
 #[derive(RustcEncodable, Debug)]
 pub struct GetFileResponse {

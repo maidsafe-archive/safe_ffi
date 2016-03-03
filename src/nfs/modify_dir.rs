@@ -17,7 +17,7 @@
 
 use errors::FfiError;
 use {helper, ParameterPacket, ResponseType, Action};
-use safe_nfs::helper::directory_helper::DirectoryHelper;
+use safe_core::nfs::helper::directory_helper::DirectoryHelper;
 
 #[derive(RustcDecodable, Debug)]
 pub struct ModifyDir {
@@ -79,8 +79,8 @@ mod test {
     use super::*;
     use {Action, ParameterPacket, test_utils};
     use rustc_serialize::base64::ToBase64;
-    use safe_nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG};
-    use safe_nfs::helper::directory_helper::DirectoryHelper;
+    use safe_core::nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG};
+    use safe_core::nfs::helper::directory_helper::DirectoryHelper;
 
     const TEST_DIR_NAME: &'static str = "test_dir";
     const METADATA_BASE64: &'static str = "c2FtcGxlIHRleHQ=";

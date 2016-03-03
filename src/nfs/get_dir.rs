@@ -53,8 +53,8 @@ impl Action for GetDir {
 #[cfg(test)]
 mod test {
     use {Action, ParameterPacket, test_utils};
-    use safe_nfs::helper::directory_helper::DirectoryHelper;
-    use safe_nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG};
+    use safe_core::nfs::helper::directory_helper::DirectoryHelper;
+    use safe_core::nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG};
 
     const TEST_DIR_NAME: &'static str = "test_dir";
 

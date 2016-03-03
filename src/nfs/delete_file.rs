@@ -17,7 +17,7 @@
 
 use errors::FfiError;
 use {helper, ParameterPacket, ResponseType, Action};
-use safe_nfs::helper::file_helper::FileHelper;
+use safe_core::nfs::helper::file_helper::FileHelper;
 
 #[derive(RustcDecodable, Debug)]
 pub struct DeleteFile {
@@ -53,8 +53,8 @@ impl Action for DeleteFile {
 mod test {
     use super::*;
     use {Action, test_utils};
-    use safe_nfs::helper::file_helper::FileHelper;
-    use safe_nfs::helper::directory_helper::DirectoryHelper;
+    use safe_core::nfs::helper::file_helper::FileHelper;
+    use safe_core::nfs::helper::directory_helper::DirectoryHelper;
 
     #[test]
     fn delete_file() {

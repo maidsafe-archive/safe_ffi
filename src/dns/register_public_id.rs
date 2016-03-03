@@ -17,7 +17,7 @@
 
 use sodiumoxide::crypto::box_;
 use routing::Data;
-use safe_dns::dns_operations::DnsOperations;
+use safe_core::dns::dns_operations::DnsOperations;
 
 #[derive(RustcDecodable, Debug)]
 pub struct RegisterPublicId {
@@ -53,7 +53,7 @@ mod test {
     use super::*;
     use Action;
     use test_utils::get_parameter_packet;
-    use safe_core::utility;
+    use safe_core::core::utility;
 
     #[test]
     fn register_public_id() {
