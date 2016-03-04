@@ -61,7 +61,6 @@
 
 
 extern crate libc;
-extern crate routing;
 extern crate xor_name;
 extern crate safe_core;
 extern crate sodiumoxide;

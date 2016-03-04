@@ -17,7 +17,6 @@
 
 use sodiumoxide::crypto::box_;
 
-use routing::Data;
 use errors::FfiError;
 use safe_core::dns::dns_operations::DnsOperations;
 
@@ -59,14 +58,13 @@ impl ::Action for RegisterDns {
                                      .clone();
         let dns_operation = try!(DnsOperations::new(params.client
                                                           .clone()));
-        let struct_data = try!(dns_operation.register_dns(self.long_name.clone(),
-                                                          &msg_public_key,
-                                                          &msg_secret_key,
-                                                          &services,
-                                                          vec![public_signing_key],
-                                                          &secret_signing_key,
-                                                          None));
-        try!(unwrap_result!(params.client.lock()).put(Data::Structured(struct_data), None));
+        try!(dns_operation.register_dns(self.long_name.clone(),
+                                        &msg_public_key,
+                                        &msg_secret_key,
+                                        &services,
+                                        vec![public_signing_key],
+                                        &secret_signing_key,
+                                        None));        
         Ok(None)
     }
 }

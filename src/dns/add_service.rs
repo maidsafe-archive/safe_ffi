@@ -17,7 +17,6 @@
 
 use errors::FfiError;
 use {helper, ParameterPacket, ResponseType, Action};
-use routing::Data;
 use safe_core::dns::dns_operations::DnsOperations;
 
 #[derive(RustcDecodable, Debug)]
@@ -51,12 +50,11 @@ impl Action for AddService {
         let signing_key = try!(unwrap_result!(params.client.lock()).get_secret_signing_key())
                               .clone();
         let dns_operation = try!(DnsOperations::new(params.client.clone()));
-        let struct_data = try!(dns_operation.add_service(&self.long_name,
-                                                         (self.service_name.clone(),
-                                                          dir_to_map.get_key().clone()),
-                                                         &signing_key,
-                                                         None));
-        try!(unwrap_result!(params.client.lock()).post(Data::Structured(struct_data), None));
+        try!(dns_operation.add_service(&self.long_name,
+                                       (self.service_name.clone(),
+                                        dir_to_map.get_key().clone()),
+                                       &signing_key,
+                                       None));        
         Ok(None)
     }
 }
