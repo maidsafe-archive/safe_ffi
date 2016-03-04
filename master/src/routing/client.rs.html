@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.7.0/src/client.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.9.0/src/client.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>client.rs.html -- source</title>
@@ -155,6 +155,51 @@
 <span id="112">112</span>
 <span id="113">113</span>
 <span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -173,6 +218,8 @@
 <span class='comment'>// Please review the Licences for the specific language governing permissions and limitations</span>
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
+<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>not</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>))]</span>
+<span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>thread</span>::<span class='ident'>RaiiThreadJoiner</span>;
 <span class='kw'>use</span> <span class='ident'>sodiumoxide</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>mpsc</span>::{<span class='ident'>Receiver</span>, <span class='ident'>Sender</span>, <span class='ident'>channel</span>};
 
@@ -197,6 +244,11 @@
     <span class='ident'>interface_result_tx</span>: <span class='ident'>Sender</span><span class='op'>&lt;</span><span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>InterfaceError</span><span class='op'>&gt;&gt;</span>,
     <span class='ident'>interface_result_rx</span>: <span class='ident'>Receiver</span><span class='op'>&lt;</span><span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>InterfaceError</span><span class='op'>&gt;&gt;</span>,
     <span class='ident'>action_sender</span>: ::<span class='ident'>types</span>::<span class='ident'>RoutingActionSender</span>,
+
+    <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>)]</span>
+    <span class='ident'>core</span>: <span class='ident'>Core</span>,
+
+    <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>not</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>))]</span>
     <span class='ident'>_raii_joiner</span>: ::<span class='ident'>maidsafe_utilities</span>::<span class='ident'>thread</span>::<span class='ident'>RaiiThreadJoiner</span>,
 }
 
@@ -211,13 +263,17 @@
     <span class='doccomment'>/// Keys will be exchanged with the `ClientAuthority` so that communication with the network is</span>
     <span class='doccomment'>/// cryptographically secure and uses group consensus. The restriction for the client name</span>
     <span class='doccomment'>/// exists to ensure that the client cannot choose its `ClientAuthority`.</span>
+    <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>not</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>))]</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>event_sender</span>: <span class='ident'>Sender</span><span class='op'>&lt;</span><span class='ident'>Event</span><span class='op'>&gt;</span>, <span class='ident'>keys</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>FullId</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Client</span>, <span class='ident'>RoutingError</span><span class='op'>&gt;</span> {
         <span class='ident'>sodiumoxide</span>::<span class='ident'>init</span>();  <span class='comment'>// enable shared global (i.e. safe to multithread now)</span>
 
         <span class='comment'>// start the handler for routing with a restriction to become a full node</span>
-        <span class='kw'>let</span> (<span class='ident'>action_sender</span>, <span class='ident'>raii_joiner</span>) <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>Core</span>::<span class='ident'>new</span>(<span class='ident'>event_sender</span>, <span class='boolval'>true</span>, <span class='ident'>keys</span>));
-
+        <span class='kw'>let</span> (<span class='ident'>action_sender</span>, <span class='kw-2'>mut</span> <span class='ident'>core</span>) <span class='op'>=</span> <span class='ident'>Core</span>::<span class='ident'>new</span>(<span class='ident'>event_sender</span>, <span class='boolval'>true</span>, <span class='ident'>keys</span>);
         <span class='kw'>let</span> (<span class='ident'>tx</span>, <span class='ident'>rx</span>) <span class='op'>=</span> <span class='ident'>channel</span>();
+
+        <span class='kw'>let</span> <span class='ident'>raii_joiner</span> <span class='op'>=</span> <span class='ident'>RaiiThreadJoiner</span>::<span class='ident'>new</span>(<span class='macro'>thread</span><span class='macro'>!</span>(<span class='string'>&quot;Client thread&quot;</span>, <span class='kw'>move</span> <span class='op'>||</span> {
+            <span class='ident'>core</span>.<span class='ident'>run</span>();
+        }));
 
         <span class='prelude-val'>Ok</span>(<span class='ident'>Client</span> {
             <span class='ident'>interface_result_tx</span>: <span class='ident'>tx</span>,
@@ -227,27 +283,61 @@
         })
     }
 
+    <span class='doccomment'>/// Create a new `Client` for unit testing.</span>
+    <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>)]</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>event_sender</span>: <span class='ident'>Sender</span><span class='op'>&lt;</span><span class='ident'>Event</span><span class='op'>&gt;</span>, <span class='ident'>keys</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>FullId</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Client</span>, <span class='ident'>RoutingError</span><span class='op'>&gt;</span> {
+        <span class='ident'>sodiumoxide</span>::<span class='ident'>init</span>();  <span class='comment'>// enable shared global (i.e. safe to multithread now)</span>
+
+        <span class='comment'>// start the handler for routing with a restriction to become a full node</span>
+        <span class='kw'>let</span> (<span class='ident'>action_sender</span>, <span class='ident'>core</span>) <span class='op'>=</span> <span class='ident'>Core</span>::<span class='ident'>new</span>(<span class='ident'>event_sender</span>, <span class='boolval'>true</span>, <span class='ident'>keys</span>);
+        <span class='kw'>let</span> (<span class='ident'>tx</span>, <span class='ident'>rx</span>) <span class='op'>=</span> <span class='ident'>channel</span>();
+
+        <span class='prelude-val'>Ok</span>(<span class='ident'>Client</span> {
+            <span class='ident'>interface_result_tx</span>: <span class='ident'>tx</span>,
+            <span class='ident'>interface_result_rx</span>: <span class='ident'>rx</span>,
+            <span class='ident'>action_sender</span>: <span class='ident'>action_sender</span>,
+            <span class='ident'>core</span>: <span class='ident'>core</span>,
+        })
+    }
+
+    <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>)]</span>
+    <span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>missing_docs</span>)]</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>poll</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
+        <span class='self'>self</span>.<span class='ident'>core</span>.<span class='ident'>poll</span>()
+    }
+
     <span class='doccomment'>/// Send a Get message with a DataRequest to an Authority, signed with given keys.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>send_get_request</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>,
                             <span class='ident'>dst</span>: <span class='ident'>Authority</span>,
                             <span class='ident'>data_request</span>: <span class='ident'>DataRequest</span>)
-                            <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>send_action</span>(<span class='ident'>RequestContent</span>::<span class='ident'>Get</span>(<span class='ident'>data_request</span>, <span class='ident'>MessageId</span>::<span class='ident'>new</span>()), <span class='ident'>dst</span>)
+                            <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MessageId</span>, <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>message_id</span> <span class='op'>=</span> <span class='ident'>MessageId</span>::<span class='ident'>new</span>();
+        <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>send_action</span>(<span class='ident'>RequestContent</span>::<span class='ident'>Get</span>(<span class='ident'>data_request</span>, <span class='ident'>message_id</span>), <span class='ident'>dst</span>));
+        <span class='prelude-val'>Ok</span>(<span class='ident'>message_id</span>)
     }
 
     <span class='doccomment'>/// Add something to the network</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>send_put_request</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dst</span>: <span class='ident'>Authority</span>, <span class='ident'>data</span>: <span class='ident'>Data</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>send_action</span>(<span class='ident'>RequestContent</span>::<span class='ident'>Put</span>(<span class='ident'>data</span>, <span class='ident'>MessageId</span>::<span class='ident'>new</span>()), <span class='ident'>dst</span>)
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>send_put_request</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dst</span>: <span class='ident'>Authority</span>, <span class='ident'>data</span>: <span class='ident'>Data</span>)
+        <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MessageId</span>, <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>message_id</span> <span class='op'>=</span> <span class='ident'>MessageId</span>::<span class='ident'>new</span>();
+        <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>send_action</span>(<span class='ident'>RequestContent</span>::<span class='ident'>Put</span>(<span class='ident'>data</span>, <span class='ident'>message_id</span>), <span class='ident'>dst</span>));
+        <span class='prelude-val'>Ok</span>(<span class='ident'>message_id</span>)
     }
 
     <span class='doccomment'>/// Change something already on the network</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>send_post_request</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dst</span>: <span class='ident'>Authority</span>, <span class='ident'>data</span>: <span class='ident'>Data</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>send_action</span>(<span class='ident'>RequestContent</span>::<span class='ident'>Post</span>(<span class='ident'>data</span>, <span class='ident'>MessageId</span>::<span class='ident'>new</span>()), <span class='ident'>dst</span>)
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>send_post_request</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dst</span>: <span class='ident'>Authority</span>, <span class='ident'>data</span>: <span class='ident'>Data</span>)
+        <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MessageId</span>, <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>message_id</span> <span class='op'>=</span> <span class='ident'>MessageId</span>::<span class='ident'>new</span>();
+        <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>send_action</span>(<span class='ident'>RequestContent</span>::<span class='ident'>Post</span>(<span class='ident'>data</span>, <span class='ident'>message_id</span>), <span class='ident'>dst</span>));
+        <span class='prelude-val'>Ok</span>(<span class='ident'>message_id</span>)
     }
 
     <span class='doccomment'>/// Remove something from the network</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>send_delete_request</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dst</span>: <span class='ident'>Authority</span>, <span class='ident'>data</span>: <span class='ident'>Data</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>send_action</span>(<span class='ident'>RequestContent</span>::<span class='ident'>Delete</span>(<span class='ident'>data</span>, <span class='ident'>MessageId</span>::<span class='ident'>new</span>()), <span class='ident'>dst</span>)
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>send_delete_request</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dst</span>: <span class='ident'>Authority</span>, <span class='ident'>data</span>: <span class='ident'>Data</span>)
+        <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MessageId</span>, <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>message_id</span> <span class='op'>=</span> <span class='ident'>MessageId</span>::<span class='ident'>new</span>();
+        <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>send_action</span>(<span class='ident'>RequestContent</span>::<span class='ident'>Delete</span>(<span class='ident'>data</span>, <span class='ident'>message_id</span>), <span class='ident'>dst</span>));
+        <span class='prelude-val'>Ok</span>(<span class='ident'>message_id</span>)
     }
 
     <span class='kw'>fn</span> <span class='ident'>send_action</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>content</span>: <span class='ident'>RequestContent</span>, <span class='ident'>dst</span>: <span class='ident'>Authority</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {

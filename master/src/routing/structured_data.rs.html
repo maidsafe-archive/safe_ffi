@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.7.0/src/structured_data.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.9.0/src/structured_data.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>structured_data.rs.html -- source</title>
@@ -530,22 +530,6 @@
 <span id="487">487</span>
 <span id="488">488</span>
 <span id="489">489</span>
-<span id="490">490</span>
-<span id="491">491</span>
-<span id="492">492</span>
-<span id="493">493</span>
-<span id="494">494</span>
-<span id="495">495</span>
-<span id="496">496</span>
-<span id="497">497</span>
-<span id="498">498</span>
-<span id="499">499</span>
-<span id="500">500</span>
-<span id="501">501</span>
-<span id="502">502</span>
-<span id="503">503</span>
-<span id="504">504</span>
-<span id="505">505</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -567,6 +551,7 @@
 <span class='doccomment'>/// Maximum allowed size for a Structured Data to grow to</span>
 <span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>MAX_STRUCTURED_DATA_SIZE_IN_BYTES</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>102400</span>;
 
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>::{<span class='self'>self</span>, <span class='ident'>Debug</span>, <span class='ident'>Formatter</span>};
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
 
 <span class='doccomment'>/// Mutable structured data.</span>
@@ -585,7 +570,6 @@
     <span class='ident'>current_owner_keys</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span>::<span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>sign</span>::<span class='ident'>PublicKey</span><span class='op'>&gt;</span>,
     <span class='ident'>previous_owner_signatures</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span>::<span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>sign</span>::<span class='ident'>Signature</span><span class='op'>&gt;</span>,
 }
-
 
 <span class='kw'>impl</span> <span class='ident'>StructuredData</span> {
     <span class='doccomment'>/// Creates a new `StructuredData` signed with `signing_key`.</span>
@@ -795,52 +779,36 @@
     }
 }
 
-<span class='kw'>impl</span> ::<span class='ident'>std</span>::<span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>StructuredData</span> {
-    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> ::<span class='ident'>std</span>::<span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), ::<span class='ident'>std</span>::<span class='ident'>fmt</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>,
-                    <span class='string'>&quot; type_tag: {:?} , name: {:?} , version: {:?} , data: {:?}&quot;</span>,
-                    <span class='self'>self</span>.<span class='ident'>type_tag</span>,
-                    <span class='self'>self</span>.<span class='ident'>name</span>(),
-                    <span class='self'>self</span>.<span class='ident'>version</span>,
-                    ::<span class='ident'>utils</span>::<span class='ident'>format_binary_array</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>data</span>[..])));
-
-        <span class='kw'>let</span> <span class='ident'>prev_owner_keys</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>previous_owner_keys</span>
-                                               .<span class='ident'>iter</span>()
-                                               .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>pub_key</span><span class='op'>|</span> {
-                                                   ::<span class='ident'>utils</span>::<span class='ident'>format_binary_array</span>(<span class='kw-2'>&amp;</span><span class='ident'>pub_key</span>.<span class='number'>0</span>)
-                                               })
-                                               .<span class='ident'>collect</span>();
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot; , previous_owner_keys : (&quot;</span>));
-        <span class='kw'>for</span> <span class='ident'>itr</span> <span class='kw'>in</span> <span class='kw-2'>&amp;</span><span class='ident'>prev_owner_keys</span> {
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;{:?} &quot;</span>, <span class='ident'>itr</span>));
-        }
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;)&quot;</span>));
-
+<span class='kw'>impl</span> <span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>StructuredData</span> {
+    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
+        <span class='kw'>let</span> <span class='ident'>previous_owner_keys</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>previous_owner_keys</span>
+                                                   .<span class='ident'>iter</span>()
+                                                   .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>pub_key</span><span class='op'>|</span> {
+                                                       ::<span class='ident'>utils</span>::<span class='ident'>format_binary_array</span>(<span class='kw-2'>&amp;</span><span class='ident'>pub_key</span>.<span class='number'>0</span>)
+                                                   })
+                                                   .<span class='ident'>collect</span>();
         <span class='kw'>let</span> <span class='ident'>current_owner_keys</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>current_owner_keys</span>
                                                   .<span class='ident'>iter</span>()
                                                   .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>pub_key</span><span class='op'>|</span> {
                                                       ::<span class='ident'>utils</span>::<span class='ident'>format_binary_array</span>(<span class='kw-2'>&amp;</span><span class='ident'>pub_key</span>.<span class='number'>0</span>)
                                                   })
                                                   .<span class='ident'>collect</span>();
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot; , current_owner_keys : (&quot;</span>));
-        <span class='kw'>for</span> <span class='ident'>itr</span> <span class='kw'>in</span> <span class='kw-2'>&amp;</span><span class='ident'>current_owner_keys</span> {
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;{:?} &quot;</span>, <span class='ident'>itr</span>));
-        }
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;) &quot;</span>));
-
-        <span class='kw'>let</span> <span class='ident'>prev_owner_signatures</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span> <span class='op'>=</span>
+        <span class='kw'>let</span> <span class='ident'>previous_owner_signatures</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span> <span class='op'>=</span>
             <span class='self'>self</span>.<span class='ident'>previous_owner_signatures</span>
                 .<span class='ident'>iter</span>()
                 .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>signature</span><span class='op'>|</span> ::<span class='ident'>utils</span>::<span class='ident'>format_binary_array</span>(<span class='kw-2'>&amp;</span><span class='ident'>signature</span>.<span class='number'>0</span>[..]))
                 .<span class='ident'>collect</span>();
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot; , prev_owner_signatures : (&quot;</span>));
-        <span class='kw'>for</span> <span class='ident'>itr</span> <span class='kw'>in</span> <span class='kw-2'>&amp;</span><span class='ident'>prev_owner_signatures</span> {
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;{:?} &quot;</span>, <span class='ident'>itr</span>));
-        }
-        <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;) &quot;</span>)
+        <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>,
+               <span class='string'>&quot;StructuredData {{ type_tag: {}, name: {}, data: {}, previous_owner_keys: {:?}, version: {}, current_owner_keys: {:?}, previous_owner_signatures: {:?} }}&quot;</span>,
+               <span class='self'>self</span>.<span class='ident'>type_tag</span>,
+               <span class='self'>self</span>.<span class='ident'>name</span>(),
+               ::<span class='ident'>utils</span>::<span class='ident'>format_binary_array</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>data</span>[..]),
+               <span class='ident'>previous_owner_keys</span>,
+               <span class='self'>self</span>.<span class='ident'>version</span>,
+               <span class='ident'>current_owner_keys</span>,
+               <span class='ident'>previous_owner_signatures</span>)
     }
 }
-
 
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
 <span class='kw'>mod</span> <span class='ident'>test</span> {

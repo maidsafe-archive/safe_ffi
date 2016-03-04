@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.7.0/src/data.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.9.0/src/data.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>data.rs.html -- source</title>
@@ -234,7 +234,7 @@
 <span class='comment'>// Please review the Licences for the specific language governing permissions and limitations</span>
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>;
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>::{<span class='self'>self</span>, <span class='ident'>Debug</span>, <span class='ident'>Formatter</span>};
 <span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::{<span class='ident'>Decoder</span>, <span class='ident'>Encodable</span>, <span class='ident'>Encoder</span>};
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>structured_data</span>::<span class='ident'>StructuredData</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>immutable_data</span>::{<span class='ident'>ImmutableData</span>, <span class='ident'>ImmutableDataType</span>};
@@ -256,18 +256,18 @@
     <span class='doccomment'>/// Return data name.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>name</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>XorName</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
-            <span class='ident'>Data</span>::<span class='ident'>Structured</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>name</span>(),
-            <span class='ident'>Data</span>::<span class='ident'>Immutable</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>name</span>(),
-            <span class='ident'>Data</span>::<span class='ident'>Plain</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>name</span>(),
+            <span class='ident'>Data</span>::<span class='ident'>Structured</span>(<span class='kw-2'>ref</span> <span class='ident'>data</span>) <span class='op'>=&gt;</span> <span class='ident'>data</span>.<span class='ident'>name</span>(),
+            <span class='ident'>Data</span>::<span class='ident'>Immutable</span>(<span class='kw-2'>ref</span> <span class='ident'>data</span>) <span class='op'>=&gt;</span> <span class='ident'>data</span>.<span class='ident'>name</span>(),
+            <span class='ident'>Data</span>::<span class='ident'>Plain</span>(<span class='kw-2'>ref</span> <span class='ident'>data</span>) <span class='op'>=&gt;</span> <span class='ident'>data</span>.<span class='ident'>name</span>(),
         }
     }
 
     <span class='doccomment'>/// Return data size.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>payload_size</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
-            <span class='ident'>Data</span>::<span class='ident'>Structured</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>payload_size</span>(),
-            <span class='ident'>Data</span>::<span class='ident'>Immutable</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>payload_size</span>(),
-            <span class='ident'>Data</span>::<span class='ident'>Plain</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>payload_size</span>(),
+            <span class='ident'>Data</span>::<span class='ident'>Structured</span>(<span class='kw-2'>ref</span> <span class='ident'>data</span>) <span class='op'>=&gt;</span> <span class='ident'>data</span>.<span class='ident'>payload_size</span>(),
+            <span class='ident'>Data</span>::<span class='ident'>Immutable</span>(<span class='kw-2'>ref</span> <span class='ident'>data</span>) <span class='op'>=&gt;</span> <span class='ident'>data</span>.<span class='ident'>payload_size</span>(),
+            <span class='ident'>Data</span>::<span class='ident'>Plain</span>(<span class='kw-2'>ref</span> <span class='ident'>data</span>) <span class='op'>=&gt;</span> <span class='ident'>data</span>.<span class='ident'>payload_size</span>(),
         }
     }
 }
@@ -283,12 +283,12 @@
     <span class='ident'>Plain</span>(<span class='ident'>XorName</span>),
 }
 
-<span class='kw'>impl</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>Data</span> {
-    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>fmt</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span> <span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>Data</span> {
+    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
-            <span class='ident'>Data</span>::<span class='ident'>Structured</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>fmt</span>(<span class='ident'>formatter</span>),
-            <span class='ident'>Data</span>::<span class='ident'>Immutable</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>fmt</span>(<span class='ident'>formatter</span>),
-            <span class='ident'>Data</span>::<span class='ident'>Plain</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>fmt</span>(<span class='ident'>formatter</span>),
+            <span class='ident'>Data</span>::<span class='ident'>Structured</span>(<span class='kw-2'>ref</span> <span class='ident'>data</span>) <span class='op'>=&gt;</span> <span class='ident'>data</span>.<span class='ident'>fmt</span>(<span class='ident'>formatter</span>),
+            <span class='ident'>Data</span>::<span class='ident'>Immutable</span>(<span class='kw-2'>ref</span> <span class='ident'>data</span>) <span class='op'>=&gt;</span> <span class='ident'>data</span>.<span class='ident'>fmt</span>(<span class='ident'>formatter</span>),
+            <span class='ident'>Data</span>::<span class='ident'>Plain</span>(<span class='kw-2'>ref</span> <span class='ident'>data</span>) <span class='op'>=&gt;</span> <span class='ident'>data</span>.<span class='ident'>fmt</span>(<span class='ident'>formatter</span>),
         }
     }
 }

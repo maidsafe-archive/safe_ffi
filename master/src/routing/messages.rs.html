@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.7.0/src/messages.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.9.0/src/messages.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>messages.rs.html -- source</title>
@@ -624,6 +624,9 @@
 <span id="581">581</span>
 <span id="582">582</span>
 <span id="583">583</span>
+<span id="584">584</span>
+<span id="585">585</span>
+<span id="586">586</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -642,7 +645,7 @@
 <span class='comment'>// Please review the Licences for the specific language governing permissions and limitations</span>
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>;
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>::{<span class='self'>self</span>, <span class='ident'>Debug</span>, <span class='ident'>Formatter</span>};
 <span class='kw'>use</span> <span class='ident'>data</span>::{<span class='ident'>Data</span>, <span class='ident'>DataRequest</span>};
 <span class='kw'>use</span> <span class='ident'>id</span>::{<span class='ident'>FullId</span>, <span class='ident'>PublicId</span>};
 <span class='kw'>use</span> <span class='ident'>types</span>::<span class='ident'>MessageId</span>;
@@ -999,8 +1002,8 @@
     },
 }
 
-<span class='kw'>impl</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>DirectMessage</span> {
-    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>fmt</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span> <span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>DirectMessage</span> {
+    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
             <span class='ident'>DirectMessage</span>::<span class='ident'>BootstrapIdentify</span> { <span class='kw-2'>ref</span> <span class='ident'>public_id</span>, <span class='kw-2'>ref</span> <span class='ident'>current_quorum_size</span> } <span class='op'>=&gt;</span> {
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>,
@@ -1022,8 +1025,8 @@
     }
 }
 
-<span class='kw'>impl</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>HopMessage</span> {
-    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>fmt</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span> <span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>HopMessage</span> {
+    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
         <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>,
                <span class='string'>&quot;HopMessage {{ content: {:?}, name: {:?}, signature: .. }}&quot;</span>,
                <span class='self'>self</span>.<span class='ident'>content</span>,
@@ -1031,8 +1034,8 @@
     }
 }
 
-<span class='kw'>impl</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>SignedMessage</span> {
-    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>fmt</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span> <span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>SignedMessage</span> {
+    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
         <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>,
                <span class='string'>&quot;SignedMessage {{ content: {:?}, public_id: {:?}, signature: .. }}&quot;</span>,
                <span class='self'>self</span>.<span class='ident'>content</span>,
@@ -1040,8 +1043,8 @@
     }
 }
 
-<span class='kw'>impl</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>RequestContent</span> {
-    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>fmt</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span> <span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>RequestContent</span> {
+    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
             <span class='ident'>RequestContent</span>::<span class='ident'>GetNetworkName</span> { <span class='kw-2'>ref</span> <span class='ident'>current_id</span> } <span class='op'>=&gt;</span> {
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;GetNetworkName {{ {:?} }}&quot;</span>, <span class='ident'>current_id</span>)
@@ -1057,7 +1060,7 @@
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;GetPublicIdWithConnectionInfo {{ .. }}&quot;</span>)
             }
             <span class='ident'>RequestContent</span>::<span class='ident'>Refresh</span>(<span class='kw-2'>ref</span> <span class='ident'>data</span>) <span class='op'>=&gt;</span> {
-                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;Refresh({:?})&quot;</span>, <span class='ident'>utils</span>::<span class='ident'>format_binary_array</span>(<span class='ident'>data</span>))
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;Refresh({})&quot;</span>, <span class='ident'>utils</span>::<span class='ident'>format_binary_array</span>(<span class='ident'>data</span>))
             }
             <span class='ident'>RequestContent</span>::<span class='ident'>Get</span>(<span class='kw-2'>ref</span> <span class='ident'>data_request</span>, <span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span> {
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;Get({:?}, {:?})&quot;</span>, <span class='ident'>data_request</span>, <span class='ident'>message_id</span>)
@@ -1075,8 +1078,8 @@
     }
 }
 
-<span class='kw'>impl</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>ResponseContent</span> {
-    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>fmt</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span> <span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>ResponseContent</span> {
+    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
             <span class='ident'>ResponseContent</span>::<span class='ident'>GetNetworkName</span> { <span class='kw-2'>ref</span> <span class='ident'>relocated_id</span> } <span class='op'>=&gt;</span> {
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;GetNetworkName {{ {:?} }}&quot;</span>, <span class='ident'>relocated_id</span>)
@@ -1096,18 +1099,21 @@
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;GetSuccess {{ {:?}, {:?} }}&quot;</span>, <span class='ident'>data</span>, <span class='ident'>message_id</span>)
             }
             <span class='ident'>ResponseContent</span>::<span class='ident'>PutSuccess</span>(<span class='kw-2'>ref</span> <span class='ident'>digest</span>, <span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span> {
-                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;PutSuccess {{ {:?}, {:?} }}&quot;</span>, <span class='ident'>digest</span>, <span class='ident'>message_id</span>)
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>,
+                       <span class='string'>&quot;PutSuccess {{ Digest({}), {:?} }}&quot;</span>,
+                       <span class='ident'>utils</span>::<span class='ident'>format_binary_array</span>(<span class='ident'>digest</span>),
+                       <span class='ident'>message_id</span>)
             }
             <span class='ident'>ResponseContent</span>::<span class='ident'>PostSuccess</span>(<span class='kw-2'>ref</span> <span class='ident'>digest</span>, <span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span> {
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>,
-                       <span class='string'>&quot;PostSuccess {{ {:?}, {:?} }}&quot;</span>,
-                       <span class='ident'>digest</span>,
+                       <span class='string'>&quot;PostSuccess {{ Digest({}), {:?} }}&quot;</span>,
+                       <span class='ident'>utils</span>::<span class='ident'>format_binary_array</span>(<span class='ident'>digest</span>),
                        <span class='ident'>message_id</span>)
             }
             <span class='ident'>ResponseContent</span>::<span class='ident'>DeleteSuccess</span>(<span class='kw-2'>ref</span> <span class='ident'>digest</span>, <span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span> {
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>,
-                       <span class='string'>&quot;DeleteSuccess {{ {:?}, {:?} }}&quot;</span>,
-                       <span class='ident'>digest</span>,
+                       <span class='string'>&quot;DeleteSuccess {{ Digest({}), {:?} }}&quot;</span>,
+                       <span class='ident'>utils</span>::<span class='ident'>format_binary_array</span>(<span class='ident'>digest</span>),
                        <span class='ident'>message_id</span>)
             }
             <span class='ident'>ResponseContent</span>::<span class='ident'>GetFailure</span> { <span class='kw-2'>ref</span> <span class='ident'>id</span>, <span class='kw-2'>ref</span> <span class='ident'>request</span>, .. } <span class='op'>=&gt;</span> {

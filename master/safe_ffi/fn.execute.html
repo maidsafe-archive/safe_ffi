@@ -46,8 +46,8 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-2356' class='srclink' href='../src/safe_ffi/lib.rs.html#266-277' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub extern fn execute(c_payload: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*const <a class='type' href='../libc/unix/notbsd/linux/other/b64/x86_64/type.c_char.html' title='libc::unix::notbsd::linux::other::b64::x86_64::c_char'>c_char</a></a>, client_handle: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*const <a class='enum' href='../libc/enum.c_void.html' title='libc::c_void'>c_void</a></a>) -&gt; <a class='type' href='../libc/type.int32_t.html' title='libc::int32_t'>int32_t</a></pre><div class='docblock'><p>General function that can be invoked for performing a API specific operation that will return
+        </span><a id='src-2439' class='srclink' href='../src/safe_ffi/lib.rs.html#319-330' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub extern fn execute(c_payload: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*const <a class='type' href='../libc/unix/notbsd/linux/other/b64/x86_64/type.c_char.html' title='libc::unix::notbsd::linux::other::b64::x86_64::c_char'>c_char</a></a>, ffi_handle: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*const <a class='enum' href='../libc/enum.c_void.html' title='libc::c_void'>c_void</a></a>) -&gt; <a class='type' href='../libc/type.int32_t.html' title='libc::int32_t'>int32_t</a></pre><div class='docblock'><p>General function that can be invoked for performing a API specific operation that will return
 only result to indicate whether the operation was successful or not.
 This function would only perform the operation and return 0 or error code
 c_payload refers to the JSON payload that can be passed as a JSON string.

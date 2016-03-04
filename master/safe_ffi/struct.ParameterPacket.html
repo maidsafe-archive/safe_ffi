@@ -46,12 +46,12 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-2182' class='srclink' href='../src/safe_ffi/lib.rs.html#100-109' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-2184' class='srclink' href='../src/safe_ffi/lib.rs.html#102-111' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct ParameterPacket {
-    pub client: <a class='struct' href='https://doc.rust-lang.org/nightly/alloc/arc/struct.Arc.html' title='alloc::arc::Arc'>Arc</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/std/sync/mutex/struct.Mutex.html' title='std::sync::mutex::Mutex'>Mutex</a>&lt;<a class='struct' href='../safe_core/client/struct.Client.html' title='safe_core::client::Client'>Client</a>&gt;&gt;,
-    pub app_root_dir_key: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../safe_nfs/metadata/directory_key/struct.DirectoryKey.html' title='safe_nfs::metadata::directory_key::DirectoryKey'>DirectoryKey</a>&gt;,
+    pub client: <a class='struct' href='https://doc.rust-lang.org/nightly/alloc/arc/struct.Arc.html' title='alloc::arc::Arc'>Arc</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/std/sync/mutex/struct.Mutex.html' title='std::sync::mutex::Mutex'>Mutex</a>&lt;<a class='struct' href='../safe_core/core/client/struct.Client.html' title='safe_core::core::client::Client'>Client</a>&gt;&gt;,
+    pub app_root_dir_key: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../safe_core/nfs/metadata/directory_key/struct.DirectoryKey.html' title='safe_core::nfs::metadata::directory_key::DirectoryKey'>DirectoryKey</a>&gt;,
     pub safe_drive_access: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>,
-    pub safe_drive_dir_key: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../safe_nfs/metadata/directory_key/struct.DirectoryKey.html' title='safe_nfs::metadata::directory_key::DirectoryKey'>DirectoryKey</a>&gt;,
+    pub safe_drive_dir_key: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../safe_core/nfs/metadata/directory_key/struct.DirectoryKey.html' title='safe_core::nfs::metadata::directory_key::DirectoryKey'>DirectoryKey</a>&gt;,
 }</pre><div class='docblock'><p>ParameterPacket acts as a holder for the standard parameters that would be needed for performing
 operations across the modules like nfs and dns</p>
 </div><h2 class='fields'>Fields</h2>

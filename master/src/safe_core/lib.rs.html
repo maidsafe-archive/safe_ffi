@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.6.1/src/lib.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.8.0/src/lib.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>lib.rs.html -- source</title>
@@ -104,22 +104,6 @@
 <span id="61">61</span>
 <span id="62">62</span>
 <span id="63">63</span>
-<span id="64">64</span>
-<span id="65">65</span>
-<span id="66">66</span>
-<span id="67">67</span>
-<span id="68">68</span>
-<span id="69">69</span>
-<span id="70">70</span>
-<span id="71">71</span>
-<span id="72">72</span>
-<span id="73">73</span>
-<span id="74">74</span>
-<span id="75">75</span>
-<span id="76">76</span>
-<span id="77">77</span>
-<span id="78">78</span>
-<span id="79">79</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -164,6 +148,7 @@
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>cfg_attr</span>(<span class='ident'>feature</span><span class='op'>=</span><span class='string'>&quot;clippy&quot;</span>, <span class='ident'>plugin</span>(<span class='ident'>clippy</span>))]</span>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>cfg_attr</span>(<span class='ident'>feature</span><span class='op'>=</span><span class='string'>&quot;clippy&quot;</span>, <span class='ident'>deny</span>(<span class='ident'>clippy</span>, <span class='ident'>clippy_pedantic</span>))]</span>
 
+<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>time</span>;
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>rand</span>;
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>routing</span>;
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>xor_name</span>;
@@ -177,29 +162,12 @@
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>maidsafe_utilities</span>;
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>mpid_messaging</span>;
 
-<span class='doccomment'>/// Public and Private Id types</span>
-<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>id</span>;
-<span class='doccomment'>/// Safe-Core Errors</span>
-<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>errors</span>;
-<span class='doccomment'>/// Self-Authentication and Gateway Module</span>
-<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>client</span>;
-<span class='doccomment'>/// Utility functions</span>
-<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>utility</span>;
-<span class='doccomment'>/// Events filtered from set of Routing provided events, on which the Client Modules must</span>
-<span class='doccomment'>/// specifically act</span>
-<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>translated_events</span>;
-<span class='doccomment'>/// Implements the Self Encryption storage trait</span>
-<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>self_encryption_storage</span>;
-<span class='doccomment'>/// Helper functions to handle StructuredData related operations</span>
-<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>structured_data_operations</span>;
-
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>self_encryption_storage</span>::<span class='ident'>SelfEncryptionStorage</span>;
-
-<span class='doccomment'>/// All Maidsafe tagging should positive-offset from this</span>
-<span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>MAIDSAFE_TAG</span>: <span class='ident'>u64</span> <span class='op'>=</span> <span class='number'>5483_000</span>;
-<span class='doccomment'>/// All StructuredData tagging should positive-offset from this if the operation needs to go</span>
-<span class='doccomment'>/// through this safe_core crate</span>
-<span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>CLIENT_STRUCTURED_DATA_TAG</span>: <span class='ident'>u64</span> <span class='op'>=</span> <span class='number'>15000</span>;
+<span class='doccomment'>/// Core module</span>
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>core</span>;
+<span class='doccomment'>/// Nfs module;</span>
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>nfs</span>;
+<span class='doccomment'>/// Dns module;</span>
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>dns</span>;
 </pre>
 </section>
     <section id='search' class="content hidden"></section>
