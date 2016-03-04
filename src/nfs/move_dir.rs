@@ -17,9 +17,9 @@
 
 use errors::FfiError;
 use {helper, ParameterPacket, ResponseType, Action};
-use safe_nfs::helper::directory_helper::DirectoryHelper;
-use safe_nfs::directory_listing::DirectoryListing;
-use safe_nfs::errors::NfsError::DirectoryAlreadyExistsWithSameName;
+use safe_core::nfs::helper::directory_helper::DirectoryHelper;
+use safe_core::nfs::directory_listing::DirectoryListing;
+use safe_core::nfs::errors::NfsError::DirectoryAlreadyExistsWithSameName;
 
 #[derive(RustcDecodable, Debug)]
 pub struct MoveDirectory {

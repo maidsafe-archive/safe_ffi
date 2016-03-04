@@ -68,8 +68,8 @@ impl Action for GetFile {
 #[cfg(test)]
 mod test {
     use {Action, ParameterPacket, test_utils};
-    use safe_nfs::helper::file_helper::FileHelper;
-    use safe_nfs::helper::directory_helper::DirectoryHelper;
+    use safe_core::nfs::helper::file_helper::FileHelper;
+    use safe_core::nfs::helper::directory_helper::DirectoryHelper;
 
     const TEST_FILE_NAME: &'static str = "test_file.txt";
 

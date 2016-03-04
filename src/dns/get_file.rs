@@ -18,9 +18,9 @@
 use errors::FfiError;
 use rustc_serialize::json;
 use nfs::file_response::get_response;
-use safe_dns::dns_operations::DnsOperations;
+use safe_core::dns::dns_operations::DnsOperations;
 use {helper, ParameterPacket, ResponseType, Action};
-use safe_nfs::helper::directory_helper::DirectoryHelper;
+use safe_core::nfs::helper::directory_helper::DirectoryHelper;
 
 #[derive(RustcDecodable, Debug)]
 pub struct GetFile {

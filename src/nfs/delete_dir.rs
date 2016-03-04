@@ -17,7 +17,7 @@
 
 use errors::FfiError;
 use {helper, ParameterPacket, ResponseType, Action};
-use safe_nfs::helper::directory_helper::DirectoryHelper;
+use safe_core::nfs::helper::directory_helper::DirectoryHelper;
 
 #[derive(RustcDecodable, Debug)]
 pub struct DeleteDir {
@@ -58,8 +58,8 @@ impl Action for DeleteDir {
 mod test {
     use super::*;
     use {Action, test_utils};
-    use safe_nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG};
-    use safe_nfs::helper::directory_helper::DirectoryHelper;
+    use safe_core::nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG};
+    use safe_core::nfs::helper::directory_helper::DirectoryHelper;
 
     #[test]
     fn delete_dir() {

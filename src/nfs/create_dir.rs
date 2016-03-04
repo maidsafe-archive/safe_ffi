@@ -17,8 +17,8 @@
 
 use errors::FfiError;
 use {helper, ParameterPacket, ResponseType, Action};
-use safe_nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG, VERSIONED_DIRECTORY_LISTING_TAG};
-use safe_nfs::helper::directory_helper::DirectoryHelper;
+use safe_core::nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG, VERSIONED_DIRECTORY_LISTING_TAG};
+use safe_core::nfs::helper::directory_helper::DirectoryHelper;
 
 #[derive(RustcDecodable, Debug)]
 pub struct CreateDir {
@@ -84,7 +84,7 @@ impl Action for CreateDir {
 mod test {
     use super::*;
     use {Action, test_utils};
-    use safe_nfs::helper::directory_helper::DirectoryHelper;
+    use safe_core::nfs::helper::directory_helper::DirectoryHelper;
 
     #[test]
     fn create_dir() {
@@ -112,8 +112,7 @@ mod test {
         assert!(request.execute(parameter_packet.clone()).is_ok());
 
         let dir_helper = DirectoryHelper::new(parameter_packet.clone().client);
-        let app_dir =
-            unwrap_result!(dir_helper.get(&unwrap_option!(parameter_packet.clone()
+        let app_dir = unwrap_result!(dir_helper.get(&unwrap_option!(parameter_packet.clone()
                                                                           .app_root_dir_key,
                                                           "")));
         assert!(app_dir.find_sub_directory(&"test_dir".to_string()).is_some());

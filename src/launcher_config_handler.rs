@@ -18,14 +18,14 @@
 use errors::FfiError;
 use xor_name::XorName;
 use std::sync::{Arc, Mutex};
-use safe_core::client::Client;
+use safe_core::core::client::Client;
 use sodiumoxide::crypto::hash::sha512;
-use safe_nfs::helper::file_helper::FileHelper;
-use safe_nfs::helper::writer::Mode::Overwrite;
-use safe_nfs::directory_listing::DirectoryListing;
-use safe_nfs::metadata::directory_key::DirectoryKey;
-use safe_nfs::helper::directory_helper::DirectoryHelper;
-use safe_nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG};
+use safe_core::nfs::helper::file_helper::FileHelper;
+use safe_core::nfs::helper::writer::Mode::Overwrite;
+use safe_core::nfs::directory_listing::DirectoryListing;
+use safe_core::nfs::metadata::directory_key::DirectoryKey;
+use safe_core::nfs::helper::directory_helper::DirectoryHelper;
+use safe_core::nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG};
 use maidsafe_utilities::serialisation::{serialise, deserialise};
 use config::{LAUNCHER_GLOBAL_CONFIG_FILE_NAME, LAUNCHER_GLOBAL_DIRECTORY_NAME};
 

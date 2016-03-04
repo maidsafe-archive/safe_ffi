@@ -17,8 +17,8 @@
 
 use errors::FfiError;
 use {helper, ParameterPacket, ResponseType, Action};
-use safe_nfs::helper::file_helper::FileHelper;
-use safe_nfs::helper::writer::Mode;
+use safe_core::nfs::helper::file_helper::FileHelper;
+use safe_core::nfs::helper::writer::Mode;
 
 #[derive(RustcDecodable, Debug)]
 pub struct ModifyFile {
@@ -110,8 +110,8 @@ mod test {
     use super::{ModifyFile, FileContentParams, OptionalParams};
     use {Action, ParameterPacket, test_utils};
     use rustc_serialize::base64::ToBase64;
-    use safe_nfs::helper::directory_helper::DirectoryHelper;
-    use safe_nfs::helper::file_helper::FileHelper;
+    use safe_core::nfs::helper::directory_helper::DirectoryHelper;
+    use safe_core::nfs::helper::file_helper::FileHelper;
 
     const TEST_FILE_NAME: &'static str = "test_file.txt";
     const METADATA_BASE64: &'static str = "c2FtcGxlIHRleHQ=";
@@ -233,36 +233,38 @@ mod test {
         let size = reader.size();
         assert_eq!(size, file_size);
         let data = unwrap_result!(reader.read(0, size));
-        assert_eq!(data.to_base64(::config::get_base64_config()), METADATA_BASE64.to_string());
-       // Uploading in smaller chunks
-       let file_size = 8011;
-       let batch_size = 1000;
-       let mut i = 0;
+        assert_eq!(data.to_base64(::config::get_base64_config()),
+                   METADATA_BASE64.to_string());
+        // Uploading in smaller chunks
+        let file_size = 8011;
+        let batch_size = 1000;
+        let mut i = 0;
 
-       while i < file_size {
-           let content = FileContentParams {
-               bytes: METADATA_BASE64.to_string(),
-               offset: Some(i), // offset: Some(i * batch_size),
-           };
+        while i < file_size {
+            let content = FileContentParams {
+                bytes: METADATA_BASE64.to_string(),
+                offset: Some(i), // offset: Some(i * batch_size),
+            };
 
-           let values = OptionalParams {
-               name: None,
-               content: Some(content),
-               user_metadata: None,
-           };
+            let values = OptionalParams {
+                name: None,
+                content: Some(content),
+                user_metadata: None,
+            };
 
-           request = ModifyFile {
-               file_path: format!("/{}", TEST_FILE_NAME),
-               new_values: values,
-               is_path_shared: false,
-           };
-           assert!(request.execute(parameter_packet.clone()).is_ok());
-           i += batch_size;
-       }
+            request = ModifyFile {
+                file_path: format!("/{}", TEST_FILE_NAME),
+                new_values: values,
+                is_path_shared: false,
+            };
+            assert!(request.execute(parameter_packet.clone()).is_ok());
+            i += batch_size;
+        }
 
-       let app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
-       let file = unwrap_option!(app_root_dir.find_file(&TEST_FILE_NAME.to_string()).map(|a| a.clone()),
-                                 "File not found");
-       assert_eq!(file.get_datamap().len(), file_size);
+        let app_root_dir = unwrap_result!(dir_helper.get(&app_root_dir_key));
+        let file = unwrap_option!(app_root_dir.find_file(&TEST_FILE_NAME.to_string())
+                                              .map(|a| a.clone()),
+                                  "File not found");
+        assert_eq!(file.get_datamap().len(), file_size);
     }
 }

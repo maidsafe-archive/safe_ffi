@@ -19,9 +19,9 @@ use std::sync::{Arc, Mutex};
 
 use errors::FfiError;
 use ParameterPacket;
-use safe_core::utility::test_utils;
-use safe_nfs::helper::directory_helper::DirectoryHelper;
-use safe_nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG};
+use safe_core::core::utility::test_utils;
+use safe_core::nfs::helper::directory_helper::DirectoryHelper;
+use safe_core::nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG};
 
 #[allow(unused)]
 pub fn get_parameter_packet(has_safe_drive_access: bool) -> Result<ParameterPacket, FfiError> {
@@ -52,7 +52,7 @@ pub fn get_parameter_packet(has_safe_drive_access: bool) -> Result<ParameterPack
 #[allow(unused)]
 pub fn get_unregistered_parameter_packet() -> Result<ParameterPacket, FfiError> {
     let client =
-        Arc::new(Mutex::new(try!(::safe_core::client::Client::create_unregistered_client())));
+        Arc::new(Mutex::new(try!(::safe_core::core::client::Client::create_unregistered_client())));
     Ok(ParameterPacket {
         client: client,
         app_root_dir_key: None,

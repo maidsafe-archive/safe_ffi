@@ -16,7 +16,7 @@
 // relating to use of the SAFE Network Software.
 
 use rustc_serialize::json;
-use safe_dns::dns_operations::DnsOperations;
+use safe_core::dns::dns_operations::DnsOperations;
 use {ParameterPacket, ResponseType, Action};
 
 pub struct GetLongNames;

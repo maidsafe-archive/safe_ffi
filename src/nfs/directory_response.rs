@@ -17,12 +17,12 @@
 
 use errors::FfiError;
 use std::sync::{Arc, Mutex};
-use safe_core::client::Client;
-use safe_nfs::directory_listing::DirectoryListing;
-use safe_nfs::metadata::file_metadata::FileMetadata;
-use safe_nfs::metadata::directory_key::DirectoryKey;
-use safe_nfs::helper::directory_helper::DirectoryHelper;
-use safe_nfs::metadata::directory_metadata::DirectoryMetadata;
+use safe_core::core::client::Client;
+use safe_core::nfs::directory_listing::DirectoryListing;
+use safe_core::nfs::metadata::file_metadata::FileMetadata;
+use safe_core::nfs::metadata::directory_key::DirectoryKey;
+use safe_core::nfs::helper::directory_helper::DirectoryHelper;
+use safe_core::nfs::metadata::directory_metadata::DirectoryMetadata;
 
 #[derive(RustcEncodable, Debug)]
 pub struct GetDirResponse {
@@ -91,7 +91,7 @@ fn get_directory_info(dir_metadata: &DirectoryMetadata) -> DirectoryInfo {
 
     DirectoryInfo {
         name: dir_metadata.get_name().clone(),
-        is_private: *dir_key.get_access_level() == ::safe_nfs::AccessLevel::Private,
+        is_private: *dir_key.get_access_level() == ::safe_core::nfs::AccessLevel::Private,
         is_versioned: dir_key.is_versioned(),
         user_metadata: (*dir_metadata.get_user_metadata())
                            .to_base64(::config::get_base64_config()),
