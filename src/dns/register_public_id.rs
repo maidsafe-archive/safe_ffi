@@ -41,7 +41,7 @@ impl ::Action for RegisterPublicId {
                                         &services,
                                         vec![public_signing_key],
                                         &secret_signing_key,
-                                        None));        
+                                        None));
         Ok(None)
     }
 }

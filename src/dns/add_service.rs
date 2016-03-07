@@ -51,10 +51,9 @@ impl Action for AddService {
                               .clone();
         let dns_operation = try!(DnsOperations::new(params.client.clone()));
         try!(dns_operation.add_service(&self.long_name,
-                                       (self.service_name.clone(),
-                                        dir_to_map.get_key().clone()),
+                                       (self.service_name.clone(), dir_to_map.get_key().clone()),
                                        &signing_key,
-                                       None));        
+                                       None));
         Ok(None)
     }
 }
