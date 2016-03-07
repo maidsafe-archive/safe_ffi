@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.8.0/src/nfs/file.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.9.0/src/nfs/file.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>file.rs.html -- source</title>
@@ -143,6 +143,7 @@
 <span id="100">100</span>
 <span id="101">101</span>
 <span id="102">102</span>
+<span id="103">103</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -163,11 +164,12 @@
 
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>;
 
+<span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>utility</span>;
 <span class='kw'>use</span> <span class='ident'>nfs</span>::<span class='ident'>errors</span>::<span class='ident'>NfsError</span>;
 <span class='kw'>use</span> <span class='ident'>nfs</span>::<span class='ident'>metadata</span>::<span class='ident'>file_metadata</span>::<span class='ident'>FileMetadata</span>;
-<span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>utility</span>;
-<span class='kw'>use</span> <span class='ident'>self_encryption</span>::<span class='ident'>DataMap</span>;
+
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
+<span class='kw'>use</span> <span class='ident'>self_encryption</span>::<span class='ident'>DataMap</span>;
 
 <span class='doccomment'>/// Representation of a File to be put into the network. Could be text, music, video etc any kind</span>
 <span class='doccomment'>/// of file</span>

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.8.0/src/core/errors.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.9.0/src/core/errors.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>errors.rs.html -- source</title>
@@ -206,6 +206,16 @@
 <span id="163">163</span>
 <span id="164">164</span>
 <span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -225,8 +235,10 @@
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>mpsc</span>;
-<span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::<span class='ident'>SerialisationError</span>;
+
 <span class='kw'>use</span> <span class='ident'>mpid_messaging</span>;
+<span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>DataRequest</span>, <span class='ident'>Data</span>};
+<span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::<span class='ident'>SerialisationError</span>;
 
 <span class='doccomment'>/// Intended for converting Client Errors into numeric codes for propagating some error information</span>
 <span class='doccomment'>/// across FFI boundaries and specially to C.</span>
@@ -246,8 +258,6 @@
     <span class='ident'>ReceivedUnexpectedData</span>,
     <span class='doccomment'>/// No such data found in local version cache</span>
     <span class='ident'>VersionCacheMiss</span>,
-    <span class='doccomment'>/// No such data found in routing-filled cache</span>
-    <span class='ident'>RoutingMessageCacheMiss</span>,
     <span class='doccomment'>/// Cannot overwrite a root directory if it already exists</span>
     <span class='ident'>RootDirectoryAlreadyExists</span>,
     <span class='doccomment'>/// Unable to obtain generator for random data</span>
@@ -269,6 +279,10 @@
     <span class='ident'>OperationAborted</span>,
     <span class='doccomment'>/// MpidMessaging Error</span>
     <span class='ident'>MpidMessagingError</span>(<span class='ident'>mpid_messaging</span>::<span class='ident'>Error</span>),
+    <span class='doccomment'>/// Performing a GET operation failed</span>
+    <span class='ident'>GetFailure</span>(<span class='ident'>DataRequest</span>),
+    <span class='doccomment'>/// Performing a network mutating operation such as PUT/POST/DELETE failed</span>
+    <span class='ident'>MutationFailure</span>(<span class='ident'>Data</span>),
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>str</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>CoreError</span> {
@@ -316,17 +330,18 @@
             <span class='ident'>CoreError</span>::<span class='ident'>SymmetricDecipherFailure</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>3</span>,
             <span class='ident'>CoreError</span>::<span class='ident'>ReceivedUnexpectedData</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>4</span>,
             <span class='ident'>CoreError</span>::<span class='ident'>VersionCacheMiss</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>5</span>,
-            <span class='ident'>CoreError</span>::<span class='ident'>RoutingMessageCacheMiss</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>6</span>,
-            <span class='ident'>CoreError</span>::<span class='ident'>RootDirectoryAlreadyExists</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>8</span>,
-            <span class='ident'>CoreError</span>::<span class='ident'>RandomDataGenerationFailure</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>9</span>,
-            <span class='ident'>CoreError</span>::<span class='ident'>OperationForbiddenForClient</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>10</span>,
-            <span class='ident'>CoreError</span>::<span class='ident'>Unexpected</span>(_) <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>11</span>,
-            <span class='ident'>CoreError</span>::<span class='ident'>RoutingError</span>(_) <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>12</span>,
-            <span class='ident'>CoreError</span>::<span class='ident'>RoutingInterfaceError</span>(_) <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>13</span>,
-            <span class='ident'>CoreError</span>::<span class='ident'>UnsupportedSaltSizeForPwHash</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>14</span>,
-            <span class='ident'>CoreError</span>::<span class='ident'>UnsuccessfulPwHash</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>15</span>,
-            <span class='ident'>CoreError</span>::<span class='ident'>OperationAborted</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>16</span>,
-            <span class='ident'>CoreError</span>::<span class='ident'>MpidMessagingError</span>(_) <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>17</span>,
+            <span class='ident'>CoreError</span>::<span class='ident'>RootDirectoryAlreadyExists</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>7</span>,
+            <span class='ident'>CoreError</span>::<span class='ident'>RandomDataGenerationFailure</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>8</span>,
+            <span class='ident'>CoreError</span>::<span class='ident'>OperationForbiddenForClient</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>9</span>,
+            <span class='ident'>CoreError</span>::<span class='ident'>Unexpected</span>(_) <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>10</span>,
+            <span class='ident'>CoreError</span>::<span class='ident'>RoutingError</span>(_) <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>11</span>,
+            <span class='ident'>CoreError</span>::<span class='ident'>RoutingInterfaceError</span>(_) <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>12</span>,
+            <span class='ident'>CoreError</span>::<span class='ident'>UnsupportedSaltSizeForPwHash</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>13</span>,
+            <span class='ident'>CoreError</span>::<span class='ident'>UnsuccessfulPwHash</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>14</span>,
+            <span class='ident'>CoreError</span>::<span class='ident'>OperationAborted</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>15</span>,
+            <span class='ident'>CoreError</span>::<span class='ident'>MpidMessagingError</span>(_) <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>16</span>,
+            <span class='ident'>CoreError</span>::<span class='ident'>GetFailure</span>(_) <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>17</span>,
+            <span class='ident'>CoreError</span>::<span class='ident'>MutationFailure</span>(_) <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>18</span>,
         }
     }
 }
@@ -346,7 +361,6 @@
             <span class='ident'>CoreError</span>::<span class='ident'>SymmetricDecipherFailure</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;CoreError::SymmetricDecipherFailure&quot;</span>),
             <span class='ident'>CoreError</span>::<span class='ident'>ReceivedUnexpectedData</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;CoreError::ReceivedUnexpectedData&quot;</span>),
             <span class='ident'>CoreError</span>::<span class='ident'>VersionCacheMiss</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;CoreError::VersionCacheMiss&quot;</span>),
-            <span class='ident'>CoreError</span>::<span class='ident'>RoutingMessageCacheMiss</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;CoreError::RoutingMessageCacheMiss&quot;</span>),
             <span class='ident'>CoreError</span>::<span class='ident'>RootDirectoryAlreadyExists</span> <span class='op'>=&gt;</span> {
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;CoreError::RootDirectoryAlreadyExists&quot;</span>)
             }
@@ -368,6 +382,12 @@
             <span class='ident'>CoreError</span>::<span class='ident'>OperationAborted</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;CoreError::OperationAborted&quot;</span>),
             <span class='ident'>CoreError</span>::<span class='ident'>MpidMessagingError</span>(<span class='kw-2'>ref</span> <span class='ident'>err</span>) <span class='op'>=&gt;</span> {
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;CoreError::MpidMessagingError -&gt; {:?}&quot;</span>, <span class='ident'>err</span>)
+            }
+            <span class='ident'>CoreError</span>::<span class='ident'>GetFailure</span>(<span class='kw-2'>ref</span> <span class='ident'>data_req</span>) <span class='op'>=&gt;</span> {
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;CoreError::GetFailure::{{{:?}}}&quot;</span>, <span class='ident'>data_req</span>)
+            }
+            <span class='ident'>CoreError</span>::<span class='ident'>MutationFailure</span>(<span class='kw-2'>ref</span> <span class='ident'>data</span>) <span class='op'>=&gt;</span> {
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;CoreError::MutationFailure::{{{:?}}}&quot;</span>, <span class='ident'>data</span>)
             }
         }
     }

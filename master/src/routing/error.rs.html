@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.9.0/src/error.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.11.0/src/error.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>error.rs.html -- source</title>
@@ -189,14 +189,6 @@
 <span id="146">146</span>
 <span id="147">147</span>
 <span id="148">148</span>
-<span id="149">149</span>
-<span id="150">150</span>
-<span id="151">151</span>
-<span id="152">152</span>
-<span id="153">153</span>
-<span id="154">154</span>
-<span id="155">155</span>
-<span id="156">156</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -285,8 +277,6 @@
     <span class='ident'>Interface</span>(<span class='ident'>InterfaceError</span>),
     <span class='doccomment'>/// i/o error</span>
     <span class='ident'>Io</span>(::<span class='ident'>std</span>::<span class='ident'>io</span>::<span class='ident'>Error</span>),
-    <span class='doccomment'>/// Serialisation error</span>
-    <span class='ident'>Cbor</span>(::<span class='ident'>cbor</span>::<span class='ident'>CborError</span>),
     <span class='doccomment'>/// Channel sending error</span>
     <span class='ident'>SendEventError</span>(<span class='ident'>SendError</span><span class='op'>&lt;</span><span class='ident'>Event</span><span class='op'>&gt;</span>),
     <span class='doccomment'>/// The bit index for a `XorName` was out of bounds.</span>
@@ -316,12 +306,6 @@
 <span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span>::<span class='ident'>std</span>::<span class='ident'>str</span>::<span class='ident'>Utf8Error</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>RoutingError</span> {
     <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>error</span>: ::<span class='ident'>std</span>::<span class='ident'>str</span>::<span class='ident'>Utf8Error</span>) <span class='op'>-&gt;</span> <span class='ident'>RoutingError</span> {
         <span class='ident'>RoutingError</span>::<span class='ident'>Utf8</span>(<span class='ident'>error</span>)
-    }
-}
-
-<span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span>::<span class='ident'>cbor</span>::<span class='ident'>CborError</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>RoutingError</span> {
-    <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>error</span>: ::<span class='ident'>cbor</span>::<span class='ident'>CborError</span>) <span class='op'>-&gt;</span> <span class='ident'>RoutingError</span> {
-        <span class='ident'>RoutingError</span>::<span class='ident'>Cbor</span>(<span class='ident'>error</span>)
     }
 }
 

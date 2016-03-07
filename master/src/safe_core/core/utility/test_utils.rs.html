@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.8.0/src/core/utility/test_utils.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.9.0/src/core/utility/test_utils.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>test_utils.rs.html -- source</title>
@@ -128,7 +128,7 @@
 <span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>sign</span>;
 <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>utility</span>;
 
-<span class='doccomment'>/// Gnerates a random mock client for testing</span>
+<span class='doccomment'>/// Generates a random mock client for testing</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_client</span>() <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Client</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
     <span class='kw'>let</span> <span class='ident'>pin</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_string</span>(<span class='number'>10</span>));
     <span class='kw'>let</span> <span class='ident'>keyword</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_string</span>(<span class='number'>10</span>));
@@ -137,22 +137,22 @@
     <span class='ident'>Client</span>::<span class='ident'>create_account</span>(<span class='ident'>keyword</span>, <span class='ident'>pin</span>, <span class='ident'>password</span>)
 }
 
-<span class='doccomment'>/// Gnerates Random Public Keys</span>
+<span class='doccomment'>/// Generates random public keys</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>generate_public_keys</span>(<span class='ident'>len</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>sign</span>::<span class='ident'>PublicKey</span><span class='op'>&gt;</span> {
     (<span class='number'>0</span>..<span class='ident'>len</span>).<span class='ident'>map</span>(<span class='op'>|</span>_<span class='op'>|</span> <span class='ident'>sign</span>::<span class='ident'>gen_keypair</span>().<span class='number'>0</span>).<span class='ident'>collect</span>()
 }
 
-<span class='doccomment'>/// Gnerates Random Secret Keys</span>
+<span class='doccomment'>/// Generates random secret keys</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>generate_secret_keys</span>(<span class='ident'>len</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>sign</span>::<span class='ident'>SecretKey</span><span class='op'>&gt;</span> {
     (<span class='number'>0</span>..<span class='ident'>len</span>).<span class='ident'>map</span>(<span class='op'>|</span>_<span class='op'>|</span> <span class='ident'>sign</span>::<span class='ident'>gen_keypair</span>().<span class='number'>1</span>).<span class='ident'>collect</span>()
 }
 
-<span class='doccomment'>/// Gnerates public keys of maximun size</span>
+<span class='doccomment'>/// Generates public keys of maximum size</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_max_sized_public_keys</span>(<span class='ident'>len</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>sign</span>::<span class='ident'>PublicKey</span><span class='op'>&gt;</span> {
     ::<span class='ident'>std</span>::<span class='ident'>iter</span>::<span class='ident'>repeat</span>(<span class='ident'>sign</span>::<span class='ident'>PublicKey</span>([::<span class='ident'>std</span>::<span class='ident'>u8</span>::<span class='ident'>MAX</span>; <span class='ident'>sign</span>::<span class='ident'>PUBLICKEYBYTES</span>])).<span class='ident'>take</span>(<span class='ident'>len</span>).<span class='ident'>collect</span>()
 }
 
-<span class='doccomment'>/// Gnerates secret keys of maximun size</span>
+<span class='doccomment'>/// Generates secret keys of maximum size</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_max_sized_secret_keys</span>(<span class='ident'>len</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>sign</span>::<span class='ident'>SecretKey</span><span class='op'>&gt;</span> {
     ::<span class='ident'>std</span>::<span class='ident'>iter</span>::<span class='ident'>repeat</span>(<span class='ident'>sign</span>::<span class='ident'>SecretKey</span>([::<span class='ident'>std</span>::<span class='ident'>u8</span>::<span class='ident'>MAX</span>; <span class='ident'>sign</span>::<span class='ident'>SECRETKEYBYTES</span>])).<span class='ident'>take</span>(<span class='ident'>len</span>).<span class='ident'>collect</span>()
 }

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.8.0/src/core/translated_events.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.9.0/src/core/translated_events.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>translated_events.rs.html -- source</title>
@@ -95,14 +95,6 @@
 <span id="52">52</span>
 <span id="53">53</span>
 <span id="54">54</span>
-<span id="55">55</span>
-<span id="56">56</span>
-<span id="57">57</span>
-<span id="58">58</span>
-<span id="59">59</span>
-<span id="60">60</span>
-<span id="61">61</span>
-<span id="62">62</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -121,17 +113,21 @@
 <span class='comment'>// Please review the Licences for the specific language governing permissions and limitations</span>
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
-<span class='kw'>use</span> <span class='ident'>routing</span>::<span class='ident'>InterfaceError</span>;
+<span class='kw'>use</span> <span class='ident'>routing</span>::<span class='ident'>Data</span>;
+<span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>errors</span>::<span class='ident'>CoreError</span>;
 
 <span class='doccomment'>/// Network Events will be translated into values starting from this number for propagating them</span>
 <span class='doccomment'>/// beyond the FFI boudaries when required</span>
 <span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>NETWORK_EVENT_START_RANGE</span>: <span class='ident'>i32</span> <span class='op'>=</span> <span class='number'>0</span>;
 
-<span class='comment'>// TODO(Spandan) This is a mess with new routing - get it sorted once sprint begins</span>
-<span class='doccomment'>/// Reception of reqested Data</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>DataReceivedEvent</span> {
-    <span class='doccomment'>/// Received Data</span>
-    <span class='ident'>DataReceived</span>,
+<span class='doccomment'>/// These events are received as a response to a GET/PUT/POST/DELETE requests made by clients</span>
+<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>ResponseEvent</span> {
+    <span class='doccomment'>/// Response to a previous GET request</span>
+    <span class='ident'>GetResp</span>(<span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Data</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span>),
+    <span class='doccomment'>/// Response to a previous Mutating (PUT/POST/DELETE) request</span>
+    <span class='ident'>MutationResp</span>(<span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>CoreError</span><span class='op'>&gt;</span>),
+    <span class='doccomment'>/// Graceful Exit Condition</span>
+    <span class='ident'>Terminated</span>,
 }
 
 <span class='doccomment'>/// Netowork Events that Client Modules need to deal with</span>
@@ -153,18 +149,6 @@
             <span class='ident'>NetworkEvent</span>::<span class='ident'>Terminated</span> <span class='op'>=&gt;</span> <span class='ident'>NETWORK_EVENT_START_RANGE</span> <span class='op'>+</span> <span class='number'>2</span>,
         }
     }
-}
-
-<span class='doccomment'>/// Failures in operations that Client Modules need to deal with</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>OperationFailureEvent</span> {
-    <span class='doccomment'>/// PUT request failed</span>
-    <span class='ident'>PutFailure</span>(<span class='ident'>InterfaceError</span>),
-    <span class='doccomment'>/// POST request failed</span>
-    <span class='ident'>PostFailure</span>(<span class='ident'>InterfaceError</span>),
-    <span class='doccomment'>/// DELETE request failed</span>
-    <span class='ident'>DeleteFailure</span>(<span class='ident'>InterfaceError</span>),
-    <span class='doccomment'>/// Graceful Exit Condition</span>
-    <span class='ident'>Terminated</span>,
 }
 </pre>
 </section>
