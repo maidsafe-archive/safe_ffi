@@ -61,7 +61,6 @@
 
 
 extern crate libc;
-extern crate routing;
 extern crate xor_name;
 extern crate safe_core;
 extern crate sodiumoxide;
@@ -96,6 +95,7 @@ mod test_utils;
 mod launcher_config_handler;
 /// Errors thrown by the FFI operations
 pub mod errors;
+
 
 /// ParameterPacket acts as a holder for the standard parameters that would be needed for performing
 /// operations across the modules like nfs and dns

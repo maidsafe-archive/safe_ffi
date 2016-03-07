@@ -17,7 +17,8 @@
 
 use errors::FfiError;
 use {helper, ParameterPacket, ResponseType, Action};
-use safe_core::nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG, VERSIONED_DIRECTORY_LISTING_TAG};
+use safe_core::nfs::{AccessLevel, UNVERSIONED_DIRECTORY_LISTING_TAG,
+                     VERSIONED_DIRECTORY_LISTING_TAG};
 use safe_core::nfs::helper::directory_helper::DirectoryHelper;
 
 #[derive(RustcDecodable, Debug)]
