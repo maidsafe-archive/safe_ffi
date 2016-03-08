@@ -1,5 +1,8 @@
 # Safe ffi - Change Log
 
+#[0.4.5]
+- Revert safe_core back to 0.9.0
+
 #[0.4.4]
 - Dependency version updates
 
