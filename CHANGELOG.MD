@@ -1,5 +1,8 @@
 # Safe ffi - Change Log
 
+#[0.4.4]
+- Dependency version updates
+
 #[0.4.3]
 - Upgrade for safe_core 0.9.0
 
