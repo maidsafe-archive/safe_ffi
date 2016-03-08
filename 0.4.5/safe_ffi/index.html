@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `safe_ffi` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, safe_ffi">
+
+    <title>safe_ffi - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    <link rel="shortcut icon" href="http://maidsafe.net/img/favicon.ico">
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        <a href='../safe_ffi/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <p class='location'></p><script>window.sidebarCurrent = {name: 'safe_ffi', ty: 'mod', relpath: '../'};</script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>safe_ffi</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-0' class='srclink' href='../src/safe_ffi/lib.rs.html#18-565' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>This crate provides FFI-bindings to the Client Modules (<code>safe_core</code>, <code>safe_nfs</code>, <code>safe_dns</code>)
+In the current implementation the allocations made by this crate are managed within the crate
+itself and is guaranteed that management of such allocations will not be pushed beyond the FFI
+boundary. This has a 2-fold outcome: firstly, the passing of data is done by filling of the
+allocations passed by the caller and is caller&#39;s responsibility to manage those. For this every
+function that fills an allocated memory also has a companion function to return the size of
+data which the caller can call to find out how much space needs to be allocated in the first
+place. Second and consequently, the caller does not have to bother calling functions within
+this crate which only serve to free resources allocated by the crate itself. This otherwise
+would be error prone and cumbersome. Instead the caller can use whatever idiom in his language
+to manage memory much more naturally and conveniently (eg., RAII idioms etc)</p>
+
+<p>The only exception to the above rule is the obtainment of the client engine itself. The client
+engine is allocated and managed by the crate. This is necessary because it serves as a context
+to all operations provided by the crate. Hence the user will obtain the engine on calling any
+one of the functions to create it and must preserve it for all subsequent operations. When
+done, to release the resources, <code>drop_client</code> may be called.</p>
+
+<p><a href="https://github.com/maidsafe/safe_ffi">Project github page</a></p>
+</div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='mod' href='errors/index.html'
+                               title='safe_ffi::errors'>errors</a></td>
+                        <td class='docblock short'>
+                             <p>Errors thrown by the FFI operations</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='macros' class='section-header'><a href="#macros">Macros</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='macro' href='macro.parse_result!.html'
+                               title='safe_ffi::parse_result!'>parse_result!</a></td>
+                        <td class='docblock short'>
+                             <p>This macro is intended to be used in all cases where we get an Err out of Result<T, U> and want
+to package it into <code>safe_ffi::errors::FfiError::SpecificParseError(String)</code>. This is
+useful because there may be miscellaneous erros while parsing through a valid JSON due to JSON
+not conforming to certain mandatory requirements. This can then be communicated back to the
+JSON sending client.</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.ParameterPacket.html'
+                               title='safe_ffi::ParameterPacket'>ParameterPacket</a></td>
+                        <td class='docblock short'>
+                             <p>ParameterPacket acts as a holder for the standard parameters that would be needed for performing
+operations across the modules like nfs and dns</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='trait' href='trait.Action.html'
+                               title='safe_ffi::Action'>Action</a></td>
+                        <td class='docblock short'>
+                             <p>ICommand trait</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.create_account.html'
+                               title='safe_ffi::create_account'>create_account</a></td>
+                        <td class='docblock short'>
+                             <p>Create a registered client. This or any one of the other companion functions to get a
+client must be called before initiating any operation allowed by this crate. <code>client_handle</code> is
+a pointer to a pointer and must point to a valid pointer not junk, else the consequences are
+undefined.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.create_unregistered_client.html'
+                               title='safe_ffi::create_unregistered_client'>create_unregistered_client</a></td>
+                        <td class='docblock short'>
+                             <p>Create an unregistered client. This or any one of the other companion functions to get a
+client must be called before initiating any operation allowed by this crate.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.drop_client.html'
+                               title='safe_ffi::drop_client'>drop_client</a></td>
+                        <td class='docblock short'>
+                             <p>Discard and clean up the previously allocated client. Use this only if the client is obtained
+from one of the client obtainment functions in this crate (<code>crate_account</code>, <code>log_in</code>,
+<code>create_unregistered_client</code>). Using <code>client_handle</code> after a call to this functions is
+undefined behaviour.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.drop_null_ptr.html'
+                               title='safe_ffi::drop_null_ptr'>drop_null_ptr</a></td>
+                        <td class='docblock short'>
+                             <p>Drop the null pointer returned as error from the execute_for_content fn</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.drop_vector.html'
+                               title='safe_ffi::drop_vector'>drop_vector</a></td>
+                        <td class='docblock short'>
+                             <p>Drop the vector returned as a result of the execute_for_content fn</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.execute.html'
+                               title='safe_ffi::execute'>execute</a></td>
+                        <td class='docblock short'>
+                             <p>General function that can be invoked for performing a API specific operation that will return
+only result to indicate whether the operation was successful or not.
+This function would only perform the operation and return 0 or error code
+c_payload refers to the JSON payload that can be passed as a JSON string.
+The JSON string should have keys module, action, app_root_dir_key, safe_drive_dir_key,
+safe_drive_access and data. <code>data</code> refers to API specific payload.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.execute_for_content.html'
+                               title='safe_ffi::execute_for_content'>execute_for_content</a></td>
+                        <td class='docblock short'>
+                             <p>General function that can be invoked for getting data as a resut for an operation.
+The function return a pointer to a U8 vecotr. The size of the U8 vector and its capacity is written
+to the out params c_size &amp; c_capacity. The size and capcity would be required for droping the vector
+The result of the execution is returned in the c_result out param</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.get_app_dir_key.html'
+                               title='safe_ffi::get_app_dir_key'>get_app_dir_key</a></td>
+                        <td class='docblock short'>
+                             <p>Returns key size</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.get_safe_drive_key.html'
+                               title='safe_ffi::get_safe_drive_key'>get_safe_drive_key</a></td>
+                        <td class='docblock short'>
+                             <p>Returns Key as base64 string</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.log_in.html'
+                               title='safe_ffi::log_in'>log_in</a></td>
+                        <td class='docblock short'>
+                             <p>Log into a registered client. This or any one of the other companion functions to get a
+client must be called before initiating any operation allowed by this crate. <code>client_handle</code> is
+a pointer to a pointer and must point to a valid pointer not junk, else the consequences are
+undefined.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.register_network_event_observer.html'
+                               title='safe_ffi::register_network_event_observer'>register_network_event_observer</a></td>
+                        <td class='docblock short'>
+                             <p>Register an observer to network events like Connected, Disconnected etc. as provided by the
+core module</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.ResponseType.html'
+                               title='safe_ffi::ResponseType'>ResponseType</a></td>
+                        <td class='docblock short'>
+                             <p>ResponseType tspecifies the standard Response that is to be expected from the ::Action trait</p>
+
+                        </td>
+                    </tr>
+                </table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "safe_ffi";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

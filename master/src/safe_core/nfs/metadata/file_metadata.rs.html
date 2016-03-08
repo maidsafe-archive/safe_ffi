@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.10.0/src/nfs/metadata/file_metadata.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.9.0/src/nfs/metadata/file_metadata.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>file_metadata.rs.html -- source</title>
@@ -192,22 +192,6 @@
 <span id="149">149</span>
 <span id="150">150</span>
 <span id="151">151</span>
-<span id="152">152</span>
-<span id="153">153</span>
-<span id="154">154</span>
-<span id="155">155</span>
-<span id="156">156</span>
-<span id="157">157</span>
-<span id="158">158</span>
-<span id="159">159</span>
-<span id="160">160</span>
-<span id="161">161</span>
-<span id="162">162</span>
-<span id="163">163</span>
-<span id="164">164</span>
-<span id="165">165</span>
-<span id="166">166</span>
-<span id="167">167</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -234,7 +218,6 @@
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>FileMetadata</span> {
     <span class='ident'>name</span>: <span class='ident'>String</span>,
     <span class='ident'>size</span>: <span class='ident'>u64</span>,
-    <span class='ident'>version</span>: <span class='ident'>u64</span>,
     <span class='ident'>created_time</span>: <span class='ident'>Tm</span>,
     <span class='ident'>modified_time</span>: <span class='ident'>Tm</span>,
     <span class='ident'>user_metadata</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
@@ -246,18 +229,10 @@
         <span class='ident'>FileMetadata</span> {
             <span class='ident'>name</span>: <span class='ident'>name</span>,
             <span class='ident'>size</span>: <span class='number'>0</span>,
-            <span class='comment'>// Version 0 is considered as invalid - do not change to version 0. This is used as</span>
-            <span class='comment'>// default vaule in comparisons.</span>
-            <span class='ident'>version</span>: <span class='number'>1</span>,
             <span class='ident'>created_time</span>: <span class='ident'>time</span>::<span class='ident'>now_utc</span>(),
             <span class='ident'>modified_time</span>: <span class='ident'>time</span>::<span class='ident'>now_utc</span>(),
             <span class='ident'>user_metadata</span>: <span class='ident'>user_metadata</span>,
         }
-    }
-
-    <span class='doccomment'>/// Get version</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_version</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>u64</span> {
-        <span class='self'>self</span>.<span class='ident'>version</span>
     }
 
     <span class='doccomment'>/// Get time of creation</span>
@@ -292,11 +267,6 @@
         <span class='self'>self</span>.<span class='ident'>name</span> <span class='op'>=</span> <span class='ident'>name</span>;
     }
 
-    <span class='doccomment'>/// Increment the file version</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>increment_version</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
-        <span class='self'>self</span>.<span class='ident'>version</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>version</span>.<span class='ident'>wrapping_add</span>(<span class='number'>1</span>);
-    }
-
     <span class='doccomment'>/// Set the size of file</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_size</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>size</span>: <span class='ident'>u64</span>) {
         <span class='self'>self</span>.<span class='ident'>size</span> <span class='op'>=</span> <span class='ident'>size</span>;
@@ -321,12 +291,11 @@
         <span class='ident'>e</span>.<span class='ident'>emit_struct</span>(<span class='string'>&quot;FileMetadata&quot;</span>, <span class='number'>7</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> {
             <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;name&quot;</span>, <span class='number'>0</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='self'>self</span>.<span class='ident'>name</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
             <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;size&quot;</span>, <span class='number'>1</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='self'>self</span>.<span class='ident'>size</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;version&quot;</span>, <span class='number'>2</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='self'>self</span>.<span class='ident'>version</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;created_time_sec&quot;</span>, <span class='number'>3</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='ident'>created_time</span>.<span class='ident'>sec</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;created_time_nsec&quot;</span>, <span class='number'>4</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='ident'>created_time</span>.<span class='ident'>nsec</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;modified_time_sec&quot;</span>, <span class='number'>5</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='ident'>modified_time</span>.<span class='ident'>sec</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;modified_time_nsec&quot;</span>, <span class='number'>6</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='ident'>modified_time</span>.<span class='ident'>nsec</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;user_metadata&quot;</span>, <span class='number'>7</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='self'>self</span>.<span class='ident'>user_metadata</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
+            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;created_time_sec&quot;</span>, <span class='number'>2</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='ident'>created_time</span>.<span class='ident'>sec</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
+            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;created_time_nsec&quot;</span>, <span class='number'>3</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='ident'>created_time</span>.<span class='ident'>nsec</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
+            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;modified_time_sec&quot;</span>, <span class='number'>4</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='ident'>modified_time</span>.<span class='ident'>sec</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
+            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;modified_time_nsec&quot;</span>, <span class='number'>5</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='ident'>modified_time</span>.<span class='ident'>nsec</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
+            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;user_metadata&quot;</span>, <span class='number'>6</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='self'>self</span>.<span class='ident'>user_metadata</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
 
             <span class='prelude-val'>Ok</span>(())
         })
@@ -339,23 +308,22 @@
             <span class='prelude-val'>Ok</span>(<span class='ident'>FileMetadata</span> {
                 <span class='ident'>name</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;name&quot;</span>, <span class='number'>0</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
                 <span class='ident'>size</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;size&quot;</span>, <span class='number'>1</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
-                <span class='ident'>version</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;version&quot;</span>, <span class='number'>2</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
                 <span class='ident'>created_time</span>: ::<span class='ident'>time</span>::<span class='ident'>at_utc</span>(<span class='ident'>Timespec</span> {
-                    <span class='ident'>sec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;created_time_sec&quot;</span>, <span class='number'>3</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
+                    <span class='ident'>sec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;created_time_sec&quot;</span>, <span class='number'>2</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
                     <span class='ident'>nsec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;created_time_nsec&quot;</span>,
-                                                   <span class='number'>4</span>,
+                                                   <span class='number'>3</span>,
                                                    <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
                 }),
                 <span class='ident'>modified_time</span>: ::<span class='ident'>time</span>::<span class='ident'>at_utc</span>(<span class='ident'>Timespec</span> {
                     <span class='ident'>sec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;modified_time_sec&quot;</span>,
-                                                  <span class='number'>5</span>,
+                                                  <span class='number'>4</span>,
                                                   <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
                     <span class='ident'>nsec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;modified_time_nsec&quot;</span>,
-                                                   <span class='number'>6</span>,
+                                                   <span class='number'>5</span>,
                                                    <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
                 }),
                 <span class='ident'>user_metadata</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;user_metadata&quot;</span>,
-                                                        <span class='number'>7</span>,
+                                                        <span class='number'>6</span>,
                                                         <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
             })
         })
