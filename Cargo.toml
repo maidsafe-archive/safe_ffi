@@ -7,16 +7,19 @@ license = "GPL-3.0"
 name = "safe_ffi"
 readme = "README.md"
 repository = "https://github.com/maidsafe/safe_ffi"
-version = "0.4.3"
+version = "0.4.4"
 
 [dependencies]
-clippy = {version = "~0.0.44", optional = true}
-libc = "~0.2.4"
-maidsafe_utilities = "~0.3.0"
-safe_core = "~0.9.0"
-sodiumoxide = "~0.0.9"
+libc = "~0.2.8"
+maidsafe_utilities = "~0.4.0"
 rustc-serialize = "~0.3.18"
-xor_name = "~0.0.4"
+safe_core = "~0.10.0"
+sodiumoxide = "~0.0.9"
+xor_name = "~0.1.0"
+
+[dependencies.clippy]
+optional = true
+version = "~0.0.48"
 
 [features]
 use-mock-routing = ["safe_core/use-mock-routing"]
