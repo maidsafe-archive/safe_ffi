@@ -60,29 +60,31 @@
 #![cfg_attr(feature="clippy", deny(clippy, clippy_pedantic))]
 
 
+#[macro_use]
+extern crate log;
 extern crate libc;
 extern crate xor_name;
 extern crate safe_core;
 extern crate sodiumoxide;
 extern crate rustc_serialize;
-#[allow(unused_extern_crates)]
 #[macro_use]
 extern crate maidsafe_utilities;
 
 use errors::FfiError;
 use rustc_serialize::json;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, mpsc};
 use rustc_serialize::Decoder;
 use safe_core::core::client::Client;
 use rustc_serialize::Decodable;
 use libc::{c_void, int32_t, c_char};
-use std::mem;
+use std::{env, mem};
 use rustc_serialize::base64::FromBase64;
 use maidsafe_utilities::serialisation::{serialise, deserialise};
 use maidsafe_utilities::thread::RaiiThreadJoiner;
+use maidsafe_utilities::log as safe_log;
 use safe_core::nfs::metadata::directory_key::DirectoryKey;
 use safe_core::core::translated_events::NetworkEvent;
-use std::sync::mpsc;
+use safe_core::core::errors::CoreError;
 use std::sync::mpsc::Sender;
 
 #[macro_use]mod macros;
@@ -153,6 +155,26 @@ impl Drop for FfiHandle {
             let _ = network_thread_terminator.send(NetworkEvent::Terminated);
         }
     }
+}
+
+/// This function should be called to enable logging to a file
+#[no_mangle]
+pub extern "C" fn init_logging() -> int32_t {
+    env::set_var("RUST_LOG", "trace");
+
+    let mut current_exe_path = ffi_try!(env::current_exe().map_err(|err| {
+        CoreError::Unexpected(format!("{:?}", err))
+    }));
+
+    if !current_exe_path.set_extension("log") {
+        ffi_try!(Err(CoreError::Unexpected("Could not set the extension to the log file - \
+                                            logging will not be initiated"
+                                               .to_owned())));
+    }
+
+    ffi_try!(safe_log::init_to_file(true, current_exe_path).map_err(CoreError::Unexpected));
+
+    0
 }
 
 /// Create an unregistered client. This or any one of the other companion functions to get a
@@ -330,9 +352,9 @@ pub extern "C" fn execute(c_payload: *const c_char, ffi_handle: *const c_void) -
 }
 
 /// General function that can be invoked for getting data as a resut for an operation.
-/// The function return a pointer to a U8 vecotr. The size of the U8 vector and its capacity is written
-/// to the out params c_size & c_capacity. The size and capcity would be required for droping the vector
-/// The result of the execution is returned in the c_result out param
+/// The function return a pointer to a U8 vecotr. The size of the U8 vector and its capacity is
+/// written to the out params c_size & c_capacity. The size and capcity would be required for
+/// droping the vector The result of the execution is returned in the c_result out param
 #[no_mangle]
 #[allow(unsafe_code)]
 pub extern "C" fn execute_for_content(c_payload: *const c_char,
@@ -488,9 +510,15 @@ fn cast_from_ffi_handle(handle: *const c_void) -> Arc<Mutex<Client>> {
 #[cfg(test)]
 mod test {
     #![allow(unsafe_code)]
+
     use super::*;
-    use libc::c_void;
+
+    use std::env;
+    use std::fs::File;
+    use std::io::Read;
     use std::error::Error;
+
+    use libc::c_void;
 
     fn generate_random_cstring(len: usize) -> Result<::std::ffi::CString, ::errors::FfiError> {
         let mut cstring_vec = try!(::safe_core::core::utility::generate_random_vector::<u8>(len));
@@ -562,4 +590,25 @@ mod test {
         }
     }
 
+    #[test]
+    fn logging() {
+        assert_eq!(init_logging(), 0);
+
+        let debug_msg = "This is a sample debug message".to_owned();
+        let junk_msg = "This message should not exist in the log file".to_owned();
+
+        debug!("{}", debug_msg);
+
+        let mut current_exe_path = unwrap_result!(env::current_exe());
+
+        assert!(current_exe_path.set_extension("log"));
+
+        let mut log_file = unwrap_result!(File::open(current_exe_path));
+        let mut file_content = String::new();
+
+        assert!(unwrap_result!(log_file.read_to_string(&mut file_content)) > 0);
+
+        assert!(file_content.contains(&debug_msg[..]));
+        assert!(!file_content.contains(&junk_msg[..]));
+    }
 }
