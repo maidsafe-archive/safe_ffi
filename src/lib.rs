@@ -160,7 +160,7 @@ impl Drop for FfiHandle {
 /// This function should be called to enable logging to a file
 #[no_mangle]
 pub extern "C" fn init_logging() -> int32_t {
-    env::set_var("RUST_LOG", "trace");
+    env::set_var("RUST_LOG", "crust,routing,safe_=trace");
 
     let mut current_exe_path = ffi_try!(env::current_exe().map_err(|err| {
         CoreError::Unexpected(format!("{:?}", err))
