@@ -1,5 +1,8 @@
 # Safe ffi - Change Log
 
+#[0.5.0]
+- Logging facility added and tested
+
 #[0.4.5]
 - Revert safe_core back to 0.9.0
 
