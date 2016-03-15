@@ -21,7 +21,7 @@ macro_rules! ffi_try {
             Ok(value)  => value,
             Err(error) => {
                 let decorator = ::std::iter::repeat('-').take(50).collect::<String>();
-                println!("\n\n {}\n| {:?}\n {}\n\n", decorator, error, decorator);
+                error!("\n\n {}\n| {:?}\n {}\n\n", decorator, error, decorator);
                 return error.into()
             },
         }
@@ -34,8 +34,8 @@ macro_rules! ffi_ptr_try {
             Ok(value)  => value,
             Err(error) => {
                 let decorator = ::std::iter::repeat('-').take(50).collect::<String>();
-                println!("\n\n {}\n| {:?}\n {}\n\n", decorator, error, decorator);
-                unsafe{ ::std::ptr::write($out, error.into()) };
+                error!("\n\n {}\n| {:?}\n {}\n\n", decorator, error, decorator);
+                unsafe { ::std::ptr::write($out, error.into()) };
                 return ::std::ptr::null();
             },
         }
