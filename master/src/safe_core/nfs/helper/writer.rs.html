@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.9.0/src/nfs/helper/writer.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.11.0/src/nfs/helper/writer.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>writer.rs.html -- source</title>
@@ -136,6 +136,7 @@
 <span id="93">93</span>
 <span id="94">94</span>
 <span id="95">95</span>
+<span id="96">96</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -221,6 +222,7 @@
 
         <span class='ident'>file</span>.<span class='ident'>get_mut_metadata</span>().<span class='ident'>set_modified_time</span>(::<span class='ident'>time</span>::<span class='ident'>now_utc</span>());
         <span class='ident'>file</span>.<span class='ident'>get_mut_metadata</span>().<span class='ident'>set_size</span>(<span class='ident'>size</span>);
+        <span class='ident'>file</span>.<span class='ident'>get_mut_metadata</span>().<span class='ident'>increment_version</span>();
 
         <span class='ident'>directory</span>.<span class='ident'>upsert_file</span>(<span class='ident'>file</span>.<span class='ident'>clone</span>());
 

@@ -46,12 +46,14 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-3305' class='srclink' href='../../../../src/safe_core/nfs/metadata/file_metadata.rs.html#23-29' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-3395' class='srclink' href='../../../../src/safe_core/nfs/metadata/file_metadata.rs.html#23-30' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct FileMetadata {
     // some fields omitted
 }</pre><div class='docblock'><p>FileMetadata about a File or a Directory</p>
 </div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../../../safe_core/nfs/metadata/file_metadata/struct.FileMetadata.html' title='safe_core::nfs::metadata::file_metadata::FileMetadata'>FileMetadata</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(name: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>, user_metadata: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;) -&gt; <a class='struct' href='../../../../safe_core/nfs/metadata/file_metadata/struct.FileMetadata.html' title='safe_core::nfs::metadata::file_metadata::FileMetadata'>FileMetadata</a></code></h4>
 <div class='docblock'><p>Create a new instance of FileMetadata</p>
+</div><h4 id='method.get_version' class='method'><code>fn <a href='#method.get_version' class='fnname'>get_version</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u32.html'>u32</a></code></h4>
+<div class='docblock'><p>Get version</p>
 </div><h4 id='method.get_created_time' class='method'><code>fn <a href='#method.get_created_time' class='fnname'>get_created_time</a>(&amp;self) -&gt; &amp;<a class='struct' href='../../../../time/struct.Tm.html' title='time::Tm'>Tm</a></code></h4>
 <div class='docblock'><p>Get time of creation</p>
 </div><h4 id='method.get_modified_time' class='method'><code>fn <a href='#method.get_modified_time' class='fnname'>get_modified_time</a>(&amp;self) -&gt; &amp;<a class='struct' href='../../../../time/struct.Tm.html' title='time::Tm'>Tm</a></code></h4>
@@ -65,6 +67,8 @@ of</p>
 <div class='docblock'><p>Get user setteble custom metadata</p>
 </div><h4 id='method.set_name' class='method'><code>fn <a href='#method.set_name' class='fnname'>set_name</a>(&amp;mut self, name: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>)</code></h4>
 <div class='docblock'><p>Set name associated with the structure (file or directory)</p>
+</div><h4 id='method.increment_version' class='method'><code>fn <a href='#method.increment_version' class='fnname'>increment_version</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Increment the file version</p>
 </div><h4 id='method.set_size' class='method'><code>fn <a href='#method.set_size' class='fnname'>set_size</a>(&amp;mut self, size: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>)</code></h4>
 <div class='docblock'><p>Set the size of file</p>
 </div><h4 id='method.set_modified_time' class='method'><code>fn <a href='#method.set_modified_time' class='fnname'>set_modified_time</a>(&amp;mut self, modified_time: <a class='struct' href='../../../../time/struct.Tm.html' title='time::Tm'>Tm</a>)</code></h4>

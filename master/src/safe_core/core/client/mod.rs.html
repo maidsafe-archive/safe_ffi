@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.9.0/src/core/client/mod.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.11.0/src/core/client/mod.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>mod.rs.html -- source</title>
@@ -883,47 +883,6 @@
 <span id="840">840</span>
 <span id="841">841</span>
 <span id="842">842</span>
-<span id="843">843</span>
-<span id="844">844</span>
-<span id="845">845</span>
-<span id="846">846</span>
-<span id="847">847</span>
-<span id="848">848</span>
-<span id="849">849</span>
-<span id="850">850</span>
-<span id="851">851</span>
-<span id="852">852</span>
-<span id="853">853</span>
-<span id="854">854</span>
-<span id="855">855</span>
-<span id="856">856</span>
-<span id="857">857</span>
-<span id="858">858</span>
-<span id="859">859</span>
-<span id="860">860</span>
-<span id="861">861</span>
-<span id="862">862</span>
-<span id="863">863</span>
-<span id="864">864</span>
-<span id="865">865</span>
-<span id="866">866</span>
-<span id="867">867</span>
-<span id="868">868</span>
-<span id="869">869</span>
-<span id="870">870</span>
-<span id="871">871</span>
-<span id="872">872</span>
-<span id="873">873</span>
-<span id="874">874</span>
-<span id="875">875</span>
-<span id="876">876</span>
-<span id="877">877</span>
-<span id="878">878</span>
-<span id="879">879</span>
-<span id="880">880</span>
-<span id="881">881</span>
-<span id="882">882</span>
-<span id="883">883</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -964,7 +923,9 @@
 
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
 <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>thread</span>::<span class='ident'>RaiiThreadJoiner</span>;
-<span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>MessageId</span>, <span class='ident'>FullId</span>, <span class='ident'>StructuredData</span>, <span class='ident'>Data</span>, <span class='ident'>DataRequest</span>, <span class='ident'>Authority</span>, <span class='ident'>Event</span>};
+<span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::<span class='ident'>serialise</span>;
+<span class='kw'>use</span> <span class='ident'>mpid_messaging</span>::{<span class='ident'>MpidMessage</span>, <span class='ident'>MpidMessageWrapper</span>};
+<span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>MessageId</span>, <span class='ident'>FullId</span>, <span class='ident'>StructuredData</span>, <span class='ident'>Data</span>, <span class='ident'>DataRequest</span>, <span class='ident'>PlainData</span>, <span class='ident'>Authority</span>, <span class='ident'>Event</span>};
 
 <span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::{<span class='ident'>box_</span>, <span class='ident'>sign</span>};
 <span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>hash</span>::{<span class='ident'>sha256</span>, <span class='ident'>sha512</span>};
@@ -1001,8 +962,7 @@
         <span class='kw'>let</span> (<span class='ident'>network_event_sender</span>, <span class='ident'>network_event_receiver</span>) <span class='op'>=</span> <span class='ident'>mpsc</span>::<span class='ident'>channel</span>();
 
         <span class='kw'>let</span> <span class='ident'>routing</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>Client</span>::<span class='ident'>get_new_routing</span>(<span class='ident'>routing_sender</span>, <span class='prelude-val'>None</span>));
-        <span class='kw'>let</span> (<span class='ident'>message_queue</span>, <span class='ident'>raii_joiner</span>) <span class='op'>=</span> <span class='ident'>MessageQueue</span>::<span class='ident'>new</span>(<span class='ident'>routing_receiver</span>,
-                                                             <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>network_event_sender</span>]);
+        <span class='kw'>let</span> (<span class='ident'>message_queue</span>, <span class='ident'>raii_joiner</span>) <span class='op'>=</span> <span class='ident'>MessageQueue</span>::<span class='ident'>new</span>(<span class='ident'>routing_receiver</span>, <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>network_event_sender</span>]);
 
         <span class='kw'>match</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>network_event_receiver</span>.<span class='ident'>recv</span>()) {
             <span class='ident'>NetworkEvent</span>::<span class='ident'>Connected</span> <span class='op'>=&gt;</span> (),
@@ -1022,10 +982,7 @@
 
     <span class='doccomment'>/// This is one of the two Gateway functions to the Maidsafe network, the other being the</span>
     <span class='doccomment'>/// log_in. This will help create a fresh account for the user in the SAFE-network.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>create_account</span>(<span class='ident'>keyword</span>: <span class='ident'>String</span>,
-                          <span class='ident'>pin</span>: <span class='ident'>String</span>,
-                          <span class='ident'>password</span>: <span class='ident'>String</span>)
-                          <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Client</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>create_account</span>(<span class='ident'>keyword</span>: <span class='ident'>String</span>, <span class='ident'>pin</span>: <span class='ident'>String</span>, <span class='ident'>password</span>: <span class='ident'>String</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Client</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>account_packet</span> <span class='op'>=</span> <span class='ident'>Account</span>::<span class='ident'>new</span>(<span class='prelude-val'>None</span>, <span class='prelude-val'>None</span>);
         <span class='kw'>let</span> <span class='ident'>id_packet</span> <span class='op'>=</span> <span class='ident'>FullId</span>::<span class='ident'>with_keys</span>((<span class='ident'>account_packet</span>.<span class='ident'>get_maid</span>().<span class='ident'>public_keys</span>().<span class='number'>1</span>.<span class='ident'>clone</span>(),
                                            <span class='ident'>account_packet</span>.<span class='ident'>get_maid</span>().<span class='ident'>secret_keys</span>().<span class='number'>1</span>.<span class='ident'>clone</span>()),
@@ -1036,8 +993,7 @@
         <span class='kw'>let</span> (<span class='ident'>network_event_sender</span>, <span class='ident'>network_event_receiver</span>) <span class='op'>=</span> <span class='ident'>mpsc</span>::<span class='ident'>channel</span>();
 
         <span class='kw'>let</span> <span class='ident'>routing</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>Client</span>::<span class='ident'>get_new_routing</span>(<span class='ident'>routing_sender</span>, <span class='prelude-val'>Some</span>(<span class='ident'>id_packet</span>)));
-        <span class='kw'>let</span> (<span class='ident'>message_queue</span>, <span class='ident'>raii_joiner</span>) <span class='op'>=</span> <span class='ident'>MessageQueue</span>::<span class='ident'>new</span>(<span class='ident'>routing_receiver</span>,
-                                                             <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>network_event_sender</span>]);
+        <span class='kw'>let</span> (<span class='ident'>message_queue</span>, <span class='ident'>raii_joiner</span>) <span class='op'>=</span> <span class='ident'>MessageQueue</span>::<span class='ident'>new</span>(<span class='ident'>routing_receiver</span>, <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>network_event_sender</span>]);
 
         <span class='kw'>match</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>network_event_receiver</span>.<span class='ident'>recv</span>()) {
             <span class='ident'>NetworkEvent</span>::<span class='ident'>Connected</span> <span class='op'>=&gt;</span> (),
@@ -1052,19 +1008,16 @@
             <span class='ident'>routing</span>: <span class='ident'>routing</span>,
             <span class='ident'>_raii_joiner</span>: <span class='ident'>raii_joiner</span>,
             <span class='ident'>message_queue</span>: <span class='ident'>message_queue</span>,
-            <span class='ident'>session_packet_id</span>: <span class='prelude-val'>Some</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>Account</span>::<span class='ident'>generate_network_id</span>(<span class='ident'>keyword</span>.<span class='ident'>as_bytes</span>(),
-                                                                      <span class='ident'>pin</span>.<span class='ident'>as_bytes</span>()))),
+            <span class='ident'>session_packet_id</span>: <span class='prelude-val'>Some</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>Account</span>::<span class='ident'>generate_network_id</span>(<span class='ident'>keyword</span>.<span class='ident'>as_bytes</span>(), <span class='ident'>pin</span>.<span class='ident'>as_bytes</span>()))),
             <span class='ident'>session_packet_keys</span>: <span class='prelude-val'>Some</span>(<span class='ident'>SessionPacketEncryptionKeys</span>::<span class='ident'>new</span>(<span class='ident'>password</span>, <span class='ident'>pin</span>)),
             <span class='ident'>client_manager_addr</span>: <span class='prelude-val'>Some</span>(<span class='ident'>client_manager_addr</span>),
         };
 
         {
             <span class='kw'>let</span> <span class='ident'>account</span> <span class='op'>=</span> <span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>account</span>.<span class='ident'>as_ref</span>(), <span class='ident'>LOGIC_ERROR</span>);
-            <span class='kw'>let</span> <span class='ident'>session_packet_keys</span> <span class='op'>=</span> <span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>session_packet_keys</span>.<span class='ident'>as_ref</span>(),
-                                                     <span class='ident'>LOGIC_ERROR</span>);
+            <span class='kw'>let</span> <span class='ident'>session_packet_keys</span> <span class='op'>=</span> <span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>session_packet_keys</span>.<span class='ident'>as_ref</span>(), <span class='ident'>LOGIC_ERROR</span>);
 
-            <span class='kw'>let</span> <span class='ident'>session_packet_id</span> <span class='op'>=</span> <span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>session_packet_id</span>.<span class='ident'>as_ref</span>(), <span class='ident'>LOGIC_ERROR</span>)
-                                        .<span class='ident'>clone</span>();
+            <span class='kw'>let</span> <span class='ident'>session_packet_id</span> <span class='op'>=</span> <span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>session_packet_id</span>.<span class='ident'>as_ref</span>(), <span class='ident'>LOGIC_ERROR</span>).<span class='ident'>clone</span>();
             <span class='kw'>let</span> <span class='ident'>account_version</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>StructuredData</span>::<span class='ident'>new</span>(<span class='ident'>LOGIN_PACKET_TYPE_TAG</span>,
                                                            <span class='ident'>session_packet_id</span>,
                                                            <span class='number'>0</span>,
@@ -1087,8 +1040,7 @@
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>unregistered_client</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>Client</span>::<span class='ident'>create_unregistered_client</span>());
         <span class='kw'>let</span> <span class='ident'>user_id</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>Account</span>::<span class='ident'>generate_network_id</span>(<span class='ident'>keyword</span>.<span class='ident'>as_bytes</span>(), <span class='ident'>pin</span>.<span class='ident'>as_bytes</span>()));
 
-        <span class='kw'>let</span> <span class='ident'>session_packet_request</span> <span class='op'>=</span> <span class='ident'>DataRequest</span>::<span class='ident'>Structured</span>(<span class='ident'>user_id</span>.<span class='ident'>clone</span>(),
-                                                             <span class='ident'>LOGIN_PACKET_TYPE_TAG</span>);
+        <span class='kw'>let</span> <span class='ident'>session_packet_request</span> <span class='op'>=</span> <span class='ident'>DataRequest</span>::<span class='ident'>Structured</span>(<span class='ident'>user_id</span>.<span class='ident'>clone</span>(), <span class='ident'>LOGIN_PACKET_TYPE_TAG</span>);
 
         <span class='kw'>let</span> <span class='ident'>resp_getter</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>unregistered_client</span>.<span class='ident'>get</span>(<span class='ident'>session_packet_request</span>, <span class='prelude-val'>None</span>));
 
@@ -1117,8 +1069,7 @@
             <span class='kw'>let</span> (<span class='ident'>network_event_sender</span>, <span class='ident'>network_event_receiver</span>) <span class='op'>=</span> <span class='ident'>mpsc</span>::<span class='ident'>channel</span>();
 
             <span class='kw'>let</span> <span class='ident'>routing</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>Client</span>::<span class='ident'>get_new_routing</span>(<span class='ident'>routing_sender</span>, <span class='prelude-val'>Some</span>(<span class='ident'>id_packet</span>)));
-            <span class='kw'>let</span> (<span class='ident'>message_queue</span>, <span class='ident'>raii_joiner</span>) <span class='op'>=</span> <span class='ident'>MessageQueue</span>::<span class='ident'>new</span>(<span class='ident'>routing_receiver</span>,
-                                                                 <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>network_event_sender</span>]);
+            <span class='kw'>let</span> (<span class='ident'>message_queue</span>, <span class='ident'>raii_joiner</span>) <span class='op'>=</span> <span class='ident'>MessageQueue</span>::<span class='ident'>new</span>(<span class='ident'>routing_receiver</span>, <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>network_event_sender</span>]);
 
             <span class='kw'>match</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>network_event_receiver</span>.<span class='ident'>recv</span>()) {
                 <span class='ident'>NetworkEvent</span>::<span class='ident'>Connected</span> <span class='op'>=&gt;</span> (),
@@ -1136,8 +1087,7 @@
                 <span class='ident'>routing</span>: <span class='ident'>routing</span>,
                 <span class='ident'>_raii_joiner</span>: <span class='ident'>raii_joiner</span>,
                 <span class='ident'>message_queue</span>: <span class='ident'>message_queue</span>,
-                <span class='ident'>session_packet_id</span>: <span class='prelude-val'>Some</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>Account</span>::<span class='ident'>generate_network_id</span>(<span class='ident'>keyword</span>.<span class='ident'>as_bytes</span>(),
-                                                                          <span class='ident'>pin</span>.<span class='ident'>as_bytes</span>()))),
+                <span class='ident'>session_packet_id</span>: <span class='prelude-val'>Some</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>Account</span>::<span class='ident'>generate_network_id</span>(<span class='ident'>keyword</span>.<span class='ident'>as_bytes</span>(), <span class='ident'>pin</span>.<span class='ident'>as_bytes</span>()))),
                 <span class='ident'>session_packet_keys</span>: <span class='prelude-val'>Some</span>(<span class='ident'>SessionPacketEncryptionKeys</span>::<span class='ident'>new</span>(<span class='ident'>password</span>, <span class='ident'>pin</span>)),
                 <span class='ident'>client_manager_addr</span>: <span class='prelude-val'>Some</span>(<span class='ident'>client_manager_addr</span>),
             };
@@ -1149,12 +1099,11 @@
     }
 
     <span class='doccomment'>/// Create an entry for the Root Directory ID for the user into the session packet, encrypt and</span>
-    <span class='doccomment'>/// store it. It will be retireved when the user logs into his account. Root directory ID is</span>
-    <span class='doccomment'>/// necessary to fetch all of user&#39;s data as all further data is encoded as meta-information</span>
+    <span class='doccomment'>/// store it. It will be retrieved when the user logs into their account. Root directory ID is</span>
+    <span class='doccomment'>/// necessary to fetch all of the user&#39;s data as all further data is encoded as meta-information</span>
     <span class='doccomment'>/// into the Root Directory or one of its subdirectories.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_user_root_directory_id</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>root_dir_id</span>: <span class='ident'>XorName</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
-        <span class='kw'>if</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>account</span>.<span class='ident'>as_mut</span>().<span class='ident'>ok_or</span>(<span class='ident'>CoreError</span>::<span class='ident'>OperationForbiddenForClient</span>))
-               .<span class='ident'>set_user_root_dir_id</span>(<span class='ident'>root_dir_id</span>) {
+        <span class='kw'>if</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>account</span>.<span class='ident'>as_mut</span>().<span class='ident'>ok_or</span>(<span class='ident'>CoreError</span>::<span class='ident'>OperationForbiddenForClient</span>)).<span class='ident'>set_user_root_dir_id</span>(<span class='ident'>root_dir_id</span>) {
             <span class='self'>self</span>.<span class='ident'>update_session_packet</span>()
         } <span class='kw'>else</span> {
             <span class='prelude-val'>Err</span>(<span class='ident'>CoreError</span>::<span class='ident'>RootDirectoryAlreadyExists</span>)
@@ -1167,12 +1116,11 @@
     }
 
     <span class='doccomment'>/// Create an entry for the Maidsafe configuration specific Root Directory ID into the</span>
-    <span class='doccomment'>/// session packet, encrypt and store it. It will be retireved when the user logs into</span>
-    <span class='doccomment'>/// his account. Root directory ID is necessary to fetch all of configuration data as all further</span>
-    <span class='doccomment'>/// data is encoded as meta-information into the config Root Directory or one of its subdirectories.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_configuration_root_directory_id</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>,
-                                               <span class='ident'>root_dir_id</span>: <span class='ident'>XorName</span>)
-                                               <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
+    <span class='doccomment'>/// session packet, encrypt and store it. It will be retrieved when the user logs into</span>
+    <span class='doccomment'>/// their account. Root directory ID is necessary to fetch all of configuration data as all</span>
+    <span class='doccomment'>/// further data is encoded as meta-information into the config Root Directory or one of its</span>
+    <span class='doccomment'>/// subdirectories.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_configuration_root_directory_id</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>root_dir_id</span>: <span class='ident'>XorName</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
         <span class='kw'>if</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>account</span>.<span class='ident'>as_mut</span>().<span class='ident'>ok_or</span>(<span class='ident'>CoreError</span>::<span class='ident'>OperationForbiddenForClient</span>))
                .<span class='ident'>set_maidsafe_config_root_dir_id</span>(<span class='ident'>root_dir_id</span>) {
             <span class='self'>self</span>.<span class='ident'>update_session_packet</span>()
@@ -1261,8 +1209,7 @@
 
         <span class='kw'>let</span> (<span class='ident'>tx</span>, <span class='ident'>rx</span>) <span class='op'>=</span> <span class='ident'>mpsc</span>::<span class='ident'>channel</span>();
         <span class='kw'>let</span> <span class='ident'>msg_id</span> <span class='op'>=</span> <span class='ident'>MessageId</span>::<span class='ident'>new</span>();
-        <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>message_queue</span>.<span class='ident'>lock</span>())
-            .<span class='ident'>register_response_observer</span>(<span class='ident'>msg_id</span>.<span class='ident'>clone</span>(), <span class='ident'>tx</span>.<span class='ident'>clone</span>());
+        <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>message_queue</span>.<span class='ident'>lock</span>()).<span class='ident'>register_response_observer</span>(<span class='ident'>msg_id</span>.<span class='ident'>clone</span>(), <span class='ident'>tx</span>.<span class='ident'>clone</span>());
 
         <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>routing</span>.<span class='ident'>send_get_request</span>(<span class='ident'>dst</span>, <span class='ident'>request_for</span>.<span class='ident'>clone</span>(), <span class='ident'>msg_id</span>));
 
@@ -1270,21 +1217,15 @@
     }
 
     <span class='doccomment'>/// Put data onto the network. This is non-blocking.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>put</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
-               <span class='ident'>data</span>: <span class='ident'>Data</span>,
-               <span class='ident'>opt_dst</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Authority</span><span class='op'>&gt;</span>)
-               <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MutationResponseGetter</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>put</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>data</span>: <span class='ident'>Data</span>, <span class='ident'>opt_dst</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Authority</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MutationResponseGetter</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>dst</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='ident'>opt_dst</span> {
             <span class='prelude-val'>Some</span>(<span class='ident'>auth</span>) <span class='op'>=&gt;</span> <span class='ident'>auth</span>,
-            <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> {
-                <span class='ident'>Authority</span>::<span class='ident'>ClientManager</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get_default_client_manager_address</span>()).<span class='ident'>clone</span>())
-            }
+            <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='ident'>Authority</span>::<span class='ident'>ClientManager</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get_default_client_manager_address</span>()).<span class='ident'>clone</span>()),
         };
 
         <span class='kw'>let</span> (<span class='ident'>tx</span>, <span class='ident'>rx</span>) <span class='op'>=</span> <span class='ident'>mpsc</span>::<span class='ident'>channel</span>();
         <span class='kw'>let</span> <span class='ident'>msg_id</span> <span class='op'>=</span> <span class='ident'>MessageId</span>::<span class='ident'>new</span>();
-        <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>message_queue</span>.<span class='ident'>lock</span>())
-            .<span class='ident'>register_response_observer</span>(<span class='ident'>msg_id</span>.<span class='ident'>clone</span>(), <span class='ident'>tx</span>.<span class='ident'>clone</span>());
+        <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>message_queue</span>.<span class='ident'>lock</span>()).<span class='ident'>register_response_observer</span>(<span class='ident'>msg_id</span>.<span class='ident'>clone</span>(), <span class='ident'>tx</span>.<span class='ident'>clone</span>());
 
         <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>routing</span>.<span class='ident'>send_put_request</span>(<span class='ident'>dst</span>, <span class='ident'>data</span>, <span class='ident'>msg_id</span>));
 
@@ -1292,10 +1233,7 @@
     }
 
     <span class='doccomment'>/// Post data onto the network</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>post</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
-                <span class='ident'>data</span>: <span class='ident'>Data</span>,
-                <span class='ident'>opt_dst</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Authority</span><span class='op'>&gt;</span>)
-                <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MutationResponseGetter</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>post</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>data</span>: <span class='ident'>Data</span>, <span class='ident'>opt_dst</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Authority</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MutationResponseGetter</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>dst</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='ident'>opt_dst</span> {
             <span class='prelude-val'>Some</span>(<span class='ident'>auth</span>) <span class='op'>=&gt;</span> <span class='ident'>auth</span>,
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='ident'>Authority</span>::<span class='ident'>NaeManager</span>(<span class='ident'>data</span>.<span class='ident'>name</span>()),
@@ -1303,8 +1241,7 @@
 
         <span class='kw'>let</span> (<span class='ident'>tx</span>, <span class='ident'>rx</span>) <span class='op'>=</span> <span class='ident'>mpsc</span>::<span class='ident'>channel</span>();
         <span class='kw'>let</span> <span class='ident'>msg_id</span> <span class='op'>=</span> <span class='ident'>MessageId</span>::<span class='ident'>new</span>();
-        <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>message_queue</span>.<span class='ident'>lock</span>())
-            .<span class='ident'>register_response_observer</span>(<span class='ident'>msg_id</span>.<span class='ident'>clone</span>(), <span class='ident'>tx</span>.<span class='ident'>clone</span>());
+        <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>message_queue</span>.<span class='ident'>lock</span>()).<span class='ident'>register_response_observer</span>(<span class='ident'>msg_id</span>.<span class='ident'>clone</span>(), <span class='ident'>tx</span>.<span class='ident'>clone</span>());
 
         <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>routing</span>.<span class='ident'>send_post_request</span>(<span class='ident'>dst</span>, <span class='ident'>data</span>, <span class='ident'>msg_id</span>));
 
@@ -1312,10 +1249,7 @@
     }
 
     <span class='doccomment'>/// Delete data from the network</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>delete</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
-                  <span class='ident'>data</span>: <span class='ident'>Data</span>,
-                  <span class='ident'>opt_dst</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Authority</span><span class='op'>&gt;</span>)
-                  <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MutationResponseGetter</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>delete</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>data</span>: <span class='ident'>Data</span>, <span class='ident'>opt_dst</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Authority</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MutationResponseGetter</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>dst</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='ident'>opt_dst</span> {
             <span class='prelude-val'>Some</span>(<span class='ident'>auth</span>) <span class='op'>=&gt;</span> <span class='ident'>auth</span>,
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='ident'>Authority</span>::<span class='ident'>NaeManager</span>(<span class='ident'>data</span>.<span class='ident'>name</span>()),
@@ -1323,8 +1257,7 @@
 
         <span class='kw'>let</span> (<span class='ident'>tx</span>, <span class='ident'>rx</span>) <span class='op'>=</span> <span class='ident'>mpsc</span>::<span class='ident'>channel</span>();
         <span class='kw'>let</span> <span class='ident'>msg_id</span> <span class='op'>=</span> <span class='ident'>MessageId</span>::<span class='ident'>new</span>();
-        <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>message_queue</span>.<span class='ident'>lock</span>())
-            .<span class='ident'>register_response_observer</span>(<span class='ident'>msg_id</span>.<span class='ident'>clone</span>(), <span class='ident'>tx</span>.<span class='ident'>clone</span>());
+        <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>message_queue</span>.<span class='ident'>lock</span>()).<span class='ident'>register_response_observer</span>(<span class='ident'>msg_id</span>.<span class='ident'>clone</span>(), <span class='ident'>tx</span>.<span class='ident'>clone</span>());
 
         <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>routing</span>.<span class='ident'>send_delete_request</span>(<span class='ident'>dst</span>, <span class='ident'>data</span>, <span class='ident'>msg_id</span>));
 
@@ -1332,98 +1265,102 @@
     }
 
     <span class='comment'>// TODO Redo this since response handling is integrated - For Qi right now</span>
-    <span class='comment'>// /// Send a message to receiver via the network. This is non-blocking.</span>
-    <span class='comment'>// pub fn send_message(&amp;self,</span>
-    <span class='comment'>//                     mpid_account: &amp;XorName,</span>
-    <span class='comment'>//                     msg_metadata: Vec&lt;u8&gt;,</span>
-    <span class='comment'>//                     msg_content: Vec&lt;u8&gt;,</span>
-    <span class='comment'>//                     receiver: XorName,</span>
-    <span class='comment'>//                     secret_key: &amp;sign::SecretKey)</span>
-    <span class='comment'>//                     -&gt; Result&lt;MutationResponseGetter, CoreError&gt; {</span>
-    <span class='comment'>//     let mpid_message = try!(MpidMessage::new(mpid_account.clone(),</span>
-    <span class='comment'>//                                              msg_metadata,</span>
-    <span class='comment'>//                                              receiver,</span>
-    <span class='comment'>//                                              msg_content,</span>
-    <span class='comment'>//                                              secret_key));</span>
-    <span class='comment'>//     let request = MpidMessageWrapper::PutMessage(mpid_message.clone());</span>
-    <span class='comment'>//     let serialised_request = try!(serialise(&amp;request));</span>
-    <span class='comment'>//     let name = try!(mpid_message.name());</span>
-    <span class='comment'>//     let data = Data::Plain(PlainData::new(name, serialised_request));</span>
-    <span class='comment'>//     self.put(data, Some(Authority::ClientManager(mpid_account.clone())))</span>
-    <span class='comment'>// }</span>
+    <span class='doccomment'>/// Send a message to receiver via the network. This is non-blocking.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>send_message</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
+                        <span class='ident'>mpid_account</span>: <span class='ident'>XorName</span>,
+                        <span class='ident'>msg_metadata</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
+                        <span class='ident'>msg_content</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
+                        <span class='ident'>receiver</span>: <span class='ident'>XorName</span>,
+                        <span class='ident'>secret_key</span>: <span class='kw-2'>&amp;</span><span class='ident'>sign</span>::<span class='ident'>SecretKey</span>)
+                        <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MutationResponseGetter</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>mpid_message</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>MpidMessage</span>::<span class='ident'>new</span>(<span class='ident'>mpid_account</span>,
+                                                 <span class='ident'>msg_metadata</span>,
+                                                 <span class='ident'>receiver</span>,
+                                                 <span class='ident'>msg_content</span>,
+                                                 <span class='ident'>secret_key</span>));
+        <span class='kw'>let</span> <span class='ident'>name</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>mpid_message</span>.<span class='ident'>name</span>());
+        <span class='kw'>let</span> <span class='ident'>request</span> <span class='op'>=</span> <span class='ident'>MpidMessageWrapper</span>::<span class='ident'>PutMessage</span>(<span class='ident'>mpid_message</span>);
 
-    <span class='comment'>// /// Delete a message from own or sender&#39;s outbox. This is non-blocking.</span>
-    <span class='comment'>// pub fn delete_message(&amp;self,</span>
-    <span class='comment'>//                       target_account: &amp;XorName,</span>
-    <span class='comment'>//                       message_name: &amp;XorName)</span>
-    <span class='comment'>//                       -&gt; Result&lt;(), CoreError&gt; {</span>
-    <span class='comment'>//     self.messaging_delete_request(target_account,</span>
-    <span class='comment'>//                                   message_name,</span>
-    <span class='comment'>//                                   MpidMessageWrapper::DeleteMessage(message_name.clone()))</span>
-    <span class='comment'>// }</span>
+        <span class='kw'>let</span> <span class='ident'>serialised_request</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>request</span>));
+        <span class='kw'>let</span> <span class='ident'>data</span> <span class='op'>=</span> <span class='ident'>Data</span>::<span class='ident'>Plain</span>(<span class='ident'>PlainData</span>::<span class='ident'>new</span>(<span class='ident'>name</span>, <span class='ident'>serialised_request</span>));
 
-    <span class='comment'>// /// Delete a header from own inbox. This is non-blocking.</span>
-    <span class='comment'>// pub fn delete_header(&amp;self,</span>
-    <span class='comment'>//                      mpid_account: &amp;XorName,</span>
-    <span class='comment'>//                      header_name: &amp;XorName)</span>
-    <span class='comment'>//                      -&gt; Result&lt;MutationResponseGetter, CoreError&gt; {</span>
-    <span class='comment'>//     self.messaging_delete_request(mpid_account,</span>
-    <span class='comment'>//                                   header_name,</span>
-    <span class='comment'>//                                   MpidMessageWrapper::DeleteHeader(header_name.clone()))</span>
-    <span class='comment'>// }</span>
+        <span class='self'>self</span>.<span class='ident'>put</span>(<span class='ident'>data</span>, <span class='prelude-val'>Some</span>(<span class='ident'>Authority</span>::<span class='ident'>ClientManager</span>(<span class='ident'>mpid_account</span>)))
+    }
 
-    <span class='comment'>// fn messaging_delete_request(&amp;self,</span>
-    <span class='comment'>//                             account: &amp;XorName,</span>
-    <span class='comment'>//                             name: &amp;XorName,</span>
-    <span class='comment'>//                             request: MpidMessageWrapper)</span>
-    <span class='comment'>//                             -&gt; Result&lt;MutationResponseGetter, CoreError&gt; {</span>
-    <span class='comment'>//     let serialised_request = try!(serialise(&amp;request));</span>
-    <span class='comment'>//     let data = Data::Plain(PlainData::new(name.clone(), serialised_request));</span>
-    <span class='comment'>//     self.delete(data, Some(Authority::ClientManager(account.clone())))</span>
-    <span class='comment'>// }</span>
+    <span class='doccomment'>/// Delete a message from own or sender&#39;s outbox. This is non-blocking.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>delete_message</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
+                          <span class='ident'>target_account</span>: <span class='ident'>XorName</span>,
+                          <span class='ident'>message_name</span>: <span class='ident'>XorName</span>)
+                          <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MutationResponseGetter</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
+        <span class='self'>self</span>.<span class='ident'>messaging_delete_request</span>(<span class='ident'>target_account</span>,
+                                      <span class='ident'>message_name</span>,
+                                      <span class='ident'>MpidMessageWrapper</span>::<span class='ident'>DeleteMessage</span>(<span class='ident'>message_name</span>.<span class='ident'>clone</span>()))
+    }
 
-    <span class='comment'>// /// Register as an online mpid_messaging client to the network. This is non-blocking.</span>
-    <span class='comment'>// pub fn register_online(&amp;self, mpid_account: &amp;XorName) -&gt; Result&lt;ResponseGetter, CoreError&gt; {</span>
-    <span class='comment'>//     self.messaging_post_request(mpid_account, MpidMessageWrapper::Online)</span>
-    <span class='comment'>// }</span>
+    <span class='doccomment'>/// Delete a header from own inbox. This is non-blocking.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>delete_header</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
+                         <span class='ident'>mpid_account</span>: <span class='ident'>XorName</span>,
+                         <span class='ident'>header_name</span>: <span class='ident'>XorName</span>)
+                         <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MutationResponseGetter</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
+        <span class='self'>self</span>.<span class='ident'>messaging_delete_request</span>(<span class='ident'>mpid_account</span>,
+                                      <span class='ident'>header_name</span>,
+                                      <span class='ident'>MpidMessageWrapper</span>::<span class='ident'>DeleteHeader</span>(<span class='ident'>header_name</span>.<span class='ident'>clone</span>()))
+    }
 
-    <span class='comment'>// /// Query the targeted messages&#39; header that still in the outbox. This is non-blocking.</span>
-    <span class='comment'>// pub fn query_outbox_headers(&amp;self,</span>
-    <span class='comment'>//                             mpid_account: &amp;XorName,</span>
-    <span class='comment'>//                             headers: Vec&lt;XorName&gt;)</span>
-    <span class='comment'>//                             -&gt; Result&lt;ResponseGetter, CoreError&gt; {</span>
-    <span class='comment'>//     self.messaging_post_request(mpid_account, MpidMessageWrapper::OutboxHas(headers))</span>
-    <span class='comment'>// }</span>
+    <span class='kw'>fn</span> <span class='ident'>messaging_delete_request</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
+                                <span class='ident'>account</span>: <span class='ident'>XorName</span>,
+                                <span class='ident'>name</span>: <span class='ident'>XorName</span>,
+                                <span class='ident'>request</span>: <span class='ident'>MpidMessageWrapper</span>)
+                                <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>MutationResponseGetter</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>serialised_request</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>request</span>));
+        <span class='kw'>let</span> <span class='ident'>data</span> <span class='op'>=</span> <span class='ident'>Data</span>::<span class='ident'>Plain</span>(<span class='ident'>PlainData</span>::<span class='ident'>new</span>(<span class='ident'>name</span>, <span class='ident'>serialised_request</span>));
 
-    <span class='comment'>// /// Get the list of messages&#39; headers that still in the outbox. This is non-blocking.</span>
-    <span class='comment'>// pub fn get_outbox_headers(&amp;self, mpid_account: &amp;XorName) -&gt; Result&lt;ResponseGetter, CoreError&gt; {</span>
-    <span class='comment'>//     self.messaging_post_request(mpid_account, MpidMessageWrapper::GetOutboxHeaders)</span>
-    <span class='comment'>// }</span>
+        <span class='self'>self</span>.<span class='ident'>delete</span>(<span class='ident'>data</span>, <span class='prelude-val'>Some</span>(<span class='ident'>Authority</span>::<span class='ident'>ClientManager</span>(<span class='ident'>account</span>)))
+    }
 
-    <span class='comment'>// // TODO: the message_queue is a LRUcache without timeout, it needs to check whether a</span>
-    <span class='comment'>// //       non-responded request will sit in the cache fowever and block the later on</span>
-    <span class='comment'>// //       post requests, as all such request will bearing the same name - mpid_account</span>
-    <span class='comment'>// fn messaging_post_request(&amp;self,</span>
-    <span class='comment'>//                           mpid_account: &amp;XorName,</span>
-    <span class='comment'>//                           request: MpidMessageWrapper)</span>
-    <span class='comment'>//                           -&gt; Result&lt;ResponseGetter, CoreError&gt; {</span>
-    <span class='comment'>//     let data_request = DataRequest::Plain(mpid_account.clone());</span>
+    <span class='doccomment'>/// Register as an online mpid_messaging client to the network. This is non-blocking.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>register_online</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>mpid_account</span>: <span class='ident'>XorName</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>GetResponseGetter</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
+        <span class='self'>self</span>.<span class='ident'>messaging_post_request</span>(<span class='ident'>mpid_account</span>, <span class='ident'>MpidMessageWrapper</span>::<span class='ident'>Online</span>)
+    }
 
-    <span class='comment'>//     let mut msg_queue = unwrap_result!(self.message_queue.lock());</span>
-    <span class='comment'>//     if msg_queue.local_cache_check(mpid_account) {</span>
-    <span class='comment'>//         return Ok(ResponseGetter::new(None, self.message_queue.clone(), data_request));</span>
-    <span class='comment'>//     }</span>
+    <span class='doccomment'>/// Query the targeted messages&#39; header that still in the outbox. This is non-blocking.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>query_outbox_headers</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
+                                <span class='ident'>mpid_account</span>: <span class='ident'>XorName</span>,
+                                <span class='ident'>headers</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>XorName</span><span class='op'>&gt;</span>)
+                                <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>GetResponseGetter</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
+        <span class='self'>self</span>.<span class='ident'>messaging_post_request</span>(<span class='ident'>mpid_account</span>, <span class='ident'>MpidMessageWrapper</span>::<span class='ident'>OutboxHas</span>(<span class='ident'>headers</span>))
+    }
 
-    <span class='comment'>//     let serialised_request = try!(serialise(&amp;request));</span>
-    <span class='comment'>//     let data = Data::Plain(PlainData::new(mpid_account.clone(), serialised_request));</span>
-    <span class='comment'>//     try!(self.post(data, Some(Authority::ClientManager(mpid_account.clone()))));</span>
+    <span class='doccomment'>/// Get the list of messages&#39; headers that still in the outbox. This is non-blocking.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_outbox_headers</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>mpid_account</span>: <span class='ident'>XorName</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>GetResponseGetter</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
+        <span class='self'>self</span>.<span class='ident'>messaging_post_request</span>(<span class='ident'>mpid_account</span>, <span class='ident'>MpidMessageWrapper</span>::<span class='ident'>GetOutboxHeaders</span>)
+    }
 
-    <span class='comment'>//     let (msg_event_sender, msg_event_receiver) = mpsc::channel();</span>
-    <span class='comment'>//     self.add_data_receive_event_observer(mpid_account.clone(), msg_event_sender.clone());</span>
-    <span class='comment'>//     Ok(ResponseGetter::new(Some((msg_event_sender, msg_event_receiver)),</span>
-    <span class='comment'>//                            self.message_queue.clone(),</span>
-    <span class='comment'>//                            data_request))</span>
-    <span class='comment'>// }</span>
+    <span class='comment'>// TODO - Qi to check if this is alright - Post something should not require version caching.</span>
+    <span class='comment'>// Should this not be a GET ? - Asked by Spandan</span>
+    <span class='kw'>fn</span> <span class='ident'>messaging_post_request</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
+                              <span class='ident'>mpid_account</span>: <span class='ident'>XorName</span>,
+                              <span class='ident'>request</span>: <span class='ident'>MpidMessageWrapper</span>)
+                              <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>GetResponseGetter</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>data_request</span> <span class='op'>=</span> <span class='ident'>DataRequest</span>::<span class='ident'>Plain</span>(<span class='ident'>mpid_account</span>);
+
+        {
+            <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>msg_queue</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>message_queue</span>.<span class='ident'>lock</span>());
+            <span class='kw'>if</span> <span class='ident'>msg_queue</span>.<span class='ident'>local_cache_check</span>(<span class='kw-2'>&amp;</span><span class='ident'>mpid_account</span>) {
+                <span class='kw'>return</span> <span class='prelude-val'>Ok</span>(<span class='ident'>GetResponseGetter</span>::<span class='ident'>new</span>(<span class='prelude-val'>None</span>, <span class='self'>self</span>.<span class='ident'>message_queue</span>.<span class='ident'>clone</span>(), <span class='ident'>data_request</span>));
+            }
+        }
+
+        <span class='kw'>let</span> <span class='ident'>serialised_request</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>request</span>));
+        <span class='kw'>let</span> <span class='ident'>data</span> <span class='op'>=</span> <span class='ident'>Data</span>::<span class='ident'>Plain</span>(<span class='ident'>PlainData</span>::<span class='ident'>new</span>(<span class='ident'>mpid_account</span>, <span class='ident'>serialised_request</span>));
+        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>post</span>(<span class='ident'>data</span>, <span class='prelude-val'>Some</span>(<span class='ident'>Authority</span>::<span class='ident'>ClientManager</span>(<span class='ident'>mpid_account</span>)))).<span class='ident'>get</span>());
+
+        <span class='kw'>let</span> (<span class='ident'>tx</span>, <span class='ident'>rx</span>) <span class='op'>=</span> <span class='ident'>mpsc</span>::<span class='ident'>channel</span>();
+        <span class='kw'>let</span> <span class='ident'>msg_id</span> <span class='op'>=</span> <span class='ident'>MessageId</span>::<span class='ident'>new</span>();
+        <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>message_queue</span>.<span class='ident'>lock</span>()).<span class='ident'>register_response_observer</span>(<span class='ident'>msg_id</span>.<span class='ident'>clone</span>(), <span class='ident'>tx</span>.<span class='ident'>clone</span>());
+
+        <span class='prelude-val'>Ok</span>(<span class='ident'>GetResponseGetter</span>::<span class='ident'>new</span>(<span class='prelude-val'>Some</span>((<span class='ident'>tx</span>, <span class='ident'>rx</span>)), <span class='self'>self</span>.<span class='ident'>message_queue</span>.<span class='ident'>clone</span>(), <span class='ident'>data_request</span>))
+    }
 
     <span class='doccomment'>/// Returns the public encryption key</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_public_encryption_key</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='ident'>box_</span>::<span class='ident'>PublicKey</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
@@ -1460,9 +1397,7 @@
     }
 
     <span class='doccomment'>/// Set the default address where the PUTs and DELETEs will go to for this client</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_default_client_manager_address</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>,
-                                              <span class='ident'>address</span>: <span class='ident'>XorName</span>)
-                                              <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_default_client_manager_address</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>address</span>: <span class='ident'>XorName</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
         <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>client_manager_addr</span>.<span class='ident'>as_mut</span>() {
             <span class='prelude-val'>Some</span>(<span class='ident'>contained_address</span>) <span class='op'>=&gt;</span> <span class='op'>*</span><span class='ident'>contained_address</span> <span class='op'>=</span> <span class='ident'>address</span>,
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>CoreError</span>::<span class='ident'>OperationForbiddenForClient</span>),
@@ -1471,9 +1406,7 @@
         <span class='prelude-val'>Ok</span>(())
     }
 
-    <span class='kw'>fn</span> <span class='ident'>get_new_routing</span>(<span class='ident'>sender</span>: <span class='ident'>Sender</span><span class='op'>&lt;</span><span class='ident'>Event</span><span class='op'>&gt;</span>,
-                       <span class='ident'>id_packet</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>FullId</span><span class='op'>&gt;</span>)
-                       <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Routing</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
+    <span class='kw'>fn</span> <span class='ident'>get_new_routing</span>(<span class='ident'>sender</span>: <span class='ident'>Sender</span><span class='op'>&lt;</span><span class='ident'>Event</span><span class='op'>&gt;</span>, <span class='ident'>id_packet</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>FullId</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Routing</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
         <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>Routing</span>::<span class='ident'>new</span>(<span class='ident'>sender</span>, <span class='ident'>id_packet</span>)))
     }
 
@@ -1482,8 +1415,7 @@
                                          .<span class='ident'>as_ref</span>()
                                          .<span class='ident'>ok_or</span>(<span class='ident'>CoreError</span>::<span class='ident'>OperationForbiddenForClient</span>))
                                     .<span class='ident'>clone</span>();
-        <span class='kw'>let</span> <span class='ident'>session_packet_request</span> <span class='op'>=</span> <span class='ident'>DataRequest</span>::<span class='ident'>Structured</span>(<span class='ident'>session_packet_id</span>.<span class='ident'>clone</span>(),
-                                                             <span class='ident'>LOGIN_PACKET_TYPE_TAG</span>);
+        <span class='kw'>let</span> <span class='ident'>session_packet_request</span> <span class='op'>=</span> <span class='ident'>DataRequest</span>::<span class='ident'>Structured</span>(<span class='ident'>session_packet_id</span>.<span class='ident'>clone</span>(), <span class='ident'>LOGIN_PACKET_TYPE_TAG</span>);
 
         <span class='kw'>let</span> <span class='ident'>resp_getter</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get</span>(<span class='ident'>session_packet_request</span>, <span class='prelude-val'>None</span>));
 
@@ -1497,12 +1429,15 @@
                                                          <span class='ident'>session_packet_keys</span>.<span class='ident'>get_pin</span>()));
 
             <span class='kw'>let</span> <span class='ident'>new_account_version</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>StructuredData</span>::<span class='ident'>new</span>(<span class='ident'>LOGIN_PACKET_TYPE_TAG</span>,
-                                         <span class='ident'>session_packet_id</span>,
-                                         <span class='ident'>retrieved_session_packet</span>.<span class='ident'>get_version</span>() <span class='op'>+</span> <span class='number'>1</span>,
-                                         <span class='ident'>encrypted_account</span>,
-                                         <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>account</span>.<span class='ident'>get_public_maid</span>().<span class='ident'>public_keys</span>().<span class='number'>0</span>.<span class='ident'>clone</span>()],
-                                         <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
-                                         <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='ident'>account</span>.<span class='ident'>get_maid</span>().<span class='ident'>secret_keys</span>().<span class='number'>0</span>)));
+                                                               <span class='ident'>session_packet_id</span>,
+                                                               <span class='ident'>retrieved_session_packet</span>.<span class='ident'>get_version</span>() <span class='op'>+</span> <span class='number'>1</span>,
+                                                               <span class='ident'>encrypted_account</span>,
+                                                               <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>account</span>.<span class='ident'>get_public_maid</span>()
+                                                                           .<span class='ident'>public_keys</span>()
+                                                                           .<span class='number'>0</span>
+                                                                           .<span class='ident'>clone</span>()],
+                                                               <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+                                                               <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='ident'>account</span>.<span class='ident'>get_maid</span>().<span class='ident'>secret_keys</span>().<span class='number'>0</span>)));
             <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>post</span>(<span class='ident'>Data</span>::<span class='ident'>Structured</span>(<span class='ident'>new_account_version</span>), <span class='prelude-val'>None</span>)).<span class='ident'>get</span>()
         } <span class='kw'>else</span> {
             <span class='prelude-val'>Err</span>(<span class='ident'>CoreError</span>::<span class='ident'>ReceivedUnexpectedData</span>)
@@ -1564,9 +1499,7 @@
         <span class='kw'>let</span> <span class='ident'>pin</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_string</span>(<span class='number'>10</span>));
 
         <span class='comment'>// Creation should pass</span>
-        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>Client</span>::<span class='ident'>create_account</span>(<span class='ident'>keyword</span>.<span class='ident'>clone</span>(),
-                                                      <span class='ident'>pin</span>.<span class='ident'>clone</span>(),
-                                                      <span class='ident'>password</span>.<span class='ident'>clone</span>()));
+        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>Client</span>::<span class='ident'>create_account</span>(<span class='ident'>keyword</span>.<span class='ident'>clone</span>(), <span class='ident'>pin</span>.<span class='ident'>clone</span>(), <span class='ident'>password</span>.<span class='ident'>clone</span>()));
 
         <span class='comment'>// Correct Credentials - Login Should Pass</span>
         <span class='kw'>let</span> _ <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>Client</span>::<span class='ident'>log_in</span>(<span class='ident'>keyword</span>, <span class='ident'>pin</span>, <span class='ident'>password</span>));
@@ -1614,9 +1547,7 @@
         <span class='kw'>let</span> <span class='ident'>password</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_string</span>(<span class='number'>10</span>));
         <span class='kw'>let</span> <span class='ident'>pin</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_string</span>(<span class='number'>10</span>));
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>Client</span>::<span class='ident'>create_account</span>(<span class='ident'>keyword</span>.<span class='ident'>clone</span>(),
-                                                               <span class='ident'>pin</span>.<span class='ident'>clone</span>(),
-                                                               <span class='ident'>password</span>.<span class='ident'>clone</span>()));
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>Client</span>::<span class='ident'>create_account</span>(<span class='ident'>keyword</span>.<span class='ident'>clone</span>(), <span class='ident'>pin</span>.<span class='ident'>clone</span>(), <span class='ident'>password</span>.<span class='ident'>clone</span>()));
 
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>get_user_root_directory_id</span>().<span class='ident'>is_none</span>());
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>get_configuration_root_directory_id</span>().<span class='ident'>is_none</span>());
@@ -1640,9 +1571,7 @@
         <span class='kw'>let</span> <span class='ident'>password</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_string</span>(<span class='number'>10</span>));
         <span class='kw'>let</span> <span class='ident'>pin</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_string</span>(<span class='number'>10</span>));
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>Client</span>::<span class='ident'>create_account</span>(<span class='ident'>keyword</span>.<span class='ident'>clone</span>(),
-                                                               <span class='ident'>pin</span>.<span class='ident'>clone</span>(),
-                                                               <span class='ident'>password</span>.<span class='ident'>clone</span>()));
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>Client</span>::<span class='ident'>create_account</span>(<span class='ident'>keyword</span>.<span class='ident'>clone</span>(), <span class='ident'>pin</span>.<span class='ident'>clone</span>(), <span class='ident'>password</span>.<span class='ident'>clone</span>()));
 
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>get_user_root_directory_id</span>().<span class='ident'>is_none</span>());
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>get_configuration_root_directory_id</span>().<span class='ident'>is_none</span>());
@@ -1675,10 +1604,8 @@
 
         <span class='comment'>// Encrypt passing Nonce</span>
         <span class='kw'>let</span> <span class='ident'>nonce</span> <span class='op'>=</span> ::<span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>box_</span>::<span class='ident'>gen_nonce</span>();
-        <span class='kw'>let</span> <span class='ident'>cipher_text_0</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>hybrid_encrypt</span>(<span class='kw-2'>&amp;</span><span class='ident'>plain_text_original_0</span>[..],
-                                                                 <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='ident'>nonce</span>)));
-        <span class='kw'>let</span> <span class='ident'>cipher_text_1</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>hybrid_encrypt</span>(<span class='kw-2'>&amp;</span><span class='ident'>plain_text_original_1</span>[..],
-                                                                 <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='ident'>nonce</span>)));
+        <span class='kw'>let</span> <span class='ident'>cipher_text_0</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>hybrid_encrypt</span>(<span class='kw-2'>&amp;</span><span class='ident'>plain_text_original_0</span>[..], <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='ident'>nonce</span>)));
+        <span class='kw'>let</span> <span class='ident'>cipher_text_1</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>hybrid_encrypt</span>(<span class='kw-2'>&amp;</span><span class='ident'>plain_text_original_1</span>[..], <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='ident'>nonce</span>)));
 
         <span class='comment'>// Encrypt without passing Nonce</span>
         <span class='kw'>let</span> <span class='ident'>cipher_text_2</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>hybrid_encrypt</span>(<span class='kw-2'>&amp;</span><span class='ident'>plain_text_original_0</span>[..], <span class='prelude-val'>None</span>));
@@ -1728,9 +1655,8 @@
 
         <span class='comment'>// Version Caching should work for ImmutableData</span>
         {
-            <span class='kw'>let</span> <span class='ident'>immut_data</span> <span class='op'>=</span>
-                <span class='ident'>ImmutableData</span>::<span class='ident'>new</span>(<span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>,
-                                   <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_vector</span>(<span class='number'>10</span>)));
+            <span class='kw'>let</span> <span class='ident'>immut_data</span> <span class='op'>=</span> <span class='ident'>ImmutableData</span>::<span class='ident'>new</span>(<span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>,
+                                                <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_vector</span>(<span class='number'>10</span>)));
             <span class='kw'>let</span> <span class='ident'>data</span> <span class='op'>=</span> <span class='ident'>Data</span>::<span class='ident'>Immutable</span>(<span class='ident'>immut_data</span>);
 
             <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>put</span>(<span class='ident'>data</span>.<span class='ident'>clone</span>(), <span class='prelude-val'>None</span>)).<span class='ident'>get</span>());
@@ -1739,9 +1665,7 @@
 
             <span class='comment'>// Should not initially be in version cache</span>
             {
-                <span class='kw'>let</span> <span class='ident'>resp_getter</span> <span class='op'>=</span> <span class='ident'>GetResponseGetter</span>::<span class='ident'>new</span>(<span class='prelude-val'>None</span>,
-                                                         <span class='ident'>client</span>.<span class='ident'>message_queue</span>.<span class='ident'>clone</span>(),
-                                                         <span class='ident'>data_request</span>.<span class='ident'>clone</span>());
+                <span class='kw'>let</span> <span class='ident'>resp_getter</span> <span class='op'>=</span> <span class='ident'>GetResponseGetter</span>::<span class='ident'>new</span>(<span class='prelude-val'>None</span>, <span class='ident'>client</span>.<span class='ident'>message_queue</span>.<span class='ident'>clone</span>(), <span class='ident'>data_request</span>.<span class='ident'>clone</span>());
 
                 <span class='kw'>match</span> <span class='ident'>resp_getter</span>.<span class='ident'>get</span>() {
                     <span class='prelude-val'>Ok</span>(_) <span class='op'>=&gt;</span> <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;Should not have found data in version cache !!&quot;</span>),
@@ -1753,9 +1677,7 @@
             <span class='kw'>let</span> <span class='ident'>response_getter</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>get</span>(<span class='ident'>data_request</span>.<span class='ident'>clone</span>(), <span class='prelude-val'>None</span>));
             <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>response_getter</span>.<span class='ident'>get</span>()), <span class='ident'>data</span>);
 
-            <span class='kw'>let</span> <span class='ident'>resp_getter</span> <span class='op'>=</span> <span class='ident'>GetResponseGetter</span>::<span class='ident'>new</span>(<span class='prelude-val'>None</span>,
-                                                     <span class='ident'>client</span>.<span class='ident'>message_queue</span>.<span class='ident'>clone</span>(),
-                                                     <span class='ident'>data_request</span>);
+            <span class='kw'>let</span> <span class='ident'>resp_getter</span> <span class='op'>=</span> <span class='ident'>GetResponseGetter</span>::<span class='ident'>new</span>(<span class='prelude-val'>None</span>, <span class='ident'>client</span>.<span class='ident'>message_queue</span>.<span class='ident'>clone</span>(), <span class='ident'>data_request</span>);
             <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>resp_getter</span>.<span class='ident'>get</span>()), <span class='ident'>data</span>);
         }
 
@@ -1779,9 +1701,7 @@
 
             <span class='comment'>// Should not initially be in version cache</span>
             {
-                <span class='kw'>let</span> <span class='ident'>resp_getter</span> <span class='op'>=</span> <span class='ident'>GetResponseGetter</span>::<span class='ident'>new</span>(<span class='prelude-val'>None</span>,
-                                                         <span class='ident'>client</span>.<span class='ident'>message_queue</span>.<span class='ident'>clone</span>(),
-                                                         <span class='ident'>data_request</span>.<span class='ident'>clone</span>());
+                <span class='kw'>let</span> <span class='ident'>resp_getter</span> <span class='op'>=</span> <span class='ident'>GetResponseGetter</span>::<span class='ident'>new</span>(<span class='prelude-val'>None</span>, <span class='ident'>client</span>.<span class='ident'>message_queue</span>.<span class='ident'>clone</span>(), <span class='ident'>data_request</span>.<span class='ident'>clone</span>());
 
                 <span class='kw'>match</span> <span class='ident'>resp_getter</span>.<span class='ident'>get</span>() {
                     <span class='prelude-val'>Ok</span>(_) <span class='op'>=&gt;</span> <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;Should not have found data in version cache !!&quot;</span>),
@@ -1795,9 +1715,7 @@
 
             <span class='comment'>// Should not be in version cache even after fetch</span>
             {
-                <span class='kw'>let</span> <span class='ident'>resp_getter</span> <span class='op'>=</span> <span class='ident'>GetResponseGetter</span>::<span class='ident'>new</span>(<span class='prelude-val'>None</span>,
-                                                         <span class='ident'>client</span>.<span class='ident'>message_queue</span>.<span class='ident'>clone</span>(),
-                                                         <span class='ident'>data_request</span>);
+                <span class='kw'>let</span> <span class='ident'>resp_getter</span> <span class='op'>=</span> <span class='ident'>GetResponseGetter</span>::<span class='ident'>new</span>(<span class='prelude-val'>None</span>, <span class='ident'>client</span>.<span class='ident'>message_queue</span>.<span class='ident'>clone</span>(), <span class='ident'>data_request</span>);
 
                 <span class='kw'>match</span> <span class='ident'>resp_getter</span>.<span class='ident'>get</span>() {
                     <span class='prelude-val'>Ok</span>(_) <span class='op'>=&gt;</span> <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;Should not have found data in version cache !!&quot;</span>),

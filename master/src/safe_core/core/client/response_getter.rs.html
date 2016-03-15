@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.9.0/src/core/client/response_getter.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.11.0/src/core/client/response_getter.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>response_getter.rs.html -- source</title>
@@ -151,7 +151,6 @@
 <span id="108">108</span>
 <span id="109">109</span>
 <span id="110">110</span>
-<span id="111">111</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -242,8 +241,7 @@
 
 <span class='kw'>impl</span> <span class='ident'>MutationResponseGetter</span> {
     <span class='doccomment'>/// Create a new instance of MutationResponseGetter</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>data_channel</span>: (<span class='ident'>Sender</span><span class='op'>&lt;</span><span class='ident'>ResponseEvent</span><span class='op'>&gt;</span>, <span class='ident'>Receiver</span><span class='op'>&lt;</span><span class='ident'>ResponseEvent</span><span class='op'>&gt;</span>))
-               <span class='op'>-&gt;</span> <span class='ident'>MutationResponseGetter</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>data_channel</span>: (<span class='ident'>Sender</span><span class='op'>&lt;</span><span class='ident'>ResponseEvent</span><span class='op'>&gt;</span>, <span class='ident'>Receiver</span><span class='op'>&lt;</span><span class='ident'>ResponseEvent</span><span class='op'>&gt;</span>)) <span class='op'>-&gt;</span> <span class='ident'>MutationResponseGetter</span> {
         <span class='ident'>MutationResponseGetter</span> { <span class='ident'>data_channel</span>: <span class='ident'>data_channel</span> }
     }
 
