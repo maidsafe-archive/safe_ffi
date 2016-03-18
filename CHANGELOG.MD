@@ -1,5 +1,8 @@
 # Safe ffi - Change Log
 
+#[0.6.0]
+- Integrating with safe_core with it's updated API (error FFI values have changed)
+
 #[0.5.0]
 - Logging facility added and tested
 
