@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["MpidMessageWrapper","A serialisable wrapper to allow multiplexing all MPID message types and actions via a single type."]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Reader","Reader is used to read contents of a File. It can read in chunks if the file happens to be very large"]]});

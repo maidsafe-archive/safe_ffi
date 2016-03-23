@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["MAX_HEADER_METADATA_SIZE","Maximum allowed length for a header's `metadata` (128 bytes)."]],"struct":[["MpidHeader","Minimal information about a given message which can be used as a notification to the receiver."]]});

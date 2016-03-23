@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["CLIENT_ERROR_START_RANGE","Intended for converting Client Errors into numeric codes for propagating some error information across FFI boundaries and specially to C."]],"enum":[["ClientError","Client Errors"]]});

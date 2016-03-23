@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["xor","Return XOR of two XorName's."]],"mod":[["client","Simulate a client."],["messages_util","Various random values for types available to tests."],["node","Simulate a vault."]]});

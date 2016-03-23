@@ -1,1 +1,0 @@
-initSidebarItems({"trait":[["Random","Trait to self construct a type with random values"]]});

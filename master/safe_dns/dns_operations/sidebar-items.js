@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["DnsOperations","This is a representational structure for all safe-dns operations"]]});

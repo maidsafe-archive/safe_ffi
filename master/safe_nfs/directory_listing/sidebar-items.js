@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["DirectoryListing","DirectoryListing is the representation of a deserialised Directory in the network"]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["append_version","Append a new version"],["create","Create the StructuredData to manage versioned data."],["get_all_versions","Get the complete version list"]]});
