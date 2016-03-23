@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.11.0/src/dns/errors.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.12.1/src/dns/errors.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>errors.rs.html -- source</title>
@@ -142,10 +142,6 @@
 <span id="99"> 99</span>
 <span id="100">100</span>
 <span id="101">101</span>
-<span id="102">102</span>
-<span id="103">103</span>
-<span id="104">104</span>
-<span id="105">105</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -242,13 +238,9 @@
             <span class='ident'>DnsError</span>::<span class='ident'>DnsRecordNotFound</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;DnsError::DnsRecordNotFound&quot;</span>),
             <span class='ident'>DnsError</span>::<span class='ident'>ServiceAlreadyExists</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;DnsError::ServiceAlreadyExists&quot;</span>),
             <span class='ident'>DnsError</span>::<span class='ident'>ServiceNotFound</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;DnsError::ServiceNotFound&quot;</span>),
-            <span class='ident'>DnsError</span>::<span class='ident'>DnsConfigFileNotFoundOrCorrupted</span> <span class='op'>=&gt;</span> {
-                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;DnsError::DnsConfigFileNotFoundOrCorrupted&quot;</span>)
-            }
+            <span class='ident'>DnsError</span>::<span class='ident'>DnsConfigFileNotFoundOrCorrupted</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;DnsError::DnsConfigFileNotFoundOrCorrupted&quot;</span>),
             <span class='ident'>DnsError</span>::<span class='ident'>Unexpected</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;DnsError::Unexpected::{{{:?}}}&quot;</span>, <span class='ident'>error</span>),
-            <span class='ident'>DnsError</span>::<span class='ident'>UnsuccessfulEncodeDecode</span>(<span class='kw-2'>ref</span> <span class='ident'>err</span>) <span class='op'>=&gt;</span> {
-                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;DnsError::UnsuccessfulEncodeDecode -&gt; {:?}&quot;</span>, <span class='ident'>err</span>)
-            }
+            <span class='ident'>DnsError</span>::<span class='ident'>UnsuccessfulEncodeDecode</span>(<span class='kw-2'>ref</span> <span class='ident'>err</span>) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;DnsError::UnsuccessfulEncodeDecode -&gt; {:?}&quot;</span>, <span class='ident'>err</span>),
         }
     }
 }

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.11.0/src/core/client/mod.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.12.1/src/core/client/mod.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>mod.rs.html -- source</title>
@@ -883,6 +883,32 @@
 <span id="840">840</span>
 <span id="841">841</span>
 <span id="842">842</span>
+<span id="843">843</span>
+<span id="844">844</span>
+<span id="845">845</span>
+<span id="846">846</span>
+<span id="847">847</span>
+<span id="848">848</span>
+<span id="849">849</span>
+<span id="850">850</span>
+<span id="851">851</span>
+<span id="852">852</span>
+<span id="853">853</span>
+<span id="854">854</span>
+<span id="855">855</span>
+<span id="856">856</span>
+<span id="857">857</span>
+<span id="858">858</span>
+<span id="859">859</span>
+<span id="860">860</span>
+<span id="861">861</span>
+<span id="862">862</span>
+<span id="863">863</span>
+<span id="864">864</span>
+<span id="865">865</span>
+<span id="866">866</span>
+<span id="867">867</span>
+<span id="868">868</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -924,7 +950,8 @@
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
 <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>thread</span>::<span class='ident'>RaiiThreadJoiner</span>;
 <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::<span class='ident'>serialise</span>;
-<span class='kw'>use</span> <span class='ident'>mpid_messaging</span>::{<span class='ident'>MpidMessage</span>, <span class='ident'>MpidMessageWrapper</span>};
+<span class='kw'>use</span> <span class='ident'>safe_network_common</span>::<span class='ident'>TYPE_TAG_SESSION_PACKET</span>;
+<span class='kw'>use</span> <span class='ident'>safe_network_common</span>::<span class='ident'>messaging</span>::{<span class='ident'>MpidMessage</span>, <span class='ident'>MpidMessageWrapper</span>};
 <span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>MessageId</span>, <span class='ident'>FullId</span>, <span class='ident'>StructuredData</span>, <span class='ident'>Data</span>, <span class='ident'>DataRequest</span>, <span class='ident'>PlainData</span>, <span class='ident'>Authority</span>, <span class='ident'>Event</span>};
 
 <span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::{<span class='ident'>box_</span>, <span class='ident'>sign</span>};
@@ -936,7 +963,6 @@
 <span class='kw'>use</span> <span class='ident'>routing</span>::<span class='ident'>Client</span> <span class='kw'>as</span> <span class='ident'>Routing</span>;
 
 <span class='kw'>const</span> <span class='ident'>LOGIC_ERROR</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span> <span class='op'>=</span> <span class='string'>&quot;Logic Error !! Report as bug.&quot;</span>;
-<span class='kw'>const</span> <span class='ident'>LOGIN_PACKET_TYPE_TAG</span>: <span class='ident'>u64</span> <span class='op'>=</span> <span class='number'>0</span>;
 
 <span class='doccomment'>/// The main self-authentication client instance that will interface all the request from high</span>
 <span class='doccomment'>/// level API&#39;s to the actual routing layer and manage all interactions with it. This is</span>
@@ -1018,7 +1044,7 @@
             <span class='kw'>let</span> <span class='ident'>session_packet_keys</span> <span class='op'>=</span> <span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>session_packet_keys</span>.<span class='ident'>as_ref</span>(), <span class='ident'>LOGIC_ERROR</span>);
 
             <span class='kw'>let</span> <span class='ident'>session_packet_id</span> <span class='op'>=</span> <span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>session_packet_id</span>.<span class='ident'>as_ref</span>(), <span class='ident'>LOGIC_ERROR</span>).<span class='ident'>clone</span>();
-            <span class='kw'>let</span> <span class='ident'>account_version</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>StructuredData</span>::<span class='ident'>new</span>(<span class='ident'>LOGIN_PACKET_TYPE_TAG</span>,
+            <span class='kw'>let</span> <span class='ident'>account_version</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>StructuredData</span>::<span class='ident'>new</span>(<span class='ident'>TYPE_TAG_SESSION_PACKET</span>,
                                                            <span class='ident'>session_packet_id</span>,
                                                            <span class='number'>0</span>,
                                                            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>account</span>.<span class='ident'>encrypt</span>(<span class='ident'>session_packet_keys</span>.<span class='ident'>get_password</span>(),
@@ -1040,7 +1066,7 @@
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>unregistered_client</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>Client</span>::<span class='ident'>create_unregistered_client</span>());
         <span class='kw'>let</span> <span class='ident'>user_id</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>Account</span>::<span class='ident'>generate_network_id</span>(<span class='ident'>keyword</span>.<span class='ident'>as_bytes</span>(), <span class='ident'>pin</span>.<span class='ident'>as_bytes</span>()));
 
-        <span class='kw'>let</span> <span class='ident'>session_packet_request</span> <span class='op'>=</span> <span class='ident'>DataRequest</span>::<span class='ident'>Structured</span>(<span class='ident'>user_id</span>.<span class='ident'>clone</span>(), <span class='ident'>LOGIN_PACKET_TYPE_TAG</span>);
+        <span class='kw'>let</span> <span class='ident'>session_packet_request</span> <span class='op'>=</span> <span class='ident'>DataRequest</span>::<span class='ident'>Structured</span>(<span class='ident'>user_id</span>.<span class='ident'>clone</span>(), <span class='ident'>TYPE_TAG_SESSION_PACKET</span>);
 
         <span class='kw'>let</span> <span class='ident'>resp_getter</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>unregistered_client</span>.<span class='ident'>get</span>(<span class='ident'>session_packet_request</span>, <span class='prelude-val'>None</span>));
 
@@ -1415,7 +1441,7 @@
                                          .<span class='ident'>as_ref</span>()
                                          .<span class='ident'>ok_or</span>(<span class='ident'>CoreError</span>::<span class='ident'>OperationForbiddenForClient</span>))
                                     .<span class='ident'>clone</span>();
-        <span class='kw'>let</span> <span class='ident'>session_packet_request</span> <span class='op'>=</span> <span class='ident'>DataRequest</span>::<span class='ident'>Structured</span>(<span class='ident'>session_packet_id</span>.<span class='ident'>clone</span>(), <span class='ident'>LOGIN_PACKET_TYPE_TAG</span>);
+        <span class='kw'>let</span> <span class='ident'>session_packet_request</span> <span class='op'>=</span> <span class='ident'>DataRequest</span>::<span class='ident'>Structured</span>(<span class='ident'>session_packet_id</span>.<span class='ident'>clone</span>(), <span class='ident'>TYPE_TAG_SESSION_PACKET</span>);
 
         <span class='kw'>let</span> <span class='ident'>resp_getter</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get</span>(<span class='ident'>session_packet_request</span>, <span class='prelude-val'>None</span>));
 
@@ -1428,7 +1454,7 @@
             <span class='kw'>let</span> <span class='ident'>encrypted_account</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>account</span>.<span class='ident'>encrypt</span>(<span class='ident'>session_packet_keys</span>.<span class='ident'>get_password</span>(),
                                                          <span class='ident'>session_packet_keys</span>.<span class='ident'>get_pin</span>()));
 
-            <span class='kw'>let</span> <span class='ident'>new_account_version</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>StructuredData</span>::<span class='ident'>new</span>(<span class='ident'>LOGIN_PACKET_TYPE_TAG</span>,
+            <span class='kw'>let</span> <span class='ident'>new_account_version</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>StructuredData</span>::<span class='ident'>new</span>(<span class='ident'>TYPE_TAG_SESSION_PACKET</span>,
                                                                <span class='ident'>session_packet_id</span>,
                                                                <span class='ident'>retrieved_session_packet</span>.<span class='ident'>get_version</span>() <span class='op'>+</span> <span class='number'>1</span>,
                                                                <span class='ident'>encrypted_account</span>,
@@ -1482,6 +1508,7 @@
     <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>client</span>::<span class='ident'>response_getter</span>::<span class='ident'>GetResponseGetter</span>;
 
     <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
+    <span class='kw'>use</span> <span class='ident'>safe_network_common</span>::<span class='ident'>client_errors</span>::<span class='ident'>MutationError</span>;
     <span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>ImmutableDataType</span>, <span class='ident'>ImmutableData</span>, <span class='ident'>DataRequest</span>, <span class='ident'>Data</span>, <span class='ident'>StructuredData</span>};
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
@@ -1489,7 +1516,32 @@
         <span class='kw'>let</span> <span class='ident'>keyword</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_string</span>(<span class='number'>10</span>));
         <span class='kw'>let</span> <span class='ident'>password</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_string</span>(<span class='number'>10</span>));
         <span class='kw'>let</span> <span class='ident'>pin</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_string</span>(<span class='number'>10</span>));
-        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>Client</span>::<span class='ident'>create_account</span>(<span class='ident'>keyword</span>, <span class='ident'>pin</span>, <span class='ident'>password</span>));
+
+        <span class='comment'>// Account creation for the 1st time - should succeed</span>
+        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>Client</span>::<span class='ident'>create_account</span>(<span class='ident'>keyword</span>.<span class='ident'>clone</span>(), <span class='ident'>pin</span>.<span class='ident'>clone</span>(), <span class='ident'>password</span>.<span class='ident'>clone</span>()));
+
+        <span class='comment'>// Account creation - same keyword, pin and password - should fail</span>
+        <span class='kw'>match</span> <span class='ident'>Client</span>::<span class='ident'>create_account</span>(<span class='ident'>keyword</span>.<span class='ident'>clone</span>(), <span class='ident'>pin</span>.<span class='ident'>clone</span>(), <span class='ident'>password</span>.<span class='ident'>clone</span>()) {
+            <span class='prelude-val'>Ok</span>(_) <span class='op'>=&gt;</span> <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;Account name hijaking should fail !&quot;</span>),
+            <span class='prelude-val'>Err</span>(<span class='ident'>CoreError</span>::<span class='ident'>MutationFailure</span> { <span class='ident'>reason</span>: <span class='ident'>MutationError</span>::<span class='ident'>AccountExists</span>, .. }) <span class='op'>=&gt;</span> (),
+            <span class='prelude-val'>Err</span>(<span class='ident'>err</span>) <span class='op'>=&gt;</span> <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;{:?}&quot;</span>, <span class='ident'>err</span>),
+        }
+
+        <span class='comment'>// Account creation - same keyword and pin - different password - should fail</span>
+        <span class='kw'>let</span> <span class='ident'>new_password</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_string</span>(<span class='number'>10</span>));
+        <span class='kw'>match</span> <span class='ident'>Client</span>::<span class='ident'>create_account</span>(<span class='ident'>keyword</span>.<span class='ident'>clone</span>(), <span class='ident'>pin</span>.<span class='ident'>clone</span>(), <span class='ident'>new_password</span>) {
+            <span class='prelude-val'>Ok</span>(_) <span class='op'>=&gt;</span> <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;Account name hijaking should fail !&quot;</span>),
+            <span class='prelude-val'>Err</span>(<span class='ident'>CoreError</span>::<span class='ident'>MutationFailure</span> { <span class='ident'>reason</span>: <span class='ident'>MutationError</span>::<span class='ident'>AccountExists</span>, .. }) <span class='op'>=&gt;</span> (),
+            <span class='prelude-val'>Err</span>(<span class='ident'>err</span>) <span class='op'>=&gt;</span> <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;{:?}&quot;</span>, <span class='ident'>err</span>),
+        }
+
+        <span class='comment'>// Account creation - same keyword and password - different pin - should succeed</span>
+        <span class='kw'>let</span> <span class='ident'>new_pin</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_string</span>(<span class='number'>10</span>));
+        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>Client</span>::<span class='ident'>create_account</span>(<span class='ident'>keyword</span>, <span class='ident'>new_pin</span>, <span class='ident'>password</span>.<span class='ident'>clone</span>()));
+
+        <span class='comment'>// Account creation - same pin and password - different keyword - should succeed</span>
+        <span class='kw'>let</span> <span class='ident'>new_keyword</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_string</span>(<span class='number'>10</span>));
+        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>Client</span>::<span class='ident'>create_account</span>(<span class='ident'>new_keyword</span>, <span class='ident'>pin</span>, <span class='ident'>password</span>));
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>

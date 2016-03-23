@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.11.0/src/nfs/metadata/directory_metadata.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.12.1/src/nfs/metadata/directory_metadata.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>directory_metadata.rs.html -- source</title>
@@ -281,10 +281,6 @@
 <span id="238">238</span>
 <span id="239">239</span>
 <span id="240">240</span>
-<span id="241">241</span>
-<span id="242">242</span>
-<span id="243">243</span>
-<span id="244">244</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -448,24 +444,14 @@
                 <span class='ident'>name</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;name&quot;</span>, <span class='number'>1</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
                 <span class='ident'>created_time</span>: ::<span class='ident'>time</span>::<span class='ident'>at_utc</span>(::<span class='ident'>time</span>::<span class='ident'>Timespec</span> {
                     <span class='ident'>sec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;created_time_sec&quot;</span>, <span class='number'>2</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
-                    <span class='ident'>nsec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;created_time_nsec&quot;</span>,
-                                                   <span class='number'>3</span>,
-                                                   <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
+                    <span class='ident'>nsec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;created_time_nsec&quot;</span>, <span class='number'>3</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
                 }),
                 <span class='ident'>modified_time</span>: ::<span class='ident'>time</span>::<span class='ident'>at_utc</span>(::<span class='ident'>time</span>::<span class='ident'>Timespec</span> {
-                    <span class='ident'>sec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;modified_time_sec&quot;</span>,
-                                                  <span class='number'>4</span>,
-                                                  <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
-                    <span class='ident'>nsec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;modified_time_nsec&quot;</span>,
-                                                   <span class='number'>5</span>,
-                                                   <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
+                    <span class='ident'>sec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;modified_time_sec&quot;</span>, <span class='number'>4</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
+                    <span class='ident'>nsec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;modified_time_nsec&quot;</span>, <span class='number'>5</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
                 }),
-                <span class='ident'>user_metadata</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;user_metadata&quot;</span>,
-                                                        <span class='number'>6</span>,
-                                                        <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
-                <span class='ident'>parent_dir_key</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;parent_dir_key&quot;</span>,
-                                                         <span class='number'>7</span>,
-                                                         <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
+                <span class='ident'>user_metadata</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;user_metadata&quot;</span>, <span class='number'>6</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
+                <span class='ident'>parent_dir_key</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;parent_dir_key&quot;</span>, <span class='number'>7</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
             })
         })
     }
@@ -517,8 +503,14 @@
         <span class='kw'>let</span> <span class='ident'>id</span> <span class='op'>=</span> <span class='ident'>XorName</span>::<span class='ident'>new</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>((<span class='ident'>utility</span>::<span class='ident'>generate_random_array_u8_64</span>())));
         <span class='kw'>let</span> <span class='ident'>modified_time</span> <span class='op'>=</span> ::<span class='ident'>time</span>::<span class='ident'>now_utc</span>();
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>obj_before</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>DirectoryMetadata</span>::<span class='ident'>new</span>(<span class='string'>&quot;hello.txt&quot;</span>.<span class='ident'>to_string</span>(),
-                <span class='number'>99u64</span>, <span class='boolval'>true</span>, <span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>, <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
-                <span class='prelude-val'>Some</span>(<span class='ident'>DirectoryKey</span>::<span class='ident'>new</span>(<span class='ident'>id</span>, <span class='number'>100u64</span>, <span class='boolval'>false</span>, <span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>))));
+                                                                   <span class='number'>99u64</span>,
+                                                                   <span class='boolval'>true</span>,
+                                                                   <span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
+                                                                   <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+                                                                   <span class='prelude-val'>Some</span>(<span class='ident'>DirectoryKey</span>::<span class='ident'>new</span>(<span class='ident'>id</span>,
+                                                                                          <span class='number'>100u64</span>,
+                                                                                          <span class='boolval'>false</span>,
+                                                                                          <span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>))));
         <span class='kw'>let</span> <span class='ident'>user_metadata</span> <span class='op'>=</span> <span class='string'>&quot;{mime: \&quot;application/json\&quot;}&quot;</span>.<span class='ident'>to_string</span>().<span class='ident'>into_bytes</span>();
         <span class='ident'>obj_before</span>.<span class='ident'>set_user_metadata</span>(<span class='ident'>user_metadata</span>.<span class='ident'>clone</span>());
         <span class='ident'>obj_before</span>.<span class='ident'>set_modified_time</span>(<span class='ident'>modified_time</span>.<span class='ident'>clone</span>());

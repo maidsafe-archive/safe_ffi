@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.11.0/src/nfs/errors.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.12.1/src/nfs/errors.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>errors.rs.html -- source</title>
@@ -149,12 +149,6 @@
 <span id="106">106</span>
 <span id="107">107</span>
 <span id="108">108</span>
-<span id="109">109</span>
-<span id="110">110</span>
-<span id="111">111</span>
-<span id="112">112</span>
-<span id="113">113</span>
-<span id="114">114</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -249,16 +243,10 @@
     <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>f</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
             <span class='ident'>NfsError</span>::<span class='ident'>CoreError</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::CoreError -&gt; {:?}&quot;</span>, <span class='ident'>error</span>),
-            <span class='ident'>NfsError</span>::<span class='ident'>DirectoryAlreadyExistsWithSameName</span> <span class='op'>=&gt;</span> {
-                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::DirectoryAlreadyExistsWithSameName&quot;</span>)
-            }
-            <span class='ident'>NfsError</span>::<span class='ident'>DestinationAndSourceAreSame</span> <span class='op'>=&gt;</span> {
-                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::DestinationAndSourceAreSame&quot;</span>)
-            }
+            <span class='ident'>NfsError</span>::<span class='ident'>DirectoryAlreadyExistsWithSameName</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::DirectoryAlreadyExistsWithSameName&quot;</span>),
+            <span class='ident'>NfsError</span>::<span class='ident'>DestinationAndSourceAreSame</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::DestinationAndSourceAreSame&quot;</span>),
             <span class='ident'>NfsError</span>::<span class='ident'>DirectoryNotFound</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::DirectoryNotFound&quot;</span>),
-            <span class='ident'>NfsError</span>::<span class='ident'>FileAlreadyExistsWithSameName</span> <span class='op'>=&gt;</span> {
-                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::FileAlreadyExistsWithSameName&quot;</span>)
-            }
+            <span class='ident'>NfsError</span>::<span class='ident'>FileAlreadyExistsWithSameName</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::FileAlreadyExistsWithSameName&quot;</span>),
             <span class='ident'>NfsError</span>::<span class='ident'>FileDoesNotMatch</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::FileDoesNotMatch&quot;</span>),
             <span class='ident'>NfsError</span>::<span class='ident'>FileNotFound</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::FileNotFound&quot;</span>),
             <span class='ident'>NfsError</span>::<span class='ident'>InvalidRangeSpecified</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::InvalidRangeSpecified&quot;</span>),

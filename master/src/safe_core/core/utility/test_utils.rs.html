@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.11.0/src/core/utility/test_utils.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.12.1/src/core/utility/test_utils.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>test_utils.rs.html -- source</title>
@@ -105,7 +105,6 @@
 <span id="62">62</span>
 <span id="63">63</span>
 <span id="64">64</span>
-<span id="65">65</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>// This SAFE Network Software is licensed to you under (1) the MaidSafe.net Commercial License,</span>
@@ -166,8 +165,7 @@
         <span class='kw'>let</span> <span class='ident'>client0</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>get_client</span>());
         <span class='kw'>let</span> <span class='ident'>client1</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>get_client</span>());
 
-        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>client0</span>.<span class='ident'>get_public_signing_key</span>()) <span class='op'>!=</span>
-                <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>client1</span>.<span class='ident'>get_public_signing_key</span>()));
+        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>client0</span>.<span class='ident'>get_public_signing_key</span>()) <span class='op'>!=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>client1</span>.<span class='ident'>get_public_signing_key</span>()));
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>client0</span>.<span class='ident'>get_public_encryption_key</span>()) <span class='op'>!=</span>
                 <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>client1</span>.<span class='ident'>get_public_encryption_key</span>()));
     }

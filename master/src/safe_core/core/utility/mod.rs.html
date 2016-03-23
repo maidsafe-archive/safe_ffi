@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.11.0/src/core/utility/mod.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.12.1/src/core/utility/mod.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>mod.rs.html -- source</title>
@@ -223,19 +223,6 @@
 <span id="180">180</span>
 <span id="181">181</span>
 <span id="182">182</span>
-<span id="183">183</span>
-<span id="184">184</span>
-<span id="185">185</span>
-<span id="186">186</span>
-<span id="187">187</span>
-<span id="188">188</span>
-<span id="189">189</span>
-<span id="190">190</span>
-<span id="191">191</span>
-<span id="192">192</span>
-<span id="193">193</span>
-<span id="194">194</span>
-<span id="195">195</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>// This SAFE Network Software is licensed to you under (1) the MaidSafe.net Commercial License,</span>
@@ -314,8 +301,7 @@
             <span class='ident'>sym_nonce</span>.<span class='number'>0</span>[<span class='ident'>it</span>.<span class='number'>0</span>] <span class='op'>=</span> <span class='op'>*</span><span class='ident'>it</span>.<span class='number'>1</span>;
         }
 
-        <span class='ident'>secretbox</span>::<span class='ident'>open</span>(<span class='kw-2'>&amp;</span><span class='ident'>sym_cipher_text</span>, <span class='kw-2'>&amp;</span><span class='ident'>sym_nonce</span>, <span class='kw-2'>&amp;</span><span class='ident'>sym_key</span>)
-            .<span class='ident'>map_err</span>(<span class='op'>|</span>()<span class='op'>|</span> <span class='ident'>CoreError</span>::<span class='ident'>SymmetricDecipherFailure</span>)
+        <span class='ident'>secretbox</span>::<span class='ident'>open</span>(<span class='kw-2'>&amp;</span><span class='ident'>sym_cipher_text</span>, <span class='kw-2'>&amp;</span><span class='ident'>sym_nonce</span>, <span class='kw-2'>&amp;</span><span class='ident'>sym_key</span>).<span class='ident'>map_err</span>(<span class='op'>|</span>()<span class='op'>|</span> <span class='ident'>CoreError</span>::<span class='ident'>SymmetricDecipherFailure</span>)
     }
 }
 
@@ -367,14 +353,8 @@
         <span class='kw'>let</span> (<span class='ident'>public_key</span>, <span class='ident'>secret_key</span>) <span class='op'>=</span> <span class='ident'>box_</span>::<span class='ident'>gen_keypair</span>();
 
         <span class='comment'>// Encrypt</span>
-        <span class='kw'>let</span> <span class='ident'>cipher_text_0</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>hybrid_encrypt</span>(<span class='kw-2'>&amp;</span><span class='ident'>plain_text_0</span>[..],
-                                                          <span class='kw-2'>&amp;</span><span class='ident'>nonce</span>,
-                                                          <span class='kw-2'>&amp;</span><span class='ident'>public_key</span>,
-                                                          <span class='kw-2'>&amp;</span><span class='ident'>secret_key</span>));
-        <span class='kw'>let</span> <span class='ident'>cipher_text_1</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>hybrid_encrypt</span>(<span class='kw-2'>&amp;</span><span class='ident'>plain_text_1</span>[..],
-                                                          <span class='kw-2'>&amp;</span><span class='ident'>nonce</span>,
-                                                          <span class='kw-2'>&amp;</span><span class='ident'>public_key</span>,
-                                                          <span class='kw-2'>&amp;</span><span class='ident'>secret_key</span>));
+        <span class='kw'>let</span> <span class='ident'>cipher_text_0</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>hybrid_encrypt</span>(<span class='kw-2'>&amp;</span><span class='ident'>plain_text_0</span>[..], <span class='kw-2'>&amp;</span><span class='ident'>nonce</span>, <span class='kw-2'>&amp;</span><span class='ident'>public_key</span>, <span class='kw-2'>&amp;</span><span class='ident'>secret_key</span>));
+        <span class='kw'>let</span> <span class='ident'>cipher_text_1</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>hybrid_encrypt</span>(<span class='kw-2'>&amp;</span><span class='ident'>plain_text_1</span>[..], <span class='kw-2'>&amp;</span><span class='ident'>nonce</span>, <span class='kw-2'>&amp;</span><span class='ident'>public_key</span>, <span class='kw-2'>&amp;</span><span class='ident'>secret_key</span>));
 
         <span class='comment'>// Same Plain Texts</span>
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>plain_text_0</span>, <span class='ident'>plain_text_1</span>);
@@ -383,14 +363,8 @@
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>cipher_text_0</span> <span class='op'>!=</span> <span class='ident'>cipher_text_1</span>);
 
         <span class='comment'>// Decrypt</span>
-        <span class='kw'>let</span> <span class='ident'>deciphered_plain_text_0</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>hybrid_decrypt</span>(<span class='kw-2'>&amp;</span><span class='ident'>cipher_text_0</span>,
-                                                                    <span class='kw-2'>&amp;</span><span class='ident'>nonce</span>,
-                                                                    <span class='kw-2'>&amp;</span><span class='ident'>public_key</span>,
-                                                                    <span class='kw-2'>&amp;</span><span class='ident'>secret_key</span>));
-        <span class='kw'>let</span> <span class='ident'>deciphered_plain_text_1</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>hybrid_decrypt</span>(<span class='kw-2'>&amp;</span><span class='ident'>cipher_text_1</span>,
-                                                                    <span class='kw-2'>&amp;</span><span class='ident'>nonce</span>,
-                                                                    <span class='kw-2'>&amp;</span><span class='ident'>public_key</span>,
-                                                                    <span class='kw-2'>&amp;</span><span class='ident'>secret_key</span>));
+        <span class='kw'>let</span> <span class='ident'>deciphered_plain_text_0</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>hybrid_decrypt</span>(<span class='kw-2'>&amp;</span><span class='ident'>cipher_text_0</span>, <span class='kw-2'>&amp;</span><span class='ident'>nonce</span>, <span class='kw-2'>&amp;</span><span class='ident'>public_key</span>, <span class='kw-2'>&amp;</span><span class='ident'>secret_key</span>));
+        <span class='kw'>let</span> <span class='ident'>deciphered_plain_text_1</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>hybrid_decrypt</span>(<span class='kw-2'>&amp;</span><span class='ident'>cipher_text_1</span>, <span class='kw-2'>&amp;</span><span class='ident'>nonce</span>, <span class='kw-2'>&amp;</span><span class='ident'>public_key</span>, <span class='kw-2'>&amp;</span><span class='ident'>secret_key</span>));
 
         <span class='comment'>// Should have decrypted to the same Plain Texts</span>
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>plain_text_0</span>, <span class='ident'>deciphered_plain_text_0</span>);
