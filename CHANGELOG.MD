@@ -1,5 +1,8 @@
 # Safe ffi - Change Log
 
+#[0.6.1]
+- safe_core's dependency on mpid_messaging has been removed from it's Cargo.toml and patch version increased. Consequently increasing patch version here to point to latest safe_core
+
 #[0.6.0]
 - Integrating with safe_core with it's updated API (error FFI values have changed)
 
