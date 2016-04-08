@@ -172,7 +172,7 @@ pub extern "C" fn init_logging() -> int32_t {
                                                .to_owned())));
     }
 
-    ffi_try!(safe_log::init_to_file(true, current_exe_path).map_err(CoreError::Unexpected));
+    ffi_try!(safe_log::init_to_file(true, current_exe_path, false).map_err(CoreError::Unexpected));
 
     0
 }
