@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.11.1/src/node.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.14.0/src/node.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>node.rs.html -- source</title>
@@ -449,6 +449,27 @@
 <span id="406">406</span>
 <span id="407">407</span>
 <span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -470,6 +491,8 @@
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>not</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>))]</span>
 <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>thread</span>::<span class='ident'>RaiiThreadJoiner</span>;
 <span class='kw'>use</span> <span class='ident'>sodiumoxide</span>;
+<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>)]</span>
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>cell</span>::<span class='ident'>RefCell</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>mpsc</span>::{<span class='ident'>Receiver</span>, <span class='ident'>Sender</span>, <span class='ident'>channel</span>};
 
 <span class='kw'>use</span> <span class='ident'>action</span>::<span class='ident'>Action</span>;
@@ -479,7 +502,6 @@
 <span class='kw'>use</span> <span class='ident'>error</span>::{<span class='ident'>InterfaceError</span>, <span class='ident'>RoutingError</span>};
 <span class='kw'>use</span> <span class='ident'>event</span>::<span class='ident'>Event</span>;
 <span class='kw'>use</span> <span class='ident'>messages</span>::{<span class='ident'>RequestContent</span>, <span class='ident'>RequestMessage</span>, <span class='ident'>ResponseContent</span>, <span class='ident'>ResponseMessage</span>, <span class='ident'>RoutingMessage</span>};
-<span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>hash</span>::<span class='ident'>sha512</span>;
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
 <span class='kw'>use</span> <span class='ident'>types</span>::<span class='ident'>MessageId</span>;
 
@@ -499,7 +521,7 @@
     <span class='ident'>action_sender</span>: ::<span class='ident'>types</span>::<span class='ident'>RoutingActionSender</span>,
 
     <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>)]</span>
-    <span class='ident'>core</span>: <span class='ident'>Core</span>,
+    <span class='ident'>core</span>: <span class='ident'>RefCell</span><span class='op'>&lt;</span><span class='ident'>Core</span><span class='op'>&gt;</span>,
 
     <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>not</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>))]</span>
     <span class='ident'>_raii_joiner</span>: ::<span class='ident'>maidsafe_utilities</span>::<span class='ident'>thread</span>::<span class='ident'>RaiiThreadJoiner</span>,
@@ -513,11 +535,11 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// The intial `Node` object will have newly generated keys.</span>
     <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>not</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>))]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>event_sender</span>: <span class='ident'>Sender</span><span class='op'>&lt;</span><span class='ident'>Event</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Node</span>, <span class='ident'>RoutingError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>event_sender</span>: <span class='ident'>Sender</span><span class='op'>&lt;</span><span class='ident'>Event</span><span class='op'>&gt;</span>, <span class='ident'>use_data_cache</span>: <span class='ident'>bool</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Node</span>, <span class='ident'>RoutingError</span><span class='op'>&gt;</span> {
         <span class='ident'>sodiumoxide</span>::<span class='ident'>init</span>();  <span class='comment'>// enable shared global (i.e. safe to multithread now)</span>
 
         <span class='comment'>// start the handler for routing without a restriction to become a full node</span>
-        <span class='kw'>let</span> (<span class='ident'>action_sender</span>, <span class='kw-2'>mut</span> <span class='ident'>core</span>) <span class='op'>=</span> <span class='ident'>Core</span>::<span class='ident'>new</span>(<span class='ident'>event_sender</span>, <span class='boolval'>false</span>, <span class='prelude-val'>None</span>);
+        <span class='kw'>let</span> (<span class='ident'>action_sender</span>, <span class='kw-2'>mut</span> <span class='ident'>core</span>) <span class='op'>=</span> <span class='ident'>Core</span>::<span class='ident'>new</span>(<span class='ident'>event_sender</span>, <span class='boolval'>false</span>, <span class='prelude-val'>None</span>, <span class='ident'>use_data_cache</span>);
         <span class='kw'>let</span> (<span class='ident'>tx</span>, <span class='ident'>rx</span>) <span class='op'>=</span> <span class='ident'>channel</span>();
 
         <span class='kw'>let</span> <span class='ident'>raii_joiner</span> <span class='op'>=</span> <span class='ident'>RaiiThreadJoiner</span>::<span class='ident'>new</span>(<span class='macro'>thread</span><span class='macro'>!</span>(<span class='string'>&quot;Node thread&quot;</span>, <span class='kw'>move</span> <span class='op'>||</span> {
@@ -534,25 +556,25 @@
 
     <span class='doccomment'>/// Create a new `Node` for unit testing.</span>
     <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>)]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>event_sender</span>: <span class='ident'>Sender</span><span class='op'>&lt;</span><span class='ident'>Event</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Node</span>, <span class='ident'>RoutingError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>event_sender</span>: <span class='ident'>Sender</span><span class='op'>&lt;</span><span class='ident'>Event</span><span class='op'>&gt;</span>, <span class='ident'>use_data_cache</span>: <span class='ident'>bool</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Node</span>, <span class='ident'>RoutingError</span><span class='op'>&gt;</span> {
         <span class='ident'>sodiumoxide</span>::<span class='ident'>init</span>();  <span class='comment'>// enable shared global (i.e. safe to multithread now)</span>
 
         <span class='comment'>// start the handler for routing without a restriction to become a full node</span>
-        <span class='kw'>let</span> (<span class='ident'>action_sender</span>, <span class='ident'>core</span>) <span class='op'>=</span> <span class='ident'>Core</span>::<span class='ident'>new</span>(<span class='ident'>event_sender</span>, <span class='boolval'>false</span>, <span class='prelude-val'>None</span>);
+        <span class='kw'>let</span> (<span class='ident'>action_sender</span>, <span class='ident'>core</span>) <span class='op'>=</span> <span class='ident'>Core</span>::<span class='ident'>new</span>(<span class='ident'>event_sender</span>, <span class='boolval'>false</span>, <span class='prelude-val'>None</span>, <span class='ident'>use_data_cache</span>);
         <span class='kw'>let</span> (<span class='ident'>tx</span>, <span class='ident'>rx</span>) <span class='op'>=</span> <span class='ident'>channel</span>();
 
         <span class='prelude-val'>Ok</span>(<span class='ident'>Node</span> {
             <span class='ident'>interface_result_tx</span>: <span class='ident'>tx</span>,
             <span class='ident'>interface_result_rx</span>: <span class='ident'>rx</span>,
             <span class='ident'>action_sender</span>: <span class='ident'>action_sender</span>,
-            <span class='ident'>core</span>: <span class='ident'>core</span>,
+            <span class='ident'>core</span>: <span class='ident'>RefCell</span>::<span class='ident'>new</span>(<span class='ident'>core</span>),
         })
     }
 
     <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>)]</span>
     <span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>missing_docs</span>)]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>poll</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
-        <span class='self'>self</span>.<span class='ident'>core</span>.<span class='ident'>poll</span>()
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>poll</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
+        <span class='self'>self</span>.<span class='ident'>core</span>.<span class='ident'>borrow_mut</span>().<span class='ident'>poll</span>()
     }
 
     <span class='doccomment'>/// Send a `Get` request to `dst` to retrieve data from the network.</span>
@@ -654,13 +676,12 @@
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>send_put_success</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
                             <span class='ident'>src</span>: <span class='ident'>Authority</span>,
                             <span class='ident'>dst</span>: <span class='ident'>Authority</span>,
-                            <span class='ident'>request_hash</span>: <span class='ident'>sha512</span>::<span class='ident'>Digest</span>,
                             <span class='ident'>id</span>: <span class='ident'>MessageId</span>)
                             <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>routing_msg</span> <span class='op'>=</span> <span class='ident'>RoutingMessage</span>::<span class='ident'>Response</span>(<span class='ident'>ResponseMessage</span> {
             <span class='ident'>src</span>: <span class='ident'>src</span>,
             <span class='ident'>dst</span>: <span class='ident'>dst</span>,
-            <span class='ident'>content</span>: <span class='ident'>ResponseContent</span>::<span class='ident'>PutSuccess</span>(<span class='ident'>request_hash</span>, <span class='ident'>id</span>),
+            <span class='ident'>content</span>: <span class='ident'>ResponseContent</span>::<span class='ident'>PutSuccess</span>(<span class='ident'>id</span>),
         });
         <span class='self'>self</span>.<span class='ident'>send_action</span>(<span class='ident'>routing_msg</span>)
     }
@@ -689,13 +710,12 @@
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>send_post_success</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
                              <span class='ident'>src</span>: <span class='ident'>Authority</span>,
                              <span class='ident'>dst</span>: <span class='ident'>Authority</span>,
-                             <span class='ident'>request_hash</span>: <span class='ident'>sha512</span>::<span class='ident'>Digest</span>,
                              <span class='ident'>id</span>: <span class='ident'>MessageId</span>)
                              <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>routing_msg</span> <span class='op'>=</span> <span class='ident'>RoutingMessage</span>::<span class='ident'>Response</span>(<span class='ident'>ResponseMessage</span> {
             <span class='ident'>src</span>: <span class='ident'>src</span>,
             <span class='ident'>dst</span>: <span class='ident'>dst</span>,
-            <span class='ident'>content</span>: <span class='ident'>ResponseContent</span>::<span class='ident'>PostSuccess</span>(<span class='ident'>request_hash</span>, <span class='ident'>id</span>),
+            <span class='ident'>content</span>: <span class='ident'>ResponseContent</span>::<span class='ident'>PostSuccess</span>(<span class='ident'>id</span>),
         });
         <span class='self'>self</span>.<span class='ident'>send_action</span>(<span class='ident'>routing_msg</span>)
     }
@@ -724,13 +744,12 @@
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>send_delete_success</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
                                <span class='ident'>src</span>: <span class='ident'>Authority</span>,
                                <span class='ident'>dst</span>: <span class='ident'>Authority</span>,
-                               <span class='ident'>request_hash</span>: <span class='ident'>sha512</span>::<span class='ident'>Digest</span>,
                                <span class='ident'>id</span>: <span class='ident'>MessageId</span>)
                                <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>routing_msg</span> <span class='op'>=</span> <span class='ident'>RoutingMessage</span>::<span class='ident'>Response</span>(<span class='ident'>ResponseMessage</span> {
             <span class='ident'>src</span>: <span class='ident'>src</span>,
             <span class='ident'>dst</span>: <span class='ident'>dst</span>,
-            <span class='ident'>content</span>: <span class='ident'>ResponseContent</span>::<span class='ident'>DeleteSuccess</span>(<span class='ident'>request_hash</span>, <span class='ident'>id</span>),
+            <span class='ident'>content</span>: <span class='ident'>ResponseContent</span>::<span class='ident'>DeleteSuccess</span>(<span class='ident'>id</span>),
         });
         <span class='self'>self</span>.<span class='ident'>send_action</span>(<span class='ident'>routing_msg</span>)
     }
@@ -762,12 +781,14 @@
     <span class='doccomment'>/// happened, the churn mechanism is triggered to adapt to the change.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>send_refresh_request</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
                                 <span class='ident'>src</span>: <span class='ident'>Authority</span>,
-                                <span class='ident'>content</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>)
+                                <span class='ident'>dst</span>: <span class='ident'>Authority</span>,
+                                <span class='ident'>content</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
+                                <span class='ident'>id</span>: <span class='ident'>MessageId</span>)
                                 <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>routing_msg</span> <span class='op'>=</span> <span class='ident'>RoutingMessage</span>::<span class='ident'>Request</span>(<span class='ident'>RequestMessage</span> {
-            <span class='ident'>src</span>: <span class='ident'>src</span>.<span class='ident'>clone</span>(),
-            <span class='ident'>dst</span>: <span class='ident'>src</span>,
-            <span class='ident'>content</span>: <span class='ident'>RequestContent</span>::<span class='ident'>Refresh</span>(<span class='ident'>content</span>),
+            <span class='ident'>src</span>: <span class='ident'>src</span>,
+            <span class='ident'>dst</span>: <span class='ident'>dst</span>,
+            <span class='ident'>content</span>: <span class='ident'>RequestContent</span>::<span class='ident'>Refresh</span>(<span class='ident'>content</span>, <span class='ident'>id</span>),
         });
         <span class='self'>self</span>.<span class='ident'>send_action</span>(<span class='ident'>routing_msg</span>)
     }
@@ -779,14 +800,24 @@
             <span class='ident'>name</span>: <span class='ident'>name</span>,
             <span class='ident'>result_tx</span>: <span class='ident'>result_tx</span>,
         }));
-        <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>result_rx</span>.<span class='ident'>recv</span>()))
+
+        <span class='self'>self</span>.<span class='ident'>receive_action_result</span>(<span class='kw-2'>&amp;</span><span class='ident'>result_rx</span>)
     }
 
     <span class='doccomment'>/// Returns the name of this node.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>name</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>XorName</span>, <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> (<span class='ident'>result_tx</span>, <span class='ident'>result_rx</span>) <span class='op'>=</span> <span class='ident'>channel</span>();
         <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>action_sender</span>.<span class='ident'>send</span>(<span class='ident'>Action</span>::<span class='ident'>Name</span> { <span class='ident'>result_tx</span>: <span class='ident'>result_tx</span> }));
-        <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>result_rx</span>.<span class='ident'>recv</span>()))
+
+        <span class='self'>self</span>.<span class='ident'>receive_action_result</span>(<span class='kw-2'>&amp;</span><span class='ident'>result_rx</span>)
+    }
+
+    <span class='doccomment'>/// Returns the name of this node.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>quorum_size</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>usize</span>, <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> (<span class='ident'>result_tx</span>, <span class='ident'>result_rx</span>) <span class='op'>=</span> <span class='ident'>channel</span>();
+        <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>action_sender</span>.<span class='ident'>send</span>(<span class='ident'>Action</span>::<span class='ident'>QuorumSize</span> { <span class='ident'>result_tx</span>: <span class='ident'>result_tx</span> }));
+
+        <span class='self'>self</span>.<span class='ident'>receive_action_result</span>(<span class='kw-2'>&amp;</span><span class='ident'>result_rx</span>)
     }
 
     <span class='kw'>fn</span> <span class='ident'>send_action</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>routing_msg</span>: <span class='ident'>RoutingMessage</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
@@ -795,7 +826,18 @@
             <span class='ident'>result_tx</span>: <span class='self'>self</span>.<span class='ident'>interface_result_tx</span>.<span class='ident'>clone</span>(),
         }));
 
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>interface_result_rx</span>.<span class='ident'>recv</span>())
+        <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>receive_action_result</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>interface_result_rx</span>))
+    }
+
+    <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>not</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>))]</span>
+    <span class='kw'>fn</span> <span class='ident'>receive_action_result</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>rx</span>: <span class='kw-2'>&amp;</span><span class='ident'>Receiver</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
+        <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>rx</span>.<span class='ident'>recv</span>()))
+    }
+
+    <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>)]</span>
+    <span class='kw'>fn</span> <span class='ident'>receive_action_result</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>rx</span>: <span class='kw-2'>&amp;</span><span class='ident'>Receiver</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
+        <span class='kw'>while</span> <span class='self'>self</span>.<span class='ident'>poll</span>() {}
+        <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>rx</span>.<span class='ident'>recv</span>()))
     }
 }
 

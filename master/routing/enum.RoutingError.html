@@ -46,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-2205' class='srclink' href='../src/routing/error.rs.html#49-112' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-2612' class='srclink' href='../src/routing/error.rs.html#52-117' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum RoutingError {
     NotBootstrapped,
     Terminated,
@@ -71,13 +71,14 @@
     InvalidStateForOperation,
     SerialisationError(<a class='enum' href='../maidsafe_utilities/serialisation/enum.SerialisationError.html' title='maidsafe_utilities::serialisation::SerialisationError'>SerialisationError</a>),
     AsymmetricDecryptionFailure,
-    UnknownConnection(<a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a>),
+    UnknownConnection(<a class='struct' href='../crust/peer_id/struct.PeerId.html' title='crust::peer_id::PeerId'>PeerId</a>),
     DirectionCheckFailed,
     RoutingTableBucketIndexFailed,
     InvalidDestination,
     ProxyConnectionNotFound,
     ClientConnectionNotFound,
     InvalidSource,
+    CannotTunnelThroughTunnel,
 }</pre><div class='docblock'><p>RoutingError.</p>
 </div><h2 class='variants'>Variants</h2>
 <table><tr><td id='variant.NotBootstrapped'><code>NotBootstrapped</code></td><td><div class='docblock'><p>The node/client has not bootstrapped yet</p>
@@ -112,6 +113,7 @@ the sender&#39;s buckets</p>
 </div></td></tr><tr><td id='variant.ProxyConnectionNotFound'><code>ProxyConnectionNotFound</code></td><td><div class='docblock'><p>Connection to proxy node does not exist in proxy map</p>
 </div></td></tr><tr><td id='variant.ClientConnectionNotFound'><code>ClientConnectionNotFound</code></td><td><div class='docblock'><p>Connection to client does not exist in client map</p>
 </div></td></tr><tr><td id='variant.InvalidSource'><code>InvalidSource</code></td><td><div class='docblock'><p>Invalid Source</p>
+</div></td></tr><tr><td id='variant.CannotTunnelThroughTunnel'><code>CannotTunnelThroughTunnel</code></td><td><div class='docblock'><p>Attempted to use a node as a tunnel that is not directly connected</p>
 </div></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/core/str/struct.Utf8Error.html' title='core::str::Utf8Error'>Utf8Error</a>&gt; for <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a></code></h3><div class='impl-items'><h4 id='method.from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: <a class='struct' href='https://doc.rust-lang.org/nightly/core/str/struct.Utf8Error.html' title='core::str::Utf8Error'>Utf8Error</a>) -&gt; <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a></code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html' title='std::io::error::Error'>Error</a>&gt; for <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a></code></h3><div class='impl-items'><h4 id='method.from-1' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: <a class='struct' href='https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html' title='std::io::error::Error'>Error</a>) -&gt; <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a></code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a>&gt; for <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a></code></h3><div class='impl-items'><h4 id='method.from-2' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a>) -&gt; <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a></code></h4>

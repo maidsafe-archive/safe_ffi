@@ -655,6 +655,10 @@
 <span id="612">612</span>
 <span id="613">613</span>
 <span id="614">614</span>
+<span id="615">615</span>
+<span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -818,7 +822,7 @@
 <span class='doccomment'>/// This function should be called to enable logging to a file</span>
 <span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
 <span class='kw'>pub</span> <span class='kw'>extern</span> <span class='string'>&quot;C&quot;</span> <span class='kw'>fn</span> <span class='ident'>init_logging</span>() <span class='op'>-&gt;</span> <span class='ident'>int32_t</span> {
-    <span class='ident'>env</span>::<span class='ident'>set_var</span>(<span class='string'>&quot;RUST_LOG&quot;</span>, <span class='string'>&quot;crust,routing,safe_=trace&quot;</span>);
+    <span class='ident'>env</span>::<span class='ident'>set_var</span>(<span class='string'>&quot;RUST_LOG&quot;</span>, <span class='string'>&quot;crust=trace,routing=trace,safe_ffi=trace&quot;</span>);
 
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>current_exe_path</span> <span class='op'>=</span> <span class='macro'>ffi_try</span><span class='macro'>!</span>(<span class='ident'>env</span>::<span class='ident'>current_exe</span>().<span class='ident'>map_err</span>(<span class='op'>|</span><span class='ident'>err</span><span class='op'>|</span> {
         <span class='ident'>CoreError</span>::<span class='ident'>Unexpected</span>(<span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{:?}&quot;</span>, <span class='ident'>err</span>))
@@ -830,7 +834,7 @@
                                                .<span class='ident'>to_owned</span>())));
     }
 
-    <span class='macro'>ffi_try</span><span class='macro'>!</span>(<span class='ident'>safe_log</span>::<span class='ident'>init_to_file</span>(<span class='boolval'>true</span>, <span class='ident'>current_exe_path</span>).<span class='ident'>map_err</span>(<span class='ident'>CoreError</span>::<span class='ident'>Unexpected</span>));
+    <span class='macro'>ffi_try</span><span class='macro'>!</span>(<span class='ident'>safe_log</span>::<span class='ident'>init_to_file</span>(<span class='boolval'>true</span>, <span class='ident'>current_exe_path</span>, <span class='boolval'>false</span>).<span class='ident'>map_err</span>(<span class='ident'>CoreError</span>::<span class='ident'>Unexpected</span>));
 
     <span class='number'>0</span>
 }
@@ -1175,6 +1179,8 @@
     <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fs</span>::<span class='ident'>File</span>;
     <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>io</span>::<span class='ident'>Read</span>;
     <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>error</span>::<span class='ident'>Error</span>;
+    <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>thread</span>;
+    <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>time</span>::<span class='ident'>Duration</span>;
 
     <span class='kw'>use</span> <span class='ident'>libc</span>::<span class='ident'>c_void</span>;
 
@@ -1256,6 +1262,8 @@
         <span class='kw'>let</span> <span class='ident'>junk_msg</span> <span class='op'>=</span> <span class='string'>&quot;This message should not exist in the log file&quot;</span>.<span class='ident'>to_owned</span>();
 
         <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>debug_msg</span>);
+
+        <span class='ident'>thread</span>::<span class='ident'>sleep</span>(<span class='ident'>Duration</span>::<span class='ident'>from_secs</span>(<span class='number'>1</span>));
 
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>current_exe_path</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>env</span>::<span class='ident'>current_exe</span>());
 

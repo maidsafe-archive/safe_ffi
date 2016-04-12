@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_network_common-0.0.1/src/client_errors.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_network_common-0.1.1/src/client_errors.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>client_errors.rs.html -- source</title>
@@ -92,6 +92,9 @@
 <span id="49">49</span>
 <span id="50">50</span>
 <span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -143,6 +146,9 @@
     <span class='doccomment'>/// Unknown error - Errors occuring at Vault level which have no bearing on clients, eg.</span>
     <span class='doccomment'>/// misc errors like serialisation failure, db failure etc</span>
     <span class='ident'>Unknown</span>,
+    <span class='doccomment'>/// The loss of sacrificial copies indicates the network as a whole is no longer having</span>
+    <span class='doccomment'>/// enough space to accept further put request. Have to wait more nodes to join.</span>
+    <span class='ident'>NetworkFull</span>,
 }
 </pre>
 </section>

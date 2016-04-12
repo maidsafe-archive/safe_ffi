@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.11.1/src/structured_data.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.14.0/src/structured_data.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>structured_data.rs.html -- source</title>
@@ -544,6 +544,7 @@
 <span id="501">501</span>
 <span id="502">502</span>
 <span id="503">503</span>
+<span id="504">504</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -817,7 +818,8 @@
                 .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>signature</span><span class='op'>|</span> ::<span class='ident'>utils</span>::<span class='ident'>format_binary_array</span>(<span class='kw-2'>&amp;</span><span class='ident'>signature</span>.<span class='number'>0</span>[..]))
                 .<span class='ident'>collect</span>();
         <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>,
-               <span class='string'>&quot;StructuredData {{ type_tag: {}, name: {}, data: {}, previous_owner_keys: {:?}, version: {}, current_owner_keys: {:?}, previous_owner_signatures: {:?} }}&quot;</span>,
+               <span class='string'>&quot;StructuredData {{ type_tag: {}, name: {}, data: {}, previous_owner_keys: {:?}, \
+                version: {}, current_owner_keys: {:?}, previous_owner_signatures: {:?} }}&quot;</span>,
                <span class='self'>self</span>.<span class='ident'>type_tag</span>,
                <span class='self'>self</span>.<span class='ident'>name</span>(),
                ::<span class='ident'>utils</span>::<span class='ident'>format_binary_array</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>data</span>[..]),

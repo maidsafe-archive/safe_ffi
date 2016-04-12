@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.11.1/src/lib.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.14.0/src/lib.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>lib.rs.html -- source</title>
@@ -255,6 +255,9 @@
 <span id="212">212</span>
 <span id="213">213</span>
 <span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -319,7 +322,7 @@
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! let (sender, _receiver) = mpsc::channel::&lt;Event&gt;();</span>
 <span class='doccomment'>//! let full_id = FullId::new(); // Generate new keys.</span>
-<span class='doccomment'>//! let _ = Client::new(sender, Some(full_id.clone())).unwrap();</span>
+<span class='doccomment'>//! let _ = Client::new(sender, Some(full_id.clone()), true).unwrap();</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! let _ = full_id.public_id().name();</span>
 <span class='doccomment'>//! ```</span>
@@ -337,7 +340,7 @@
 <span class='doccomment'>//! use routing::{Node, Event};</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! let (sender, _receiver) = mpsc::channel::&lt;Event&gt;();</span>
-<span class='doccomment'>//! let _ = Node::new(sender).unwrap();</span>
+<span class='doccomment'>//! let _ = Node::new(sender, true).unwrap();</span>
 <span class='doccomment'>//! ```</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! Upon creation, the node will first connect to the network as a client. Once it has client</span>
@@ -448,14 +451,16 @@
 <span class='kw'>mod</span> <span class='ident'>plain_data</span>;
 <span class='kw'>mod</span> <span class='ident'>structured_data</span>;
 <span class='kw'>mod</span> <span class='ident'>timer</span>;
+<span class='kw'>mod</span> <span class='ident'>tunnels</span>;
 <span class='kw'>mod</span> <span class='ident'>types</span>;
 <span class='kw'>mod</span> <span class='ident'>utils</span>;
 
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>all</span>(<span class='ident'>test</span>, <span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>))]</span>
 <span class='kw'>mod</span> <span class='ident'>core_tests</span>;
 
+<span class='doccomment'>/// Mock crust</span>
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>)]</span>
-<span class='kw'>mod</span> <span class='ident'>mock_crust</span>;
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>mock_crust</span>;
 
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>authority</span>::<span class='ident'>Authority</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>client</span>::<span class='ident'>Client</span>;
@@ -463,7 +468,8 @@
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>error</span>::{<span class='ident'>InterfaceError</span>, <span class='ident'>RoutingError</span>};
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>event</span>::<span class='ident'>Event</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>id</span>::{<span class='ident'>FullId</span>, <span class='ident'>PublicId</span>};
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>immutable_data</span>::{<span class='ident'>ImmutableData</span>, <span class='ident'>ImmutableDataType</span>};
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>immutable_data</span>::{<span class='ident'>ImmutableData</span>, <span class='ident'>ImmutableDataType</span>, <span class='ident'>normal_to_backup</span>, <span class='ident'>backup_to_normal</span>, <span class='ident'>normal_to_sacrificial</span>,
+                         <span class='ident'>sacrificial_to_normal</span>, <span class='ident'>backup_to_sacrificial</span>, <span class='ident'>sacrificial_to_backup</span>};
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>messages</span>::{<span class='ident'>RequestContent</span>, <span class='ident'>RequestMessage</span>, <span class='ident'>ResponseContent</span>, <span class='ident'>ResponseMessage</span>,
                    <span class='ident'>RoutingMessage</span>, <span class='ident'>SignedMessage</span>};
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>node</span>::<span class='ident'>Node</span>;

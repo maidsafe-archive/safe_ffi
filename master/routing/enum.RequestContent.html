@@ -46,15 +46,18 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-3600' class='srclink' href='../src/routing/messages.rs.html#235-284' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-4136' class='srclink' href='../src/routing/messages.rs.html#257-312' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum RequestContent {
     GetNetworkName {
         current_id: <a class='struct' href='../routing/struct.PublicId.html' title='routing::PublicId'>PublicId</a>,
+        message_id: <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>,
     },
     ExpectCloseNode {
         expect_id: <a class='struct' href='../routing/struct.PublicId.html' title='routing::PublicId'>PublicId</a>,
+        client_auth: <a class='enum' href='../routing/enum.Authority.html' title='routing::Authority'>Authority</a>,
+        message_id: <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>,
     },
-    GetCloseGroup,
+    GetCloseGroup(<a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>),
     Connect,
     ConnectionInfo {
         encrypted_connection_info: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;,
@@ -65,7 +68,7 @@
         encrypted_connection_info: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;,
         nonce_bytes: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.array.html'>[<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>; box_::NONCEBYTES]</a>,
     },
-    Refresh(<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;),
+    Refresh(<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;, <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>),
     Get(<a class='enum' href='../routing/enum.DataRequest.html' title='routing::DataRequest'>DataRequest</a>, <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>),
     Put(<a class='enum' href='../routing/enum.Data.html' title='routing::Data'>Data</a>, <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>),
     Post(<a class='enum' href='../routing/enum.Data.html' title='routing::Data'>Data</a>, <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>),
@@ -79,10 +82,13 @@ a new name chosen by the <code>NaeManager</code>.</p>
 </div><h3 class='fields'>Fields</h3>
 
                                               <table><tr><td id='variant.GetNetworkName.field.current_id'><code>current_id</code></td><td><div class='docblock'><p>The client&#39;s <code>PublicId</code> (public keys and name)</p>
+</div></td></tr><tr><td id='variant.GetNetworkName.field.message_id'><code>message_id</code></td><td><div class='docblock'><p>The message&#39;s unique identifier.</p>
 </div></td></tr></table></td></tr><tr><td id='variant.ExpectCloseNode'><code>ExpectCloseNode</code></td><td><div class='docblock'><p>Notify a joining node&#39;s <code>NodeManager</code> so that it expects a <code>GetCloseGroup</code> request from it.</p>
 </div><h3 class='fields'>Fields</h3>
 
                                               <table><tr><td id='variant.ExpectCloseNode.field.expect_id'><code>expect_id</code></td><td><div class='docblock'><p>The joining node&#39;s <code>PublicId</code> (public keys and name)</p>
+</div></td></tr><tr><td id='variant.ExpectCloseNode.field.client_auth'><code>client_auth</code></td><td><div class='docblock'><p>The client&#39;s current authority.</p>
+</div></td></tr><tr><td id='variant.ExpectCloseNode.field.message_id'><code>message_id</code></td><td><div class='docblock'><p>The message&#39;s unique identifier.</p>
 </div></td></tr></table></td></tr><tr><td id='variant.GetCloseGroup'><code>GetCloseGroup</code></td><td><div class='docblock'><p>Request the <code>PublicId</code>s of the recipient&#39;s close group.</p>
 
 <p>This is sent from a joining node to its <code>NodeManager</code> to request the <code>PublicId</code>s of the

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.12.1/src/core/errors.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.14.1/src/core/errors.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>errors.rs.html -- source</title>
@@ -228,6 +228,7 @@
 <span id="185">185</span>
 <span id="186">186</span>
 <span id="187">187</span>
+<span id="188">188</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -374,6 +375,7 @@
             <span class='ident'>CoreError</span>::<span class='ident'>MutationFailure</span> { <span class='ident'>reason</span>: <span class='ident'>MutationError</span>::<span class='ident'>InvalidSuccessor</span>, .. } <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>24</span>,
             <span class='ident'>CoreError</span>::<span class='ident'>MutationFailure</span> { <span class='ident'>reason</span>: <span class='ident'>MutationError</span>::<span class='ident'>InvalidOperation</span>, .. } <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>25</span>,
             <span class='ident'>CoreError</span>::<span class='ident'>MutationFailure</span> { <span class='ident'>reason</span>: <span class='ident'>MutationError</span>::<span class='ident'>Unknown</span>, .. } <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>26</span>,
+            <span class='ident'>CoreError</span>::<span class='ident'>MutationFailure</span> { <span class='ident'>reason</span>: <span class='ident'>MutationError</span>::<span class='ident'>NetworkFull</span>, .. } <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>27</span>,
         }
     }
 }

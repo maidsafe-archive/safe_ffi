@@ -46,10 +46,12 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-4158' class='srclink' href='../src/routing/messages.rs.html#291-373' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-4837' class='srclink' href='../src/routing/messages.rs.html#319-407' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum ResponseContent {
     GetNetworkName {
         relocated_id: <a class='struct' href='../routing/struct.PublicId.html' title='routing::PublicId'>PublicId</a>,
+        close_group_ids: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../routing/struct.PublicId.html' title='routing::PublicId'>PublicId</a>&gt;,
+        message_id: <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>,
     },
     GetPublicId {
         public_id: <a class='struct' href='../routing/struct.PublicId.html' title='routing::PublicId'>PublicId</a>,
@@ -61,11 +63,12 @@
     },
     GetCloseGroup {
         close_group_ids: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../routing/struct.PublicId.html' title='routing::PublicId'>PublicId</a>&gt;,
+        message_id: <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>,
     },
     GetSuccess(<a class='enum' href='../routing/enum.Data.html' title='routing::Data'>Data</a>, <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>),
-    PutSuccess(<a class='struct' href='../sodiumoxide/crypto/hash/sha512/struct.Digest.html' title='sodiumoxide::crypto::hash::sha512::Digest'>Digest</a>, <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>),
-    PostSuccess(<a class='struct' href='../sodiumoxide/crypto/hash/sha512/struct.Digest.html' title='sodiumoxide::crypto::hash::sha512::Digest'>Digest</a>, <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>),
-    DeleteSuccess(<a class='struct' href='../sodiumoxide/crypto/hash/sha512/struct.Digest.html' title='sodiumoxide::crypto::hash::sha512::Digest'>Digest</a>, <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>),
+    PutSuccess(<a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>),
+    PostSuccess(<a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>),
+    DeleteSuccess(<a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>),
     GetFailure {
         id: <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>,
         request: <a class='struct' href='../routing/struct.RequestMessage.html' title='routing::RequestMessage'>RequestMessage</a>,
@@ -93,10 +96,12 @@ or client, the response will contain the signed request to prevent forgery.</p>
 </div><h2 class='variants'>Variants</h2>
 <table><tr><td id='variant.GetNetworkName'><code>GetNetworkName</code></td><td><div class='docblock'><p>Reply with the new <code>PublicId</code> for the joining node.</p>
 
-<p>Sent from the <code>NaeManager</code> to the <code>Client</code>.</p>
+<p>Sent from the <code>NodeManager</code> to the <code>Client</code>.</p>
 </div><h3 class='fields'>Fields</h3>
 
                                               <table><tr><td id='variant.GetNetworkName.field.relocated_id'><code>relocated_id</code></td><td><div class='docblock'><p>Supplied <code>PublicId</code>, but with the new name</p>
+</div></td></tr><tr><td id='variant.GetNetworkName.field.close_group_ids'><code>close_group_ids</code></td><td><div class='docblock'><p>Our close group <code>PublicId</code>s.</p>
+</div></td></tr><tr><td id='variant.GetNetworkName.field.message_id'><code>message_id</code></td><td><div class='docblock'><p>The message&#39;s unique identifier.</p>
 </div></td></tr></table></td></tr><tr><td id='variant.GetPublicId'><code>GetPublicId</code></td><td><div class='docblock'><p>Reply with the requested <code>PublicId</code>.</p>
 
 <p>Sent from the <code>NodeManager</code> to the joining node.</p>
@@ -117,6 +122,7 @@ or client, the response will contain the signed request to prevent forgery.</p>
 </div><h3 class='fields'>Fields</h3>
 
                                               <table><tr><td id='variant.GetCloseGroup.field.close_group_ids'><code>close_group_ids</code></td><td><div class='docblock'><p>Our close group <code>PublicId</code>s.</p>
+</div></td></tr><tr><td id='variant.GetCloseGroup.field.message_id'><code>message_id</code></td><td><div class='docblock'><p>The message ID.</p>
 </div></td></tr></table></td></tr><tr><td id='variant.GetSuccess'><code>GetSuccess</code></td><td><div class='docblock'><p>Reply with the requested data (may not be ignored)</p>
 
 <p>Sent from a <code>ManagedNode</code> to an <code>NaeManager</code>, and from there to a <code>Client</code>, although this
