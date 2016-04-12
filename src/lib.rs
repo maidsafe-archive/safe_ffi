@@ -160,7 +160,7 @@ impl Drop for FfiHandle {
 /// This function should be called to enable logging to a file
 #[no_mangle]
 pub extern "C" fn init_logging() -> int32_t {
-    env::set_var("RUST_LOG", "crust,routing,safe_=trace");
+    env::set_var("RUST_LOG", "crust=trace,routing=trace,safe_ffi=trace");
 
     let mut current_exe_path = ffi_try!(env::current_exe().map_err(|err| {
         CoreError::Unexpected(format!("{:?}", err))
@@ -172,7 +172,7 @@ pub extern "C" fn init_logging() -> int32_t {
                                                .to_owned())));
     }
 
-    ffi_try!(safe_log::init_to_file(true, current_exe_path).map_err(CoreError::Unexpected));
+    ffi_try!(safe_log::init_to_file(true, current_exe_path, false).map_err(CoreError::Unexpected));
 
     0
 }
@@ -517,6 +517,8 @@ mod test {
     use std::fs::File;
     use std::io::Read;
     use std::error::Error;
+    use std::thread;
+    use std::time::Duration;
 
     use libc::c_void;
 
@@ -598,6 +600,8 @@ mod test {
         let junk_msg = "This message should not exist in the log file".to_owned();
 
         debug!("{}", debug_msg);
+
+        thread::sleep(Duration::from_secs(1));
 
         let mut current_exe_path = unwrap_result!(env::current_exe());
 
