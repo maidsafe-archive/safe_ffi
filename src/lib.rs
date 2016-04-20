@@ -601,6 +601,8 @@ mod test {
 
         debug!("{}", debug_msg);
 
+        thread::sleep(Duration::from_secs(1));
+
         let mut current_exe_path = unwrap_result!(env::current_exe());
 
         assert!(current_exe_path.set_extension("log"));
