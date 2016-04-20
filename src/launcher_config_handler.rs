@@ -161,8 +161,8 @@ impl ConfigHandler {
                 None => {
                     dir_listing =
                         try!(try!(file_helper.create(LAUNCHER_GLOBAL_CONFIG_FILE_NAME.to_string(),
-                                                Vec::new(),
-                                                dir_listing))
+                                                               Vec::new(),
+                                                               dir_listing))
                                  .close())
                             .0;
                     unwrap_option!(dir_listing.get_files()

@@ -160,7 +160,7 @@ impl Drop for FfiHandle {
 /// This function should be called to enable logging to a file
 #[no_mangle]
 pub extern "C" fn init_logging() -> int32_t {
-    env::set_var("RUST_LOG", "crust=trace,routing=trace,safe_ffi=trace");
+    env::set_var("RUST_LOG", "crust,routing,safe_core,safe_ffi=trace");
 
     let mut current_exe_path = ffi_try!(env::current_exe().map_err(|err| {
         CoreError::Unexpected(format!("{:?}", err))
@@ -514,10 +514,10 @@ mod test {
     use super::*;
 
     use std::env;
+    use std::thread;
     use std::fs::File;
     use std::io::Read;
     use std::error::Error;
-    use std::thread;
     use std::time::Duration;
 
     use libc::c_void;
@@ -606,6 +606,9 @@ mod test {
         let mut current_exe_path = unwrap_result!(env::current_exe());
 
         assert!(current_exe_path.set_extension("log"));
+
+        // Give sometime to the async logging to flush in the background thread
+        thread::sleep(Duration::from_millis(50));
 
         let mut log_file = unwrap_result!(File::open(current_exe_path));
         let mut file_content = String::new();
