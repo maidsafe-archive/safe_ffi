@@ -26,7 +26,7 @@
     
 
     <nav class="sidebar">
-        <a href='../../safe_network_common/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <a href='../../safe_network_common/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='logo' width='100'></a>
         <p class='location'><a href='../index.html'>safe_network_common</a></p><script>window.sidebarCurrent = {name: 'messaging', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
     </nav>
 
@@ -55,7 +55,6 @@
                                title='safe_network_common::messaging::MpidHeader'>MpidHeader</a></td>
                         <td class='docblock short'>
                              <p>Minimal information about a given message which can be used as a notification to the receiver.</p>
-
                         </td>
                     </tr>
                 
@@ -64,7 +63,6 @@
                                title='safe_network_common::messaging::MpidMessage'>MpidMessage</a></td>
                         <td class='docblock short'>
                              <p>A full message including header and body which can be sent to or retrieved from the network.</p>
-
                         </td>
                     </tr>
                 </table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
@@ -74,7 +72,6 @@
                                title='safe_network_common::messaging::Error'>Error</a></td>
                         <td class='docblock short'>
                              <p>Error types relating to MPID messaging.</p>
-
                         </td>
                     </tr>
                 
@@ -84,7 +81,6 @@
                         <td class='docblock short'>
                              <p>A serialisable wrapper to allow multiplexing all MPID message types and actions via a single
 type.</p>
-
                         </td>
                     </tr>
                 </table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
@@ -94,7 +90,6 @@ type.</p>
                                title='safe_network_common::messaging::GUID_SIZE'>GUID_SIZE</a></td>
                         <td class='docblock short'>
                              <p>Length of the GUID (unique ID) of a message (16 bytes).</p>
-
                         </td>
                     </tr>
                 
@@ -104,7 +99,6 @@ type.</p>
                         <td class='docblock short'>
                              <p>Maximum allowed length for a <a href="struct.MpidMessage.html#method.new">message&#39;s <code>body</code></a> (101,760
 bytes).</p>
-
                         </td>
                     </tr>
                 
@@ -114,7 +108,6 @@ bytes).</p>
                         <td class='docblock short'>
                              <p>Maximum allowed length for a <a href="struct.MpidHeader.html#method.new">header&#39;s <code>metadata</code></a> (128
 bytes).</p>
-
                         </td>
                     </tr>
                 
@@ -123,7 +116,6 @@ bytes).</p>
                                title='safe_network_common::messaging::MAX_INBOX_SIZE'>MAX_INBOX_SIZE</a></td>
                         <td class='docblock short'>
                              <p>Maximum allowed inbox size for an account (128 MiB).</p>
-
                         </td>
                     </tr>
                 
@@ -132,7 +124,6 @@ bytes).</p>
                                title='safe_network_common::messaging::MAX_OUTBOX_SIZE'>MAX_OUTBOX_SIZE</a></td>
                         <td class='docblock short'>
                              <p>Maximum allowed outbox size for an account (128 MiB).</p>
-
                         </td>
                     </tr>
                 </table></section>
@@ -178,7 +169,7 @@ bytes).</p>
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>

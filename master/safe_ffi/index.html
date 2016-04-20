@@ -26,7 +26,7 @@
     
 
     <nav class="sidebar">
-        <a href='../safe_ffi/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <a href='../safe_ffi/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='logo' width='100'></a>
         <p class='location'></p><script>window.sidebarCurrent = {name: 'safe_ffi', ty: 'mod', relpath: '../'};</script>
     </nav>
 
@@ -46,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-0' class='srclink' href='../src/safe_ffi/lib.rs.html#18-618' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-0' class='srclink' href='../src/safe_ffi/src/lib.rs.html#18-621' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>This crate provides FFI-bindings to the Client Modules (<code>safe_core</code>, <code>safe_nfs</code>, <code>safe_dns</code>)
 In the current implementation the allocations made by this crate are managed within the crate
 itself and is guaranteed that management of such allocations will not be pushed beyond the FFI
@@ -73,7 +73,6 @@ done, to release the resources, <code>drop_client</code> may be called.</p>
                                title='safe_ffi::errors'>errors</a></td>
                         <td class='docblock short'>
                              <p>Errors thrown by the FFI operations</p>
-
                         </td>
                     </tr>
                 </table><h2 id='macros' class='section-header'><a href="#macros">Macros</a></h2>
@@ -87,7 +86,6 @@ to package it into <code>safe_ffi::errors::FfiError::SpecificParseError(String)<
 useful because there may be miscellaneous erros while parsing through a valid JSON due to JSON
 not conforming to certain mandatory requirements. This can then be communicated back to the
 JSON sending client.</p>
-
                         </td>
                     </tr>
                 </table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
@@ -98,7 +96,6 @@ JSON sending client.</p>
                         <td class='docblock short'>
                              <p>ParameterPacket acts as a holder for the standard parameters that would be needed for performing
 operations across the modules like nfs and dns</p>
-
                         </td>
                     </tr>
                 </table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
@@ -108,7 +105,6 @@ operations across the modules like nfs and dns</p>
                                title='safe_ffi::Action'>Action</a></td>
                         <td class='docblock short'>
                              <p>ICommand trait</p>
-
                         </td>
                     </tr>
                 </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
@@ -121,7 +117,6 @@ operations across the modules like nfs and dns</p>
 client must be called before initiating any operation allowed by this crate. <code>client_handle</code> is
 a pointer to a pointer and must point to a valid pointer not junk, else the consequences are
 undefined.</p>
-
                         </td>
                     </tr>
                 
@@ -131,7 +126,6 @@ undefined.</p>
                         <td class='docblock short'>
                              <p>Create an unregistered client. This or any one of the other companion functions to get a
 client must be called before initiating any operation allowed by this crate.</p>
-
                         </td>
                     </tr>
                 
@@ -143,7 +137,6 @@ client must be called before initiating any operation allowed by this crate.</p>
 from one of the client obtainment functions in this crate (<code>crate_account</code>, <code>log_in</code>,
 <code>create_unregistered_client</code>). Using <code>client_handle</code> after a call to this functions is
 undefined behaviour.</p>
-
                         </td>
                     </tr>
                 
@@ -152,7 +145,6 @@ undefined behaviour.</p>
                                title='safe_ffi::drop_null_ptr'>drop_null_ptr</a></td>
                         <td class='docblock short'>
                              <p>Drop the null pointer returned as error from the execute_for_content fn</p>
-
                         </td>
                     </tr>
                 
@@ -161,7 +153,6 @@ undefined behaviour.</p>
                                title='safe_ffi::drop_vector'>drop_vector</a></td>
                         <td class='docblock short'>
                              <p>Drop the vector returned as a result of the execute_for_content fn</p>
-
                         </td>
                     </tr>
                 
@@ -175,7 +166,6 @@ This function would only perform the operation and return 0 or error code
 c_payload refers to the JSON payload that can be passed as a JSON string.
 The JSON string should have keys module, action, app_root_dir_key, safe_drive_dir_key,
 safe_drive_access and data. <code>data</code> refers to API specific payload.</p>
-
                         </td>
                     </tr>
                 
@@ -187,7 +177,6 @@ safe_drive_access and data. <code>data</code> refers to API specific payload.</p
 The function return a pointer to a U8 vecotr. The size of the U8 vector and its capacity is
 written to the out params c_size &amp; c_capacity. The size and capcity would be required for
 droping the vector The result of the execution is returned in the c_result out param</p>
-
                         </td>
                     </tr>
                 
@@ -196,7 +185,6 @@ droping the vector The result of the execution is returned in the c_result out p
                                title='safe_ffi::get_app_dir_key'>get_app_dir_key</a></td>
                         <td class='docblock short'>
                              <p>Returns key size</p>
-
                         </td>
                     </tr>
                 
@@ -205,7 +193,6 @@ droping the vector The result of the execution is returned in the c_result out p
                                title='safe_ffi::get_safe_drive_key'>get_safe_drive_key</a></td>
                         <td class='docblock short'>
                              <p>Returns Key as base64 string</p>
-
                         </td>
                     </tr>
                 
@@ -214,7 +201,6 @@ droping the vector The result of the execution is returned in the c_result out p
                                title='safe_ffi::init_logging'>init_logging</a></td>
                         <td class='docblock short'>
                              <p>This function should be called to enable logging to a file</p>
-
                         </td>
                     </tr>
                 
@@ -226,7 +212,6 @@ droping the vector The result of the execution is returned in the c_result out p
 client must be called before initiating any operation allowed by this crate. <code>client_handle</code> is
 a pointer to a pointer and must point to a valid pointer not junk, else the consequences are
 undefined.</p>
-
                         </td>
                     </tr>
                 
@@ -236,7 +221,6 @@ undefined.</p>
                         <td class='docblock short'>
                              <p>Register an observer to network events like Connected, Disconnected etc. as provided by the
 core module</p>
-
                         </td>
                     </tr>
                 </table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
@@ -246,7 +230,6 @@ core module</p>
                                title='safe_ffi::ResponseType'>ResponseType</a></td>
                         <td class='docblock short'>
                              <p>ResponseType tspecifies the standard Response that is to be expected from the ::Action trait</p>
-
                         </td>
                     </tr>
                 </table></section>
@@ -292,7 +275,7 @@ core module</p>
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>

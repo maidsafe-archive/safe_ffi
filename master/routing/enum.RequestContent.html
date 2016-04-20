@@ -26,7 +26,7 @@
     
 
     <nav class="sidebar">
-        <a href='../routing/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <a href='../routing/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='logo' width='100'></a>
         <p class='location'><a href='index.html'>routing</a></p><script>window.sidebarCurrent = {name: 'RequestContent', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
@@ -46,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-4136' class='srclink' href='../src/routing/messages.rs.html#257-312' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-4139' class='srclink' href='../src/routing/messages.rs.html#258-313' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum RequestContent {
     GetNetworkName {
         current_id: <a class='struct' href='../routing/struct.PublicId.html' title='routing::PublicId'>PublicId</a>,
@@ -61,12 +61,12 @@
     Connect,
     ConnectionInfo {
         encrypted_connection_info: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;,
-        nonce_bytes: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.array.html'>[<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>; box_::NONCEBYTES]</a>,
+        nonce_bytes: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.array.html'>[</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.array.html'>; box_::NONCEBYTES]</a>,
     },
     GetPublicId,
     GetPublicIdWithConnectionInfo {
         encrypted_connection_info: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;,
-        nonce_bytes: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.array.html'>[<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>; box_::NONCEBYTES]</a>,
+        nonce_bytes: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.array.html'>[</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.array.html'>; box_::NONCEBYTES]</a>,
     },
     Refresh(<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;, <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>),
     Get(<a class='enum' href='../routing/enum.DataRequest.html' title='routing::DataRequest'>DataRequest</a>, <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>),
@@ -75,7 +75,7 @@
     Delete(<a class='enum' href='../routing/enum.Data.html' title='routing::Data'>Data</a>, <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>),
 }</pre><div class='docblock'><p>The request types</p>
 </div><h2 class='variants'>Variants</h2>
-<table><tr><td id='variant.GetNetworkName'><code>GetNetworkName</code></td><td><div class='docblock'><p>Ask the network to alter your <code>PublicId</code> name.</p>
+<table class='variants_table'><tr><td id='variant.GetNetworkName'><code>GetNetworkName</code></td><td><div class='docblock'><p>Ask the network to alter your <code>PublicId</code> name.</p>
 
 <p>This is sent by a <code>Client</code> to its <code>NaeManager</code> with the intent to become a routing node with
 a new name chosen by the <code>NaeManager</code>.</p>
@@ -83,40 +83,40 @@ a new name chosen by the <code>NaeManager</code>.</p>
 
                                               <table><tr><td id='variant.GetNetworkName.field.current_id'><code>current_id</code></td><td><div class='docblock'><p>The client&#39;s <code>PublicId</code> (public keys and name)</p>
 </div></td></tr><tr><td id='variant.GetNetworkName.field.message_id'><code>message_id</code></td><td><div class='docblock'><p>The message&#39;s unique identifier.</p>
-</div></td></tr></table></td></tr><tr><td id='variant.ExpectCloseNode'><code>ExpectCloseNode</code></td><td><div class='docblock'><p>Notify a joining node&#39;s <code>NodeManager</code> so that it expects a <code>GetCloseGroup</code> request from it.</p>
+</div></td></tr></table></td><td></td></tr><tr><td id='variant.ExpectCloseNode'><code>ExpectCloseNode</code></td><td><div class='docblock'><p>Notify a joining node&#39;s <code>NodeManager</code> so that it expects a <code>GetCloseGroup</code> request from it.</p>
 </div><h3 class='fields'>Fields</h3>
 
                                               <table><tr><td id='variant.ExpectCloseNode.field.expect_id'><code>expect_id</code></td><td><div class='docblock'><p>The joining node&#39;s <code>PublicId</code> (public keys and name)</p>
 </div></td></tr><tr><td id='variant.ExpectCloseNode.field.client_auth'><code>client_auth</code></td><td><div class='docblock'><p>The client&#39;s current authority.</p>
 </div></td></tr><tr><td id='variant.ExpectCloseNode.field.message_id'><code>message_id</code></td><td><div class='docblock'><p>The message&#39;s unique identifier.</p>
-</div></td></tr></table></td></tr><tr><td id='variant.GetCloseGroup'><code>GetCloseGroup</code></td><td><div class='docblock'><p>Request the <code>PublicId</code>s of the recipient&#39;s close group.</p>
+</div></td></tr></table></td><td></td></tr><tr><td id='variant.GetCloseGroup'><code>GetCloseGroup</code></td><td><div class='docblock'><p>Request the <code>PublicId</code>s of the recipient&#39;s close group.</p>
 
 <p>This is sent from a joining node to its <code>NodeManager</code> to request the <code>PublicId</code>s of the
 <code>NodeManager</code>&#39;s members.</p>
-</div></td></tr><tr><td id='variant.Connect'><code>Connect</code></td><td><div class='docblock'><p>Request a direct connection to the recipient.</p>
-</div></td></tr><tr><td id='variant.ConnectionInfo'><code>ConnectionInfo</code></td><td><div class='docblock'><p>Send our connection_info encrypted to a node we wish to connect to and have the keys for.</p>
+</div></td><td></td></tr><tr><td id='variant.Connect'><code>Connect</code></td><td><div class='docblock'><p>Request a direct connection to the recipient.</p>
+</div></td><td></td></tr><tr><td id='variant.ConnectionInfo'><code>ConnectionInfo</code></td><td><div class='docblock'><p>Send our connection_info encrypted to a node we wish to connect to and have the keys for.</p>
 </div><h3 class='fields'>Fields</h3>
 
                                               <table><tr><td id='variant.ConnectionInfo.field.encrypted_connection_info'><code>encrypted_connection_info</code></td><td><div class='docblock'><p>Encrypted Crust connection info.</p>
 </div></td></tr><tr><td id='variant.ConnectionInfo.field.nonce_bytes'><code>nonce_bytes</code></td><td><div class='docblock'><p>Nonce used to provide a salt in the encrytped message.</p>
-</div></td></tr></table></td></tr><tr><td id='variant.GetPublicId'><code>GetPublicId</code></td><td><div class='docblock'><p>Ask each member of a group near a node address for the <code>PublicId</code>.</p>
-</div></td></tr><tr><td id='variant.GetPublicIdWithConnectionInfo'><code>GetPublicIdWithConnectionInfo</code></td><td><div class='docblock'><p>Ask for a <code>PublicId</code> but provide our connection_info encrytped.</p>
+</div></td></tr></table></td><td></td></tr><tr><td id='variant.GetPublicId'><code>GetPublicId</code></td><td><div class='docblock'><p>Ask each member of a group near a node address for the <code>PublicId</code>.</p>
+</div></td><td></td></tr><tr><td id='variant.GetPublicIdWithConnectionInfo'><code>GetPublicIdWithConnectionInfo</code></td><td><div class='docblock'><p>Ask for a <code>PublicId</code> but provide our connection_info encrytped.</p>
 </div><h3 class='fields'>Fields</h3>
 
                                               <table><tr><td id='variant.GetPublicIdWithConnectionInfo.field.encrypted_connection_info'><code>encrypted_connection_info</code></td><td><div class='docblock'><p>Encrypted crust connection_info (socket address and protocol).</p>
 </div></td></tr><tr><td id='variant.GetPublicIdWithConnectionInfo.field.nonce_bytes'><code>nonce_bytes</code></td><td><div class='docblock'><p>Nonce used to provide a salt in the encrytped message.</p>
-</div></td></tr></table></td></tr><tr><td id='variant.Refresh'><code>Refresh</code></td><td><div class='docblock'><p>Message from upper layers sending network state on any network churn event.</p>
-</div></td></tr><tr><td id='variant.Get'><code>Get</code></td><td><div class='docblock'><p>Ask for data from network, passed from API with data name as parameter</p>
-</div></td></tr><tr><td id='variant.Put'><code>Put</code></td><td><div class='docblock'><p>Put data to network. Provide actual data as parameter</p>
-</div></td></tr><tr><td id='variant.Post'><code>Post</code></td><td><div class='docblock'><p>Post data to network. Provide actual data as parameter</p>
-</div></td></tr><tr><td id='variant.Delete'><code>Delete</code></td><td><div class='docblock'><p>Delete data from network. Provide actual data as parameter</p>
-</div></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='enum' href='../routing/enum.RequestContent.html' title='routing::RequestContent'>RequestContent</a></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#method.fmt' class='fnname'>fmt</a>(&amp;self, formatter: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
+</div></td></tr></table></td><td></td></tr><tr><td id='variant.Refresh'><code>Refresh</code></td><td><div class='docblock'><p>Message from upper layers sending network state on any network churn event.</p>
+</div></td><td></td></tr><tr><td id='variant.Get'><code>Get</code></td><td><div class='docblock'><p>Ask for data from network, passed from API with data name as parameter</p>
+</div></td><td></td></tr><tr><td id='variant.Put'><code>Put</code></td><td><div class='docblock'><p>Put data to network. Provide actual data as parameter</p>
+</div></td><td></td></tr><tr><td id='variant.Post'><code>Post</code></td><td><div class='docblock'><p>Post data to network. Provide actual data as parameter</p>
+</div></td><td></td></tr><tr><td id='variant.Delete'><code>Delete</code></td><td><div class='docblock'><p>Delete data from network. Provide actual data as parameter</p>
+</div></td><td></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='enum' href='../routing/enum.RequestContent.html' title='routing::RequestContent'>RequestContent</a></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#method.fmt' class='fnname'>fmt</a>(&amp;self, formatter: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
 </div><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='../rustc_serialize/serialize/trait.Decodable.html' title='rustc_serialize::serialize::Decodable'>Decodable</a> for <a class='enum' href='../routing/enum.RequestContent.html' title='routing::RequestContent'>RequestContent</a></code></h3><div class='impl-items'><h4 id='method.decode' class='method'><code>fn <a href='../rustc_serialize/serialize/trait.Decodable.html#method.decode' class='fnname'>decode</a>&lt;__D: <a class='trait' href='../rustc_serialize/serialize/trait.Decoder.html' title='rustc_serialize::serialize::Decoder'>Decoder</a>&gt;(__arg_0: &amp;mut __D) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='enum' href='../routing/enum.RequestContent.html' title='routing::RequestContent'>RequestContent</a>, __D::Error&gt;</code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='../rustc_serialize/serialize/trait.Encodable.html' title='rustc_serialize::serialize::Encodable'>Encodable</a> for <a class='enum' href='../routing/enum.RequestContent.html' title='routing::RequestContent'>RequestContent</a></code></h3><div class='impl-items'><h4 id='method.encode' class='method'><code>fn <a href='../rustc_serialize/serialize/trait.Encodable.html#method.encode' class='fnname'>encode</a>&lt;__S: <a class='trait' href='../rustc_serialize/serialize/trait.Encoder.html' title='rustc_serialize::serialize::Encoder'>Encoder</a>&gt;(&amp;self, __arg_0: &amp;mut __S) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, __S::Error&gt;</code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/hash/trait.Hash.html' title='core::hash::Hash'>Hash</a> for <a class='enum' href='../routing/enum.RequestContent.html' title='routing::RequestContent'>RequestContent</a></code></h3><div class='impl-items'><h4 id='method.hash' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/hash/trait.Hash.html#method.hash' class='fnname'>hash</a>&lt;__H: <a class='trait' href='https://doc.rust-lang.org/nightly/core/hash/trait.Hasher.html' title='core::hash::Hasher'>Hasher</a>&gt;(&amp;self, __arg_0: &amp;mut __H)</code></h4>
-<h4 id='method.hash_slice' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/hash/trait.Hash.html#method.hash_slice' class='fnname'>hash_slice</a>&lt;H&gt;(data: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;[Self]</a>, state: &amp;mut H) <span class='where'>where H: <a class='trait' href='https://doc.rust-lang.org/nightly/core/hash/trait.Hasher.html' title='core::hash::Hasher'>Hasher</a></span></code></h4>
+<h4 id='method.hash_slice' class='method'><span class="since">1.3.0</span><code>fn <a href='https://doc.rust-lang.org/nightly/core/hash/trait.Hash.html#method.hash_slice' class='fnname'>hash_slice</a>&lt;H&gt;(data: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;[Self]</a>, state: &amp;mut H) <span class='where'>where H: <a class='trait' href='https://doc.rust-lang.org/nightly/core/hash/trait.Hasher.html' title='core::hash::Hasher'>Hasher</a></span></code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='enum' href='../routing/enum.RequestContent.html' title='routing::RequestContent'>RequestContent</a></code></h3><div class='impl-items'><h4 id='method.clone' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='enum' href='../routing/enum.RequestContent.html' title='routing::RequestContent'>RequestContent</a></code></h4>
-<h4 id='method.clone_from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
+<h4 id='method.clone_from' class='method'><span class="since">1.0.0</span><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a> for <a class='enum' href='../routing/enum.RequestContent.html' title='routing::RequestContent'>RequestContent</a></code></h3><div class='impl-items'><h4 id='method.eq' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class='enum' href='../routing/enum.RequestContent.html' title='routing::RequestContent'>RequestContent</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
 <h4 id='method.ne' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class='enum' href='../routing/enum.RequestContent.html' title='routing::RequestContent'>RequestContent</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.Eq.html' title='core::cmp::Eq'>Eq</a> for <a class='enum' href='../routing/enum.RequestContent.html' title='routing::RequestContent'>RequestContent</a></code></h3><div class='impl-items'></div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialOrd.html' title='core::cmp::PartialOrd'>PartialOrd</a> for <a class='enum' href='../routing/enum.RequestContent.html' title='routing::RequestContent'>RequestContent</a></code></h3><div class='impl-items'><h4 id='method.partial_cmp' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialOrd.html#method.partial_cmp' class='fnname'>partial_cmp</a>(&amp;self, __arg_0: &amp;<a class='enum' href='../routing/enum.RequestContent.html' title='routing::RequestContent'>RequestContent</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='enum' href='https://doc.rust-lang.org/nightly/core/cmp/enum.Ordering.html' title='core::cmp::Ordering'>Ordering</a>&gt;</code></h4>
@@ -168,7 +168,7 @@ a new name chosen by the <code>NaeManager</code>.</p>
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.14.0/src/messages.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.15.1/src/messages.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>messages.rs.html -- source</title>
@@ -26,7 +26,7 @@
     
 
     <nav class="sidebar">
-        <a href='../../routing/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <a href='../../routing/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='logo' width='100'></a>
         
     </nav>
 
@@ -677,6 +677,7 @@
 <span id="634">634</span>
 <span id="635">635</span>
 <span id="636">636</span>
+<span id="637">637</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -710,6 +711,7 @@
 <span class='kw'>use</span> <span class='ident'>id</span>::{<span class='ident'>FullId</span>, <span class='ident'>PublicId</span>};
 <span class='kw'>use</span> <span class='ident'>types</span>::<span class='ident'>MessageId</span>;
 <span class='kw'>use</span> <span class='ident'>utils</span>;
+<span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
 
 <span class='doccomment'>/// Wrapper of all messages.</span>
 <span class='doccomment'>///</span>
@@ -1043,11 +1045,11 @@
     <span class='doccomment'>/// may be shortcut if the data is in a node&#39;s cache.</span>
     <span class='ident'>GetSuccess</span>(<span class='ident'>Data</span>, <span class='ident'>MessageId</span>),
     <span class='doccomment'>/// Success token for Put (may be ignored)</span>
-    <span class='ident'>PutSuccess</span>(<span class='ident'>MessageId</span>),
+    <span class='ident'>PutSuccess</span>(<span class='ident'>XorName</span>, <span class='ident'>MessageId</span>),
     <span class='doccomment'>/// Success token for Post  (may be ignored)</span>
-    <span class='ident'>PostSuccess</span>(<span class='ident'>MessageId</span>),
+    <span class='ident'>PostSuccess</span>(<span class='ident'>XorName</span>, <span class='ident'>MessageId</span>),
     <span class='doccomment'>/// Success token for delete  (may be ignored)</span>
-    <span class='ident'>DeleteSuccess</span>(<span class='ident'>MessageId</span>),
+    <span class='ident'>DeleteSuccess</span>(<span class='ident'>XorName</span>, <span class='ident'>MessageId</span>),
     <span class='doccomment'>/// Error for `Get`, includes signed request to prevent injection attacks</span>
     <span class='ident'>GetFailure</span> {
         <span class='doccomment'>/// Unique message identifier</span>
@@ -1211,14 +1213,14 @@
             <span class='ident'>ResponseContent</span>::<span class='ident'>GetSuccess</span>(<span class='kw-2'>ref</span> <span class='ident'>data</span>, <span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span> {
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;GetSuccess {{ {:?}, {:?} }}&quot;</span>, <span class='ident'>data</span>, <span class='ident'>message_id</span>)
             }
-            <span class='ident'>ResponseContent</span>::<span class='ident'>PutSuccess</span>(<span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span> {
-                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;PutSuccess {{ {:?} }}&quot;</span>, <span class='ident'>message_id</span>)
+            <span class='ident'>ResponseContent</span>::<span class='ident'>PutSuccess</span>(<span class='kw-2'>ref</span> <span class='ident'>name</span>, <span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span> {
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;PutSuccess {{ {:?}, {:?} }}&quot;</span>, <span class='ident'>name</span>, <span class='ident'>message_id</span>)
             }
-            <span class='ident'>ResponseContent</span>::<span class='ident'>PostSuccess</span>(<span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span> {
-                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;PostSuccess {{ {:?} }}&quot;</span>, <span class='ident'>message_id</span>)
+            <span class='ident'>ResponseContent</span>::<span class='ident'>PostSuccess</span>(<span class='kw-2'>ref</span> <span class='ident'>name</span>, <span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span> {
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;PostSuccess {{ {:?}, {:?} }}&quot;</span>, <span class='ident'>name</span>, <span class='ident'>message_id</span>)
             }
-            <span class='ident'>ResponseContent</span>::<span class='ident'>DeleteSuccess</span>(<span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span> {
-                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;DeleteSuccess {{ {:?} }}&quot;</span>, <span class='ident'>message_id</span>)
+            <span class='ident'>ResponseContent</span>::<span class='ident'>DeleteSuccess</span>(<span class='kw-2'>ref</span> <span class='ident'>name</span>, <span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span> {
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;DeleteSuccess {{ {:?}, {:?} }}&quot;</span>, <span class='ident'>name</span>, <span class='ident'>message_id</span>)
             }
             <span class='ident'>ResponseContent</span>::<span class='ident'>GetFailure</span> { <span class='kw-2'>ref</span> <span class='ident'>id</span>, <span class='kw-2'>ref</span> <span class='ident'>request</span>, .. } <span class='op'>=&gt;</span> {
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;GetFailure {{ {:?}, {:?}, .. }}&quot;</span>, <span class='ident'>id</span>, <span class='ident'>request</span>)
@@ -1358,7 +1360,7 @@
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>

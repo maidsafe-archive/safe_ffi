@@ -26,7 +26,7 @@
     
 
     <nav class="sidebar">
-        <a href='../../../safe_core/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <a href='../../../safe_core/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='logo' width='100'></a>
         <p class='location'><a href='../../index.html'>safe_core</a>::<wbr><a href='../index.html'>core</a>::<wbr><a href='index.html'>errors</a></p><script>window.sidebarCurrent = {name: 'CoreError', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
@@ -74,34 +74,34 @@
     },
 }</pre><div class='docblock'><p>Client Errors</p>
 </div><h2 class='variants'>Variants</h2>
-<table><tr><td id='variant.StructuredDataHeaderSizeProhibitive'><code>StructuredDataHeaderSizeProhibitive</code></td><td><div class='docblock'><p>StructuredData has no space available to fit in any user data inside it.</p>
-</div></td></tr><tr><td id='variant.UnsuccessfulEncodeDecode'><code>UnsuccessfulEncodeDecode</code></td><td><div class='docblock'><p>Could not Serialise or Deserialise</p>
-</div></td></tr><tr><td id='variant.AsymmetricDecipherFailure'><code>AsymmetricDecipherFailure</code></td><td><div class='docblock'><p>Asymmetric Key Decryption Failed</p>
-</div></td></tr><tr><td id='variant.SymmetricDecipherFailure'><code>SymmetricDecipherFailure</code></td><td><div class='docblock'><p>Symmetric Key Decryption Failed</p>
-</div></td></tr><tr><td id='variant.ReceivedUnexpectedData'><code>ReceivedUnexpectedData</code></td><td><div class='docblock'><p>ReceivedUnexpectedData</p>
-</div></td></tr><tr><td id='variant.VersionCacheMiss'><code>VersionCacheMiss</code></td><td><div class='docblock'><p>No such data found in local version cache</p>
-</div></td></tr><tr><td id='variant.RootDirectoryAlreadyExists'><code>RootDirectoryAlreadyExists</code></td><td><div class='docblock'><p>Cannot overwrite a root directory if it already exists</p>
-</div></td></tr><tr><td id='variant.RandomDataGenerationFailure'><code>RandomDataGenerationFailure</code></td><td><div class='docblock'><p>Unable to obtain generator for random data</p>
-</div></td></tr><tr><td id='variant.OperationForbiddenForClient'><code>OperationForbiddenForClient</code></td><td><div class='docblock'><p>Forbidden operation requested for this Client</p>
-</div></td></tr><tr><td id='variant.Unexpected'><code>Unexpected</code></td><td><div class='docblock'><p>Unexpected - Probably a Logic error</p>
-</div></td></tr><tr><td id='variant.RoutingError'><code>RoutingError</code></td><td><div class='docblock'><p>Routing Error</p>
-</div></td></tr><tr><td id='variant.RoutingInterfaceError'><code>RoutingInterfaceError</code></td><td><div class='docblock'><p>Interface Error</p>
-</div></td></tr><tr><td id='variant.UnsupportedSaltSizeForPwHash'><code>UnsupportedSaltSizeForPwHash</code></td><td><div class='docblock'><p>Unable to pack into or operate with size of Salt</p>
-</div></td></tr><tr><td id='variant.UnsuccessfulPwHash'><code>UnsuccessfulPwHash</code></td><td><div class='docblock'><p>Unable to complete computation for password hashing - usually because OS refused to
+<table class='variants_table'><tr><td id='variant.StructuredDataHeaderSizeProhibitive'><code>StructuredDataHeaderSizeProhibitive</code></td><td><div class='docblock'><p>StructuredData has no space available to fit in any user data inside it.</p>
+</div></td><td></td></tr><tr><td id='variant.UnsuccessfulEncodeDecode'><code>UnsuccessfulEncodeDecode</code></td><td><div class='docblock'><p>Could not Serialise or Deserialise</p>
+</div></td><td></td></tr><tr><td id='variant.AsymmetricDecipherFailure'><code>AsymmetricDecipherFailure</code></td><td><div class='docblock'><p>Asymmetric Key Decryption Failed</p>
+</div></td><td></td></tr><tr><td id='variant.SymmetricDecipherFailure'><code>SymmetricDecipherFailure</code></td><td><div class='docblock'><p>Symmetric Key Decryption Failed</p>
+</div></td><td></td></tr><tr><td id='variant.ReceivedUnexpectedData'><code>ReceivedUnexpectedData</code></td><td><div class='docblock'><p>ReceivedUnexpectedData</p>
+</div></td><td></td></tr><tr><td id='variant.VersionCacheMiss'><code>VersionCacheMiss</code></td><td><div class='docblock'><p>No such data found in local version cache</p>
+</div></td><td></td></tr><tr><td id='variant.RootDirectoryAlreadyExists'><code>RootDirectoryAlreadyExists</code></td><td><div class='docblock'><p>Cannot overwrite a root directory if it already exists</p>
+</div></td><td></td></tr><tr><td id='variant.RandomDataGenerationFailure'><code>RandomDataGenerationFailure</code></td><td><div class='docblock'><p>Unable to obtain generator for random data</p>
+</div></td><td></td></tr><tr><td id='variant.OperationForbiddenForClient'><code>OperationForbiddenForClient</code></td><td><div class='docblock'><p>Forbidden operation requested for this Client</p>
+</div></td><td></td></tr><tr><td id='variant.Unexpected'><code>Unexpected</code></td><td><div class='docblock'><p>Unexpected - Probably a Logic error</p>
+</div></td><td></td></tr><tr><td id='variant.RoutingError'><code>RoutingError</code></td><td><div class='docblock'><p>Routing Error</p>
+</div></td><td></td></tr><tr><td id='variant.RoutingInterfaceError'><code>RoutingInterfaceError</code></td><td><div class='docblock'><p>Interface Error</p>
+</div></td><td></td></tr><tr><td id='variant.UnsupportedSaltSizeForPwHash'><code>UnsupportedSaltSizeForPwHash</code></td><td><div class='docblock'><p>Unable to pack into or operate with size of Salt</p>
+</div></td><td></td></tr><tr><td id='variant.UnsuccessfulPwHash'><code>UnsuccessfulPwHash</code></td><td><div class='docblock'><p>Unable to complete computation for password hashing - usually because OS refused to
 allocate amount of requested memory</p>
-</div></td></tr><tr><td id='variant.OperationAborted'><code>OperationAborted</code></td><td><div class='docblock'><p>Blocking operation was cancelled</p>
-</div></td></tr><tr><td id='variant.MpidMessagingError'><code>MpidMessagingError</code></td><td><div class='docblock'><p>MpidMessaging Error</p>
-</div></td></tr><tr><td id='variant.GetFailure'><code>GetFailure</code></td><td><div class='docblock'><p>Performing a GET operation failed</p>
+</div></td><td></td></tr><tr><td id='variant.OperationAborted'><code>OperationAborted</code></td><td><div class='docblock'><p>Blocking operation was cancelled</p>
+</div></td><td></td></tr><tr><td id='variant.MpidMessagingError'><code>MpidMessagingError</code></td><td><div class='docblock'><p>MpidMessaging Error</p>
+</div></td><td></td></tr><tr><td id='variant.GetFailure'><code>GetFailure</code></td><td><div class='docblock'><p>Performing a GET operation failed</p>
 </div><h3 class='fields'>Fields</h3>
 
                                               <table><tr><td id='variant.GetFailure.field.request'><code>request</code></td><td><div class='docblock'><p>Orignal request that was made to the network</p>
 </div></td></tr><tr><td id='variant.GetFailure.field.reason'><code>reason</code></td><td><div class='docblock'><p>Reason for failure</p>
-</div></td></tr></table></td></tr><tr><td id='variant.MutationFailure'><code>MutationFailure</code></td><td><div class='docblock'><p>Performing a network mutating operation such as PUT/POST/DELETE failed</p>
+</div></td></tr></table></td><td></td></tr><tr><td id='variant.MutationFailure'><code>MutationFailure</code></td><td><div class='docblock'><p>Performing a network mutating operation such as PUT/POST/DELETE failed</p>
 </div><h3 class='fields'>Fields</h3>
 
                                               <table><tr><td id='variant.MutationFailure.field.data'><code>data</code></td><td><div class='docblock'><p>Orignal data that was sent to the network</p>
 </div></td></tr><tr><td id='variant.MutationFailure.field.reason'><code>reason</code></td><td><div class='docblock'><p>Reason for failure</p>
-</div></td></tr></table></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl&lt;'a&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;&amp;'a <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>&gt; for <a class='enum' href='../../../safe_core/core/errors/enum.CoreError.html' title='safe_core::core::errors::CoreError'>CoreError</a></code></h3><div class='impl-items'><h4 id='method.from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: &amp;'a <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='enum' href='../../../safe_core/core/errors/enum.CoreError.html' title='safe_core::core::errors::CoreError'>CoreError</a></code></h4>
+</div></td></tr></table></td><td></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl&lt;'a&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;&amp;'a <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>&gt; for <a class='enum' href='../../../safe_core/core/errors/enum.CoreError.html' title='safe_core::core::errors::CoreError'>CoreError</a></code></h3><div class='impl-items'><h4 id='method.from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: &amp;'a <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='enum' href='../../../safe_core/core/errors/enum.CoreError.html' title='safe_core::core::errors::CoreError'>CoreError</a></code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='enum' href='../../../maidsafe_utilities/serialisation/enum.SerialisationError.html' title='maidsafe_utilities::serialisation::SerialisationError'>SerialisationError</a>&gt; for <a class='enum' href='../../../safe_core/core/errors/enum.CoreError.html' title='safe_core::core::errors::CoreError'>CoreError</a></code></h3><div class='impl-items'><h4 id='method.from-1' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: <a class='enum' href='../../../maidsafe_utilities/serialisation/enum.SerialisationError.html' title='maidsafe_utilities::serialisation::SerialisationError'>SerialisationError</a>) -&gt; <a class='enum' href='../../../safe_core/core/errors/enum.CoreError.html' title='safe_core::core::errors::CoreError'>CoreError</a></code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='enum' href='../../../routing/error/enum.RoutingError.html' title='routing::error::RoutingError'>RoutingError</a>&gt; for <a class='enum' href='../../../safe_core/core/errors/enum.CoreError.html' title='safe_core::core::errors::CoreError'>CoreError</a></code></h3><div class='impl-items'><h4 id='method.from-2' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: <a class='enum' href='../../../routing/error/enum.RoutingError.html' title='routing::error::RoutingError'>RoutingError</a>) -&gt; <a class='enum' href='../../../safe_core/core/errors/enum.CoreError.html' title='safe_core::core::errors::CoreError'>CoreError</a></code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='enum' href='../../../routing/error/enum.InterfaceError.html' title='routing::error::InterfaceError'>InterfaceError</a>&gt; for <a class='enum' href='../../../safe_core/core/errors/enum.CoreError.html' title='safe_core::core::errors::CoreError'>CoreError</a></code></h3><div class='impl-items'><h4 id='method.from-3' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: <a class='enum' href='../../../routing/error/enum.InterfaceError.html' title='routing::error::InterfaceError'>InterfaceError</a>) -&gt; <a class='enum' href='../../../safe_core/core/errors/enum.CoreError.html' title='safe_core::core::errors::CoreError'>CoreError</a></code></h4>
@@ -152,7 +152,7 @@ allocate amount of requested memory</p>
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>

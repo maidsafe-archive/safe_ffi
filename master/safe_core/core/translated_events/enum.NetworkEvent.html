@@ -26,7 +26,7 @@
     
 
     <nav class="sidebar">
-        <a href='../../../safe_core/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <a href='../../../safe_core/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='logo' width='100'></a>
         <p class='location'><a href='../../index.html'>safe_core</a>::<wbr><a href='../index.html'>core</a>::<wbr><a href='index.html'>translated_events</a></p><script>window.sidebarCurrent = {name: 'NetworkEvent', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
@@ -46,18 +46,18 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-1721' class='srclink' href='../../../src/safe_core/core/translated_events.rs.html#36-44' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-1716' class='srclink' href='../../../src/safe_core/core/translated_events.rs.html#36-44' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum NetworkEvent {
     Connected,
     Disconnected,
     Terminated,
 }</pre><div class='docblock'><p>Netowork Events that Client Modules need to deal with</p>
 </div><h2 class='variants'>Variants</h2>
-<table><tr><td id='variant.Connected'><code>Connected</code></td><td><div class='docblock'><p>The client engine is connected to atleast one peer</p>
-</div></td></tr><tr><td id='variant.Disconnected'><code>Disconnected</code></td><td><div class='docblock'><p>The client engine is disconnected from the network (under usual circumstances this would
+<table class='variants_table'><tr><td id='variant.Connected'><code>Connected</code></td><td><div class='docblock'><p>The client engine is connected to atleast one peer</p>
+</div></td><td></td></tr><tr><td id='variant.Disconnected'><code>Disconnected</code></td><td><div class='docblock'><p>The client engine is disconnected from the network (under usual circumstances this would
 indicate that client connection to proxy node has been lost)</p>
-</div></td></tr><tr><td id='variant.Terminated'><code>Terminated</code></td><td><div class='docblock'><p>Graceful Exit Condition</p>
-</div></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.Into.html' title='core::convert::Into'>Into</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>&gt; for <a class='enum' href='../../../safe_core/core/translated_events/enum.NetworkEvent.html' title='safe_core::core::translated_events::NetworkEvent'>NetworkEvent</a></code></h3><div class='impl-items'><h4 id='method.into' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.Into.html#method.into' class='fnname'>into</a>(self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a></code></h4>
+</div></td><td></td></tr><tr><td id='variant.Terminated'><code>Terminated</code></td><td><div class='docblock'><p>Graceful Exit Condition</p>
+</div></td><td></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.Into.html' title='core::convert::Into'>Into</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>&gt; for <a class='enum' href='../../../safe_core/core/translated_events/enum.NetworkEvent.html' title='safe_core::core::translated_events::NetworkEvent'>NetworkEvent</a></code></h3><div class='impl-items'><h4 id='method.into' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.Into.html#method.into' class='fnname'>into</a>(self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a></code></h4>
 </div></section>
     <section id='search' class="content hidden"></section>
 
@@ -101,7 +101,7 @@ indicate that client connection to proxy node has been lost)</p>
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/kademlia_routing_table-0.4.0/src/lib.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/kademlia_routing_table-0.4.1/src/lib.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>lib.rs.html -- source</title>
@@ -26,7 +26,7 @@
     
 
     <nav class="sidebar">
-        <a href='../../kademlia_routing_table/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <a href='../../kademlia_routing_table/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='logo' width='100'></a>
         
     </nav>
 
@@ -1281,10 +1281,6 @@
 <span id="1238">1238</span>
 <span id="1239">1239</span>
 <span id="1240">1240</span>
-<span id="1241">1241</span>
-<span id="1242">1242</span>
-<span id="1243">1243</span>
-<span id="1244">1244</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -1450,7 +1446,7 @@
 <span class='doccomment'>/// The number of nodes a message is sent to in each hop for redundancy.</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// See [`target_nodes`](struct.RoutingTable.html#method.target_nodes) for details.</span>
-<span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>PARALLELISM</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>4</span>;
+<span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>PARALLELISM</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>8</span>;
 
 <span class='doccomment'>/// A message destination.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Copy</span>, <span class='ident'>Clone</span>, <span class='ident'>Debug</span>)]</span>
@@ -1632,11 +1628,7 @@
                         <span class='kw'>return</span> <span class='macro'>vec</span><span class='macro'>!</span>[];
                     }
                     <span class='kw'>let</span> <span class='ident'>close_group</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>closest_nodes_to</span>(<span class='ident'>target</span>, <span class='ident'>GROUP_SIZE</span> <span class='op'>-</span> <span class='number'>1</span>, <span class='boolval'>false</span>);
-                    <span class='kw'>return</span> <span class='kw'>if</span> <span class='ident'>close_group</span>.<span class='ident'>iter</span>().<span class='ident'>any</span>(<span class='op'>|</span><span class='ident'>n</span><span class='op'>|</span> <span class='ident'>n</span>.<span class='ident'>name</span>() <span class='op'>==</span> <span class='ident'>hop</span>) {
-                        <span class='macro'>vec</span><span class='macro'>!</span>[]
-                    } <span class='kw'>else</span> {
-                        <span class='ident'>close_group</span>
-                    };
+                    <span class='kw'>return</span> <span class='ident'>close_group</span>;
                 }
                 <span class='ident'>target</span>
             }
@@ -2574,7 +2566,7 @@
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>

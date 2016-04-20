@@ -26,7 +26,7 @@
     
 
     <nav class="sidebar">
-        <a href='../safe_ffi/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <a href='../safe_ffi/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='logo' width='100'></a>
         <p class='location'><a href='index.html'>safe_ffi</a></p><script>window.sidebarCurrent = {name: 'ParameterPacket', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
@@ -46,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-2134' class='srclink' href='../src/safe_ffi/lib.rs.html#104-113' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-2134' class='srclink' href='../src/safe_ffi/src/lib.rs.html#104-113' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct ParameterPacket {
     pub client: <a class='struct' href='https://doc.rust-lang.org/nightly/alloc/arc/struct.Arc.html' title='alloc::arc::Arc'>Arc</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/std/sync/mutex/struct.Mutex.html' title='std::sync::mutex::Mutex'>Mutex</a>&lt;<a class='struct' href='../safe_core/core/client/struct.Client.html' title='safe_core::core::client::Client'>Client</a>&gt;&gt;,
     pub app_root_dir_key: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../safe_core/nfs/metadata/directory_key/struct.DirectoryKey.html' title='safe_core::nfs::metadata::directory_key::DirectoryKey'>DirectoryKey</a>&gt;,
@@ -64,7 +64,7 @@ operations across the modules like nfs and dns</p>
 </div></td></tr><tr class='stab '>
                                   <td id='structfield.safe_drive_dir_key'><code>safe_drive_dir_key</code></td><td><div class='docblock'><p>SAFEDrive root directory key</p>
 </div></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../safe_ffi/struct.ParameterPacket.html' title='safe_ffi::ParameterPacket'>ParameterPacket</a></code></h3><div class='impl-items'><h4 id='method.clone' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../safe_ffi/struct.ParameterPacket.html' title='safe_ffi::ParameterPacket'>ParameterPacket</a></code></h4>
-<h4 id='method.clone_from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
+<h4 id='method.clone_from' class='method'><span class="since">1.0.0</span><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
 </div></section>
     <section id='search' class="content hidden"></section>
 
@@ -108,7 +108,7 @@ operations across the modules like nfs and dns</p>
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>

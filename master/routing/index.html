@@ -26,7 +26,7 @@
     
 
     <nav class="sidebar">
-        <a href='../routing/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <a href='../routing/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='logo' width='100'></a>
         <p class='location'></p><script>window.sidebarCurrent = {name: 'routing', ty: 'mod', relpath: '../'};</script>
     </nav>
 
@@ -79,6 +79,7 @@ functionality, e. g. storing and retrieving data, validating permissions, managi
 <p>A client&#39;s name is a hash of its public keys. Upon creation, the client will attempt to connect
 to the network through any node, and exchange public keys with it. That node becomes a
 bootstrap node for the client, and messages to and from the client will be routed over it.</p>
+
 <pre class='rust rust-example-rendered'>
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>mpsc</span>;
 <span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>Client</span>, <span class='ident'>Event</span>, <span class='ident'>FullId</span>};
@@ -94,6 +95,7 @@ bootstrap node for the client, and messages to and from the client will be route
 
 <h1 id='node-creation' class='section-header'><a href='#node-creation'>Node creation</a></h1>
 <p>Creating a node looks even simpler:</p>
+
 <pre class='rust rust-example-rendered'>
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>mpsc</span>;
 <span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>Node</span>, <span class='ident'>Event</span>};
@@ -163,7 +165,6 @@ receive a message from a <code>Client</code> or <code>Node</code> if it was eith
                         <td class='docblock short'>
                              <p>Interface for sending and receiving messages to and from a network of nodes in the role of a
 client.</p>
-
                         </td>
                     </tr>
                 
@@ -172,7 +173,6 @@ client.</p>
                                title='routing::FullId'>FullId</a></td>
                         <td class='docblock short'>
                              <p>Network identity component containing name, and public and private keys.</p>
-
                         </td>
                     </tr>
                 
@@ -181,7 +181,6 @@ client.</p>
                                title='routing::ImmutableData'>ImmutableData</a></td>
                         <td class='docblock short'>
                              <p>An immutable chunk of data.</p>
-
                         </td>
                     </tr>
                 
@@ -190,7 +189,6 @@ client.</p>
                                title='routing::MessageId'>MessageId</a></td>
                         <td class='docblock short'>
                              <p>Unique ID for messages</p>
-
                         </td>
                     </tr>
                 
@@ -200,7 +198,6 @@ client.</p>
                         <td class='docblock short'>
                              <p>Interface for sending and receiving messages to and from other nodes, in the role of a full
 routing node.</p>
-
                         </td>
                     </tr>
                 
@@ -209,7 +206,6 @@ routing node.</p>
                                title='routing::PlainData'>PlainData</a></td>
                         <td class='docblock short'>
                              <p>Plain data with a name and a value.</p>
-
                         </td>
                     </tr>
                 
@@ -218,7 +214,6 @@ routing node.</p>
                                title='routing::PublicId'>PublicId</a></td>
                         <td class='docblock short'>
                              <p>Network identity component containing name and public keys.</p>
-
                         </td>
                     </tr>
                 
@@ -227,7 +222,6 @@ routing node.</p>
                                title='routing::RequestMessage'>RequestMessage</a></td>
                         <td class='docblock short'>
                              <p>A request message wrapper</p>
-
                         </td>
                     </tr>
                 
@@ -236,7 +230,6 @@ routing node.</p>
                                title='routing::ResponseMessage'>ResponseMessage</a></td>
                         <td class='docblock short'>
                              <p>A response message wrapper</p>
-
                         </td>
                     </tr>
                 
@@ -245,7 +238,6 @@ routing node.</p>
                                title='routing::SignedMessage'>SignedMessage</a></td>
                         <td class='docblock short'>
                              <p>Wrapper around a routing message, signed by the originator of the message.</p>
-
                         </td>
                     </tr>
                 
@@ -254,7 +246,6 @@ routing node.</p>
                                title='routing::StructuredData'>StructuredData</a></td>
                         <td class='docblock short'>
                              <p>Mutable structured data.</p>
-
                         </td>
                     </tr>
                 </table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
@@ -264,7 +255,6 @@ routing node.</p>
                                title='routing::Authority'>Authority</a></td>
                         <td class='docblock short'>
                              <p>An entity that can act as a source or destination of a message.</p>
-
                         </td>
                     </tr>
                 
@@ -273,7 +263,6 @@ routing node.</p>
                                title='routing::Data'>Data</a></td>
                         <td class='docblock short'>
                              <p>This is the data types routing handles in the public interface</p>
-
                         </td>
                     </tr>
                 
@@ -282,7 +271,6 @@ routing node.</p>
                                title='routing::DataRequest'>DataRequest</a></td>
                         <td class='docblock short'>
                              <p>DataRequest.</p>
-
                         </td>
                     </tr>
                 
@@ -291,7 +279,6 @@ routing node.</p>
                                title='routing::Event'>Event</a></td>
                         <td class='docblock short'>
                              <p>An Event raised by a <code>Node</code> or <code>Client</code> via its event sender.</p>
-
                         </td>
                     </tr>
                 
@@ -300,7 +287,6 @@ routing node.</p>
                                title='routing::ImmutableDataType'>ImmutableDataType</a></td>
                         <td class='docblock short'>
                              <p>The type of an individual copy of immutable data.</p>
-
                         </td>
                     </tr>
                 
@@ -309,7 +295,6 @@ routing node.</p>
                                title='routing::InterfaceError'>InterfaceError</a></td>
                         <td class='docblock short'>
                              <p>InterfaceError.</p>
-
                         </td>
                     </tr>
                 
@@ -318,7 +303,6 @@ routing node.</p>
                                title='routing::RequestContent'>RequestContent</a></td>
                         <td class='docblock short'>
                              <p>The request types</p>
-
                         </td>
                     </tr>
                 
@@ -327,7 +311,6 @@ routing node.</p>
                                title='routing::ResponseContent'>ResponseContent</a></td>
                         <td class='docblock short'>
                              <p>The response types</p>
-
                         </td>
                     </tr>
                 
@@ -336,7 +319,6 @@ routing node.</p>
                                title='routing::RoutingError'>RoutingError</a></td>
                         <td class='docblock short'>
                              <p>RoutingError.</p>
-
                         </td>
                     </tr>
                 
@@ -345,7 +327,6 @@ routing node.</p>
                                title='routing::RoutingMessage'>RoutingMessage</a></td>
                         <td class='docblock short'>
                              <p>Variant type to hold <code>either</code> a request or response.</p>
-
                         </td>
                     </tr>
                 </table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
@@ -355,7 +336,6 @@ routing node.</p>
                                title='routing::MAX_STRUCTURED_DATA_SIZE_IN_BYTES'>MAX_STRUCTURED_DATA_SIZE_IN_BYTES</a></td>
                         <td class='docblock short'>
                              <p>Maximum allowed size for a Structured Data to grow to</p>
-
                         </td>
                     </tr>
                 </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
@@ -365,7 +345,6 @@ routing node.</p>
                                title='routing::backup_to_normal'>backup_to_normal</a></td>
                         <td class='docblock short'>
                              <p>Convert backup ImmutableData name to normal name.</p>
-
                         </td>
                     </tr>
                 
@@ -374,7 +353,6 @@ routing node.</p>
                                title='routing::backup_to_sacrificial'>backup_to_sacrificial</a></td>
                         <td class='docblock short'>
                              <p>Convert backup ImmutableData name to sacrificial name.</p>
-
                         </td>
                     </tr>
                 
@@ -383,7 +361,6 @@ routing node.</p>
                                title='routing::normal_to_backup'>normal_to_backup</a></td>
                         <td class='docblock short'>
                              <p>Convert normal ImmutableData name to backup name.</p>
-
                         </td>
                     </tr>
                 
@@ -392,7 +369,6 @@ routing node.</p>
                                title='routing::normal_to_sacrificial'>normal_to_sacrificial</a></td>
                         <td class='docblock short'>
                              <p>Convert normal ImmutableData name to sacrificial name.</p>
-
                         </td>
                     </tr>
                 
@@ -401,7 +377,6 @@ routing node.</p>
                                title='routing::sacrificial_to_backup'>sacrificial_to_backup</a></td>
                         <td class='docblock short'>
                              <p>Convert sacrificial ImmutableData name to backup name.</p>
-
                         </td>
                     </tr>
                 
@@ -410,7 +385,6 @@ routing node.</p>
                                title='routing::sacrificial_to_normal'>sacrificial_to_normal</a></td>
                         <td class='docblock short'>
                              <p>Convert sacrificial ImmutableData name to normal name.</p>
-
                         </td>
                     </tr>
                 </table></section>
@@ -456,7 +430,7 @@ routing node.</p>
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>

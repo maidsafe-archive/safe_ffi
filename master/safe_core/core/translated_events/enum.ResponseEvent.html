@@ -26,7 +26,7 @@
     
 
     <nav class="sidebar">
-        <a href='../../../safe_core/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <a href='../../../safe_core/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='logo' width='100'></a>
         <p class='location'><a href='../../index.html'>safe_core</a>::<wbr><a href='../index.html'>core</a>::<wbr><a href='index.html'>translated_events</a></p><script>window.sidebarCurrent = {name: 'ResponseEvent', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
@@ -46,17 +46,17 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-1715' class='srclink' href='../../../src/safe_core/core/translated_events.rs.html#26-33' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-1710' class='srclink' href='../../../src/safe_core/core/translated_events.rs.html#26-33' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum ResponseEvent {
     GetResp(<a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='enum' href='../../../routing/data/enum.Data.html' title='routing::data::Data'>Data</a>, <a class='enum' href='../../../safe_core/core/errors/enum.CoreError.html' title='safe_core::core::errors::CoreError'>CoreError</a>&gt;),
     MutationResp(<a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../../../safe_core/core/errors/enum.CoreError.html' title='safe_core::core::errors::CoreError'>CoreError</a>&gt;),
     Terminated,
 }</pre><div class='docblock'><p>These events are received as a response to a GET/PUT/POST/DELETE requests made by clients</p>
 </div><h2 class='variants'>Variants</h2>
-<table><tr><td id='variant.GetResp'><code>GetResp</code></td><td><div class='docblock'><p>Response to a previous GET request</p>
-</div></td></tr><tr><td id='variant.MutationResp'><code>MutationResp</code></td><td><div class='docblock'><p>Response to a previous Mutating (PUT/POST/DELETE) request</p>
-</div></td></tr><tr><td id='variant.Terminated'><code>Terminated</code></td><td><div class='docblock'><p>Graceful Exit Condition</p>
-</div></td></tr></table></section>
+<table class='variants_table'><tr><td id='variant.GetResp'><code>GetResp</code></td><td><div class='docblock'><p>Response to a previous GET request</p>
+</div></td><td></td></tr><tr><td id='variant.MutationResp'><code>MutationResp</code></td><td><div class='docblock'><p>Response to a previous Mutating (PUT/POST/DELETE) request</p>
+</div></td><td></td></tr><tr><td id='variant.Terminated'><code>Terminated</code></td><td><div class='docblock'><p>Graceful Exit Condition</p>
+</div></td><td></td></tr></table></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -99,7 +99,7 @@
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>

@@ -26,7 +26,7 @@
     
 
     <nav class="sidebar">
-        <a href='../../../safe_core/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <a href='../../../safe_core/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='logo' width='100'></a>
         <p class='location'><a href='../../index.html'>safe_core</a>::<wbr><a href='../index.html'>dns</a>::<wbr><a href='index.html'>errors</a></p><script>window.sidebarCurrent = {name: 'DnsError', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
@@ -46,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-4635' class='srclink' href='../../../src/safe_core/dns/errors.rs.html#27-46' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-4630' class='srclink' href='../../../src/safe_core/dns/errors.rs.html#27-46' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum DnsError {
     CoreError(<a class='enum' href='../../../safe_core/core/errors/enum.CoreError.html' title='safe_core::core::errors::CoreError'>CoreError</a>),
     NfsError(<a class='enum' href='../../../safe_core/nfs/errors/enum.NfsError.html' title='safe_core::nfs::errors::NfsError'>NfsError</a>),
@@ -59,16 +59,16 @@
     UnsuccessfulEncodeDecode(<a class='enum' href='../../../maidsafe_utilities/serialisation/enum.SerialisationError.html' title='maidsafe_utilities::serialisation::SerialisationError'>SerialisationError</a>),
 }</pre><div class='docblock'><p>Safe-Dns specific errors</p>
 </div><h2 class='variants'>Variants</h2>
-<table><tr><td id='variant.CoreError'><code>CoreError</code></td><td><div class='docblock'><p>Errors from Safe-Client</p>
-</div></td></tr><tr><td id='variant.NfsError'><code>NfsError</code></td><td><div class='docblock'><p>Errors from Safe-Nfs</p>
-</div></td></tr><tr><td id='variant.DnsNameAlreadyRegistered'><code>DnsNameAlreadyRegistered</code></td><td><div class='docblock'><p>Dns record already exists</p>
-</div></td></tr><tr><td id='variant.DnsRecordNotFound'><code>DnsRecordNotFound</code></td><td><div class='docblock'><p>Dns record not found</p>
-</div></td></tr><tr><td id='variant.ServiceAlreadyExists'><code>ServiceAlreadyExists</code></td><td><div class='docblock'><p>Service already exists</p>
-</div></td></tr><tr><td id='variant.ServiceNotFound'><code>ServiceNotFound</code></td><td><div class='docblock'><p>Service not found</p>
-</div></td></tr><tr><td id='variant.DnsConfigFileNotFoundOrCorrupted'><code>DnsConfigFileNotFoundOrCorrupted</code></td><td><div class='docblock'><p>Dns Configuration file not found or corrupted</p>
-</div></td></tr><tr><td id='variant.Unexpected'><code>Unexpected</code></td><td><div class='docblock'><p>Unexpected, probably due to logical error</p>
-</div></td></tr><tr><td id='variant.UnsuccessfulEncodeDecode'><code>UnsuccessfulEncodeDecode</code></td><td><div class='docblock'><p>Could not serialise or deserialise data</p>
-</div></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='enum' href='../../../maidsafe_utilities/serialisation/enum.SerialisationError.html' title='maidsafe_utilities::serialisation::SerialisationError'>SerialisationError</a>&gt; for <a class='enum' href='../../../safe_core/dns/errors/enum.DnsError.html' title='safe_core::dns::errors::DnsError'>DnsError</a></code></h3><div class='impl-items'><h4 id='method.from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: <a class='enum' href='../../../maidsafe_utilities/serialisation/enum.SerialisationError.html' title='maidsafe_utilities::serialisation::SerialisationError'>SerialisationError</a>) -&gt; <a class='enum' href='../../../safe_core/dns/errors/enum.DnsError.html' title='safe_core::dns::errors::DnsError'>DnsError</a></code></h4>
+<table class='variants_table'><tr><td id='variant.CoreError'><code>CoreError</code></td><td><div class='docblock'><p>Errors from Safe-Client</p>
+</div></td><td></td></tr><tr><td id='variant.NfsError'><code>NfsError</code></td><td><div class='docblock'><p>Errors from Safe-Nfs</p>
+</div></td><td></td></tr><tr><td id='variant.DnsNameAlreadyRegistered'><code>DnsNameAlreadyRegistered</code></td><td><div class='docblock'><p>Dns record already exists</p>
+</div></td><td></td></tr><tr><td id='variant.DnsRecordNotFound'><code>DnsRecordNotFound</code></td><td><div class='docblock'><p>Dns record not found</p>
+</div></td><td></td></tr><tr><td id='variant.ServiceAlreadyExists'><code>ServiceAlreadyExists</code></td><td><div class='docblock'><p>Service already exists</p>
+</div></td><td></td></tr><tr><td id='variant.ServiceNotFound'><code>ServiceNotFound</code></td><td><div class='docblock'><p>Service not found</p>
+</div></td><td></td></tr><tr><td id='variant.DnsConfigFileNotFoundOrCorrupted'><code>DnsConfigFileNotFoundOrCorrupted</code></td><td><div class='docblock'><p>Dns Configuration file not found or corrupted</p>
+</div></td><td></td></tr><tr><td id='variant.Unexpected'><code>Unexpected</code></td><td><div class='docblock'><p>Unexpected, probably due to logical error</p>
+</div></td><td></td></tr><tr><td id='variant.UnsuccessfulEncodeDecode'><code>UnsuccessfulEncodeDecode</code></td><td><div class='docblock'><p>Could not serialise or deserialise data</p>
+</div></td><td></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='enum' href='../../../maidsafe_utilities/serialisation/enum.SerialisationError.html' title='maidsafe_utilities::serialisation::SerialisationError'>SerialisationError</a>&gt; for <a class='enum' href='../../../safe_core/dns/errors/enum.DnsError.html' title='safe_core::dns::errors::DnsError'>DnsError</a></code></h3><div class='impl-items'><h4 id='method.from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: <a class='enum' href='../../../maidsafe_utilities/serialisation/enum.SerialisationError.html' title='maidsafe_utilities::serialisation::SerialisationError'>SerialisationError</a>) -&gt; <a class='enum' href='../../../safe_core/dns/errors/enum.DnsError.html' title='safe_core::dns::errors::DnsError'>DnsError</a></code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='enum' href='../../../safe_core/core/errors/enum.CoreError.html' title='safe_core::core::errors::CoreError'>CoreError</a>&gt; for <a class='enum' href='../../../safe_core/dns/errors/enum.DnsError.html' title='safe_core::dns::errors::DnsError'>DnsError</a></code></h3><div class='impl-items'><h4 id='method.from-1' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: <a class='enum' href='../../../safe_core/core/errors/enum.CoreError.html' title='safe_core::core::errors::CoreError'>CoreError</a>) -&gt; <a class='enum' href='../../../safe_core/dns/errors/enum.DnsError.html' title='safe_core::dns::errors::DnsError'>DnsError</a></code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='enum' href='../../../safe_core/nfs/errors/enum.NfsError.html' title='safe_core::nfs::errors::NfsError'>NfsError</a>&gt; for <a class='enum' href='../../../safe_core/dns/errors/enum.DnsError.html' title='safe_core::dns::errors::DnsError'>DnsError</a></code></h3><div class='impl-items'><h4 id='method.from-2' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: <a class='enum' href='../../../safe_core/nfs/errors/enum.NfsError.html' title='safe_core::nfs::errors::NfsError'>NfsError</a>) -&gt; <a class='enum' href='../../../safe_core/dns/errors/enum.DnsError.html' title='safe_core::dns::errors::DnsError'>DnsError</a></code></h4>
 </div><h3 class='impl'><code>impl&lt;'a&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;&amp;'a <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>&gt; for <a class='enum' href='../../../safe_core/dns/errors/enum.DnsError.html' title='safe_core::dns::errors::DnsError'>DnsError</a></code></h3><div class='impl-items'><h4 id='method.from-3' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: &amp;'a <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='enum' href='../../../safe_core/dns/errors/enum.DnsError.html' title='safe_core::dns::errors::DnsError'>DnsError</a></code></h4>
@@ -117,7 +117,7 @@
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>

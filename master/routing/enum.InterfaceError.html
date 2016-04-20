@@ -26,7 +26,7 @@
     
 
     <nav class="sidebar">
-        <a href='../routing/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <a href='../routing/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='logo' width='100'></a>
         <p class='location'><a href='index.html'>routing</a></p><script>window.sidebarCurrent = {name: 'InterfaceError', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
@@ -46,17 +46,17 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-2591' class='srclink' href='../src/routing/error.rs.html#29-36' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-2593' class='srclink' href='../src/routing/error.rs.html#29-36' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum InterfaceError {
     NotConnected,
     ChannelRxError(<a class='struct' href='https://doc.rust-lang.org/nightly/std/sync/mpsc/struct.RecvError.html' title='std::sync::mpsc::RecvError'>RecvError</a>),
     EventSenderError(<a class='enum' href='../maidsafe_utilities/event_sender/enum.EventSenderError.html' title='maidsafe_utilities::event_sender::EventSenderError'>EventSenderError</a>&lt;<a class='enum' href='../maidsafe_utilities/event_sender/enum.MaidSafeEventCategory.html' title='maidsafe_utilities::event_sender::MaidSafeEventCategory'>MaidSafeEventCategory</a>, Action&gt;),
 }</pre><div class='docblock'><p>InterfaceError.</p>
 </div><h2 class='variants'>Variants</h2>
-<table><tr><td id='variant.NotConnected'><code>NotConnected</code></td><td><div class='docblock'><p>NotConnected.</p>
-</div></td></tr><tr><td id='variant.ChannelRxError'><code>ChannelRxError</code></td><td><div class='docblock'><p>Error while trying to receive a message from a channel</p>
-</div></td></tr><tr><td id='variant.EventSenderError'><code>EventSenderError</code></td><td><div class='docblock'><p>Error while trying to transmit an event via a channel</p>
-</div></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='enum' href='../maidsafe_utilities/event_sender/enum.EventSenderError.html' title='maidsafe_utilities::event_sender::EventSenderError'>EventSenderError</a>&lt;<a class='enum' href='../maidsafe_utilities/event_sender/enum.MaidSafeEventCategory.html' title='maidsafe_utilities::event_sender::MaidSafeEventCategory'>MaidSafeEventCategory</a>, Action&gt;&gt; for <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a></code></h3><div class='impl-items'><h4 id='method.from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: <a class='enum' href='../maidsafe_utilities/event_sender/enum.EventSenderError.html' title='maidsafe_utilities::event_sender::EventSenderError'>EventSenderError</a>&lt;<a class='enum' href='../maidsafe_utilities/event_sender/enum.MaidSafeEventCategory.html' title='maidsafe_utilities::event_sender::MaidSafeEventCategory'>MaidSafeEventCategory</a>, Action&gt;) -&gt; <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a></code></h4>
+<table class='variants_table'><tr><td id='variant.NotConnected'><code>NotConnected</code></td><td><div class='docblock'><p>NotConnected.</p>
+</div></td><td></td></tr><tr><td id='variant.ChannelRxError'><code>ChannelRxError</code></td><td><div class='docblock'><p>Error while trying to receive a message from a channel</p>
+</div></td><td></td></tr><tr><td id='variant.EventSenderError'><code>EventSenderError</code></td><td><div class='docblock'><p>Error while trying to transmit an event via a channel</p>
+</div></td><td></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='enum' href='../maidsafe_utilities/event_sender/enum.EventSenderError.html' title='maidsafe_utilities::event_sender::EventSenderError'>EventSenderError</a>&lt;<a class='enum' href='../maidsafe_utilities/event_sender/enum.MaidSafeEventCategory.html' title='maidsafe_utilities::event_sender::MaidSafeEventCategory'>MaidSafeEventCategory</a>, Action&gt;&gt; for <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a></code></h3><div class='impl-items'><h4 id='method.from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: <a class='enum' href='../maidsafe_utilities/event_sender/enum.EventSenderError.html' title='maidsafe_utilities::event_sender::EventSenderError'>EventSenderError</a>&lt;<a class='enum' href='../maidsafe_utilities/event_sender/enum.MaidSafeEventCategory.html' title='maidsafe_utilities::event_sender::MaidSafeEventCategory'>MaidSafeEventCategory</a>, Action&gt;) -&gt; <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a></code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/std/sync/mpsc/struct.RecvError.html' title='std::sync::mpsc::RecvError'>RecvError</a>&gt; for <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a></code></h3><div class='impl-items'><h4 id='method.from-1' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: <a class='struct' href='https://doc.rust-lang.org/nightly/std/sync/mpsc/struct.RecvError.html' title='std::sync::mpsc::RecvError'>RecvError</a>) -&gt; <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a></code></h4>
 </div><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#method.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
 </div></section>
@@ -102,7 +102,7 @@
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>

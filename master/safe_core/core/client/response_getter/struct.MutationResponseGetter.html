@@ -26,7 +26,7 @@
     
 
     <nav class="sidebar">
-        <a href='../../../../safe_core/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <a href='../../../../safe_core/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='logo' width='100'></a>
         <p class='location'><a href='../../../index.html'>safe_core</a>::<wbr><a href='../../index.html'>core</a>::<wbr><a href='../index.html'>client</a>::<wbr><a href='index.html'>response_getter</a></p><script>window.sidebarCurrent = {name: 'MutationResponseGetter', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
@@ -52,7 +52,7 @@
 }</pre><div class='docblock'><p>MutationResponseGetter is a lazy evaluated response getter for mutating network requests such
 as PUT/POST/DELETE. It will fetch either from local cache or wait for the MessageQueue to notify
 it of the incoming response from the network</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../../../safe_core/core/client/response_getter/struct.MutationResponseGetter.html' title='safe_core::core::client::response_getter::MutationResponseGetter'>MutationResponseGetter</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(data_channel: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(<a class='struct' href='https://doc.rust-lang.org/nightly/std/sync/mpsc/struct.Sender.html' title='std::sync::mpsc::Sender'>Sender</a>&lt;<a class='enum' href='../../../../safe_core/core/translated_events/enum.ResponseEvent.html' title='safe_core::core::translated_events::ResponseEvent'>ResponseEvent</a>&gt;, <a class='struct' href='https://doc.rust-lang.org/nightly/std/sync/mpsc/struct.Receiver.html' title='std::sync::mpsc::Receiver'>Receiver</a>&lt;<a class='enum' href='../../../../safe_core/core/translated_events/enum.ResponseEvent.html' title='safe_core::core::translated_events::ResponseEvent'>ResponseEvent</a>&gt;)</a>) -&gt; <a class='struct' href='../../../../safe_core/core/client/response_getter/struct.MutationResponseGetter.html' title='safe_core::core::client::response_getter::MutationResponseGetter'>MutationResponseGetter</a></code></h4>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../../../safe_core/core/client/response_getter/struct.MutationResponseGetter.html' title='safe_core::core::client::response_getter::MutationResponseGetter'>MutationResponseGetter</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(data_channel: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(</a><a class='struct' href='https://doc.rust-lang.org/nightly/std/sync/mpsc/struct.Sender.html' title='std::sync::mpsc::Sender'>Sender</a>&lt;<a class='enum' href='../../../../safe_core/core/translated_events/enum.ResponseEvent.html' title='safe_core::core::translated_events::ResponseEvent'>ResponseEvent</a>&gt;, <a class='struct' href='https://doc.rust-lang.org/nightly/std/sync/mpsc/struct.Receiver.html' title='std::sync::mpsc::Receiver'>Receiver</a>&lt;<a class='enum' href='../../../../safe_core/core/translated_events/enum.ResponseEvent.html' title='safe_core::core::translated_events::ResponseEvent'>ResponseEvent</a>&gt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>)</a>) -&gt; <a class='struct' href='../../../../safe_core/core/client/response_getter/struct.MutationResponseGetter.html' title='safe_core::core::client::response_getter::MutationResponseGetter'>MutationResponseGetter</a></code></h4>
 <div class='docblock'><p>Create a new instance of MutationResponseGetter</p>
 </div><h4 id='method.get' class='method'><code>fn <a href='#method.get' class='fnname'>get</a>(&amp;self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../../../../safe_core/core/errors/enum.CoreError.html' title='safe_core::core::errors::CoreError'>CoreError</a>&gt;</code></h4>
 <div class='docblock'><p>Get response when it comes from the network as informed by MessageQueue. This is blocking</p>
@@ -103,7 +103,7 @@ on <code>get()</code> fire <code>sender.send(ResponseEvent::Terminated)</code> t
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>
