@@ -12,9 +12,9 @@ version = "0.6.1"
 [dependencies]
 libc = "~0.2.10"
 log = "~0.3.6"
-maidsafe_utilities = "~0.5.2"
+maidsafe_utilities = "~0.5.3"
 rustc-serialize = "~0.3.19"
-safe_core = "~0.14.2"
+safe_core = "~0.14.3"
 sodiumoxide = "~0.0.10"
 xor_name = "~0.1.0"
 

@@ -77,7 +77,7 @@ use rustc_serialize::Decoder;
 use safe_core::core::client::Client;
 use rustc_serialize::Decodable;
 use libc::{c_void, int32_t, c_char};
-use std::{env, mem};
+use std::mem;
 use rustc_serialize::base64::FromBase64;
 use maidsafe_utilities::serialisation::{serialise, deserialise};
 use maidsafe_utilities::thread::RaiiThreadJoiner;
@@ -160,19 +160,7 @@ impl Drop for FfiHandle {
 /// This function should be called to enable logging to a file
 #[no_mangle]
 pub extern "C" fn init_logging() -> int32_t {
-    env::set_var("RUST_LOG", "crust,routing,safe_core,safe_ffi=trace");
-
-    let mut current_exe_path = ffi_try!(env::current_exe().map_err(|err| {
-        CoreError::Unexpected(format!("{:?}", err))
-    }));
-
-    if !current_exe_path.set_extension("log") {
-        ffi_try!(Err(CoreError::Unexpected("Could not set the extension to the log file - \
-                                            logging will not be initiated"
-                                               .to_owned())));
-    }
-
-    ffi_try!(safe_log::init_to_file(true, current_exe_path, false).map_err(CoreError::Unexpected));
+    ffi_try!(safe_log::init(false).map_err(CoreError::Unexpected));
 
     0
 }
@@ -592,8 +580,10 @@ mod test {
         }
     }
 
+    // Enable this test when doing explicit file-logging
     #[test]
-    fn logging() {
+    #[ignore]
+    fn file_logging() {
         assert_eq!(init_logging(), 0);
 
         let debug_msg = "This is a sample debug message".to_owned();
