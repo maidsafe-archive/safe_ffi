@@ -80,8 +80,9 @@ impl Action for MoveFile {
             return Err(FfiError::PermissionDenied);
         }
         let directory_helper = DirectoryHelper::new(params.client.clone());
-        let (mut src_dir, src_file_name) =
-            try!(self.get_directory_and_file(&params, self.is_src_path_shared, &self.src_path));
+        let (mut src_dir, src_file_name) = try!(self.get_directory_and_file(&params,
+                                                                            self.is_src_path_shared,
+                                                                            &self.src_path));
         let mut dest_dir = try!(self.get_directory(&params,
                                                    self.is_dest_path_shared,
                                                    &self.dest_path));
