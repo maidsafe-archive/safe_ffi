@@ -1,5 +1,9 @@
 # Safe ffi - Change Log
 
+#[0.6.2]
+- Default logging function called so that logging can be configured via log.toml file
+- Dependency update
+
 #[0.6.1]
 - safe_core's dependency on mpid_messaging has been removed from it's Cargo.toml and patch version increased. Consequently increasing patch version here to point to latest safe_core
 
