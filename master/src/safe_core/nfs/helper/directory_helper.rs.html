@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.14.2/src/nfs/helper/directory_helper.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.14.3/src/nfs/helper/directory_helper.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>directory_helper.rs.html -- source</title>
@@ -655,7 +655,7 @@
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
 <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::{<span class='ident'>serialise</span>, <span class='ident'>deserialise</span>};
 <span class='kw'>use</span> <span class='ident'>nfs</span>::<span class='ident'>metadata</span>::<span class='ident'>directory_key</span>::<span class='ident'>DirectoryKey</span>;
-<span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>ImmutableData</span>, <span class='ident'>ImmutableDataType</span>, <span class='ident'>StructuredData</span>, <span class='ident'>Data</span>, <span class='ident'>DataRequest</span>};
+<span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>ImmutableData</span>, <span class='ident'>StructuredData</span>, <span class='ident'>Data</span>, <span class='ident'>DataIdentifier</span>};
 <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>client</span>::<span class='ident'>Client</span>;
 <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>errors</span>::<span class='ident'>CoreError</span>;
 <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>structured_data_operations</span>::{<span class='ident'>unversioned</span>, <span class='ident'>versioned</span>};
@@ -753,7 +753,7 @@
                           <span class='ident'>access_level</span>: <span class='kw-2'>&amp;</span><span class='ident'>AccessLevel</span>,
                           <span class='ident'>version</span>: <span class='ident'>XorName</span>)
                           <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>DirectoryListing</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>immutable_data</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get_immutable_data</span>(<span class='ident'>version</span>, <span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>));
+        <span class='kw'>let</span> <span class='ident'>immutable_data</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get_immutable_data</span>(<span class='ident'>version</span>));
         <span class='kw'>match</span> <span class='op'>*</span><span class='ident'>access_level</span> {
             <span class='ident'>AccessLevel</span>::<span class='ident'>Private</span> <span class='op'>=&gt;</span> {
                 <span class='ident'>DirectoryListing</span>::<span class='ident'>decrypt</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>(),
@@ -894,7 +894,7 @@
                 <span class='ident'>AccessLevel</span>::<span class='ident'>Private</span> <span class='op'>=&gt;</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>directory</span>.<span class='ident'>encrypt</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>())),
                 <span class='ident'>AccessLevel</span>::<span class='ident'>Public</span> <span class='op'>=&gt;</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>directory</span>)),
             };
-            <span class='kw'>let</span> <span class='ident'>version</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>save_as_immutable_data</span>(<span class='ident'>serialised_data</span>, <span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>));
+            <span class='kw'>let</span> <span class='ident'>version</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>save_as_immutable_data</span>(<span class='ident'>serialised_data</span>));
             <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>versioned</span>::<span class='ident'>create</span>(<span class='kw-2'>&amp;</span><span class='op'>*</span><span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()),
                                       <span class='ident'>version</span>,
                                       <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_type_tag</span>(),
@@ -939,7 +939,7 @@
                 <span class='ident'>AccessLevel</span>::<span class='ident'>Private</span> <span class='op'>=&gt;</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>directory</span>.<span class='ident'>encrypt</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>())),
                 <span class='ident'>AccessLevel</span>::<span class='ident'>Public</span> <span class='op'>=&gt;</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>directory</span>)),
             };
-            <span class='kw'>let</span> <span class='ident'>version</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>save_as_immutable_data</span>(<span class='ident'>serialised_data</span>, <span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>));
+            <span class='kw'>let</span> <span class='ident'>version</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>save_as_immutable_data</span>(<span class='ident'>serialised_data</span>));
             <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>versioned</span>::<span class='ident'>append_version</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span><span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()),
                                            <span class='ident'>structured_data</span>,
                                            <span class='ident'>version</span>,
@@ -970,8 +970,8 @@
     }
 
     <span class='doccomment'>/// Saves the data as ImmutableData in the network and returns the name</span>
-    <span class='kw'>fn</span> <span class='ident'>save_as_immutable_data</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>data</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>, <span class='ident'>data_type</span>: <span class='ident'>ImmutableDataType</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>XorName</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>immutable_data</span> <span class='op'>=</span> <span class='ident'>ImmutableData</span>::<span class='ident'>new</span>(<span class='ident'>data_type</span>, <span class='ident'>data</span>);
+    <span class='kw'>fn</span> <span class='ident'>save_as_immutable_data</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>data</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>XorName</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>immutable_data</span> <span class='op'>=</span> <span class='ident'>ImmutableData</span>::<span class='ident'>new</span>(<span class='ident'>data</span>);
         <span class='kw'>let</span> <span class='ident'>name</span> <span class='op'>=</span> <span class='ident'>immutable_data</span>.<span class='ident'>name</span>();
         <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Posting PUT request to save immutable data to the network ...&quot;</span>);
         <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>put</span>(<span class='ident'>Data</span>::<span class='ident'>Immutable</span>(<span class='ident'>immutable_data</span>), <span class='prelude-val'>None</span>)).<span class='ident'>get</span>());
@@ -980,7 +980,7 @@
 
     <span class='doccomment'>/// Get StructuredData from the Network</span>
     <span class='kw'>fn</span> <span class='ident'>get_structured_data</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>id</span>: <span class='kw-2'>&amp;</span><span class='ident'>XorName</span>, <span class='ident'>type_tag</span>: <span class='ident'>u64</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>StructuredData</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>request</span> <span class='op'>=</span> <span class='ident'>DataRequest</span>::<span class='ident'>Structured</span>(<span class='ident'>id</span>.<span class='ident'>clone</span>(), <span class='ident'>type_tag</span>);
+        <span class='kw'>let</span> <span class='ident'>request</span> <span class='op'>=</span> <span class='ident'>DataIdentifier</span>::<span class='ident'>Structured</span>(<span class='ident'>id</span>.<span class='ident'>clone</span>(), <span class='ident'>type_tag</span>);
         <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Getting structured data from the network ...&quot;</span>);
         <span class='kw'>let</span> <span class='ident'>response_getter</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get</span>(<span class='ident'>request</span>, <span class='prelude-val'>None</span>));
         <span class='kw'>match</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>response_getter</span>.<span class='ident'>get</span>()) {
@@ -990,8 +990,8 @@
     }
 
     <span class='doccomment'>/// Get ImmutableData from the Network</span>
-    <span class='kw'>fn</span> <span class='ident'>get_immutable_data</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>id</span>: <span class='ident'>XorName</span>, <span class='ident'>data_type</span>: <span class='ident'>ImmutableDataType</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>ImmutableData</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>request</span> <span class='op'>=</span> <span class='ident'>DataRequest</span>::<span class='ident'>Immutable</span>(<span class='ident'>id</span>, <span class='ident'>data_type</span>);
+    <span class='kw'>fn</span> <span class='ident'>get_immutable_data</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>id</span>: <span class='ident'>XorName</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>ImmutableData</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>request</span> <span class='op'>=</span> <span class='ident'>DataIdentifier</span>::<span class='ident'>Immutable</span>(<span class='ident'>id</span>);
         <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Getting immutable data from the network ...&quot;</span>);
         <span class='kw'>let</span> <span class='ident'>response_getter</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get</span>(<span class='ident'>request</span>, <span class='prelude-val'>None</span>));
         <span class='kw'>match</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>response_getter</span>.<span class='ident'>get</span>()) {

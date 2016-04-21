@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.14.2/src/core/structured_data_operations/versioned.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.14.3/src/core/structured_data_operations/versioned.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>versioned.rs.html -- source</title>
@@ -198,8 +198,6 @@
 <span id="155">155</span>
 <span id="156">156</span>
 <span id="157">157</span>
-<span id="158">158</span>
-<span id="159">159</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -223,7 +221,7 @@
 <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>errors</span>::<span class='ident'>CoreError</span>;
 <span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>sign</span>;
 <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::{<span class='ident'>serialise</span>, <span class='ident'>deserialise</span>};
-<span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>StructuredData</span>, <span class='ident'>ImmutableData</span>, <span class='ident'>ImmutableDataType</span>, <span class='ident'>Data</span>, <span class='ident'>DataRequest</span>};
+<span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>StructuredData</span>, <span class='ident'>ImmutableData</span>, <span class='ident'>Data</span>, <span class='ident'>DataIdentifier</span>};
 <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>structured_data_operations</span>::{<span class='ident'>DataFitResult</span>, <span class='ident'>check_if_data_can_fit_in_structured_data</span>};
 
 <span class='doccomment'>/// Create the StructuredData to manage versioned data.</span>
@@ -281,8 +279,7 @@
                <span class='ident'>prev_owner_keys</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>sign</span>::<span class='ident'>PublicKey</span><span class='op'>&gt;</span>,
                <span class='ident'>private_signing_key</span>: <span class='kw-2'>&amp;</span><span class='ident'>sign</span>::<span class='ident'>SecretKey</span>)
                <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>StructuredData</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
-    <span class='kw'>let</span> <span class='ident'>immutable_data</span> <span class='op'>=</span> <span class='ident'>ImmutableData</span>::<span class='ident'>new</span>(<span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>,
-                                            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='ident'>version_names_to_store</span>)));
+    <span class='kw'>let</span> <span class='ident'>immutable_data</span> <span class='op'>=</span> <span class='ident'>ImmutableData</span>::<span class='ident'>new</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='ident'>version_names_to_store</span>)));
     <span class='kw'>let</span> <span class='ident'>name_of_immutable_data</span> <span class='op'>=</span> <span class='ident'>immutable_data</span>.<span class='ident'>name</span>();
 
     <span class='kw'>let</span> <span class='ident'>encoded_name</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>name_of_immutable_data</span>));
@@ -306,8 +303,7 @@
 
 <span class='kw'>fn</span> <span class='ident'>get_immutable_data</span>(<span class='ident'>client</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Client</span>, <span class='ident'>struct_data</span>: <span class='kw-2'>&amp;</span><span class='ident'>StructuredData</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>ImmutableData</span>, <span class='ident'>CoreError</span><span class='op'>&gt;</span> {
     <span class='kw'>let</span> <span class='ident'>name</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>deserialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>struct_data</span>.<span class='ident'>get_data</span>()));
-    <span class='kw'>let</span> <span class='ident'>response_getter</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>get</span>(<span class='ident'>DataRequest</span>::<span class='ident'>Immutable</span>(<span class='ident'>name</span>, <span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>),
-                                          <span class='prelude-val'>None</span>));
+    <span class='kw'>let</span> <span class='ident'>response_getter</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>client</span>.<span class='ident'>get</span>(<span class='ident'>DataIdentifier</span>::<span class='ident'>Immutable</span>(<span class='ident'>name</span>), <span class='prelude-val'>None</span>));
     <span class='kw'>let</span> <span class='ident'>data</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>response_getter</span>.<span class='ident'>get</span>());
     <span class='kw'>match</span> <span class='ident'>data</span> {
         <span class='ident'>Data</span>::<span class='ident'>Immutable</span>(<span class='ident'>immutable_data</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(<span class='ident'>immutable_data</span>),

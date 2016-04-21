@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.15.1/src/client.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.16.2/src/client.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>client.rs.html -- source</title>
@@ -249,7 +249,7 @@
 <span class='kw'>use</span> <span class='ident'>action</span>::<span class='ident'>Action</span>;
 <span class='kw'>use</span> <span class='ident'>event</span>::<span class='ident'>Event</span>;
 <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>Core</span>;
-<span class='kw'>use</span> <span class='ident'>data</span>::{<span class='ident'>Data</span>, <span class='ident'>DataRequest</span>};
+<span class='kw'>use</span> <span class='ident'>data</span>::{<span class='ident'>Data</span>, <span class='ident'>DataIdentifier</span>};
 <span class='kw'>use</span> <span class='ident'>error</span>::{<span class='ident'>InterfaceError</span>, <span class='ident'>RoutingError</span>};
 <span class='kw'>use</span> <span class='ident'>authority</span>::<span class='ident'>Authority</span>;
 <span class='kw'>use</span> <span class='ident'>messages</span>::<span class='ident'>RequestContent</span>;
@@ -329,18 +329,18 @@
     }
 
     <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;use-mock-crust&quot;</span>)]</span>
-    <span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>missing_docs</span>)]</span>
+    <span class='doccomment'>/// Poll and process all events in this client&#39;s `Core` instance.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>poll</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
         <span class='self'>self</span>.<span class='ident'>core</span>.<span class='ident'>borrow_mut</span>().<span class='ident'>poll</span>()
     }
 
-    <span class='doccomment'>/// Send a Get message with a DataRequest to an Authority, signed with given keys.</span>
+    <span class='doccomment'>/// Send a Get message with a `DataIdentifier` to an `Authority`, signed with given keys.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>send_get_request</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>,
                             <span class='ident'>dst</span>: <span class='ident'>Authority</span>,
-                            <span class='ident'>data_request</span>: <span class='ident'>DataRequest</span>,
+                            <span class='ident'>data_id</span>: <span class='ident'>DataIdentifier</span>,
                             <span class='ident'>message_id</span>: <span class='ident'>MessageId</span>)
                             <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>InterfaceError</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>send_action</span>(<span class='ident'>RequestContent</span>::<span class='ident'>Get</span>(<span class='ident'>data_request</span>, <span class='ident'>message_id</span>), <span class='ident'>dst</span>)
+        <span class='self'>self</span>.<span class='ident'>send_action</span>(<span class='ident'>RequestContent</span>::<span class='ident'>Get</span>(<span class='ident'>data_id</span>, <span class='ident'>message_id</span>), <span class='ident'>dst</span>)
     }
 
     <span class='doccomment'>/// Add something to the network</span>

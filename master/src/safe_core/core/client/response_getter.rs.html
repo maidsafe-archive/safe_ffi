@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.14.2/src/core/client/response_getter.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.14.3/src/core/client/response_getter.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>response_getter.rs.html -- source</title>
@@ -171,7 +171,7 @@
 
 <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>errors</span>::<span class='ident'>CoreError</span>;
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
-<span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>DataRequest</span>, <span class='ident'>Data</span>};
+<span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>DataIdentifier</span>, <span class='ident'>Data</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>sync</span>::{<span class='ident'>Arc</span>, <span class='ident'>Mutex</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>mpsc</span>::{<span class='ident'>Sender</span>, <span class='ident'>Receiver</span>};
 <span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>client</span>::<span class='ident'>message_queue</span>::<span class='ident'>MessageQueue</span>;
@@ -184,20 +184,20 @@
     <span class='ident'>data_channel</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='ident'>Sender</span><span class='op'>&lt;</span><span class='ident'>ResponseEvent</span><span class='op'>&gt;</span>, <span class='ident'>Receiver</span><span class='op'>&lt;</span><span class='ident'>ResponseEvent</span><span class='op'>&gt;</span>)<span class='op'>&gt;</span>,
     <span class='ident'>message_queue</span>: <span class='ident'>Arc</span><span class='op'>&lt;</span><span class='ident'>Mutex</span><span class='op'>&lt;</span><span class='ident'>MessageQueue</span><span class='op'>&gt;&gt;</span>,
     <span class='ident'>requested_name</span>: <span class='ident'>XorName</span>,
-    <span class='ident'>requested_type</span>: <span class='ident'>DataRequest</span>,
+    <span class='ident'>requested_id</span>: <span class='ident'>DataIdentifier</span>,
 }
 
 <span class='kw'>impl</span> <span class='ident'>GetResponseGetter</span> {
     <span class='doccomment'>/// Create a new instance of GetResponseGetter</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>data_channel</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='ident'>Sender</span><span class='op'>&lt;</span><span class='ident'>ResponseEvent</span><span class='op'>&gt;</span>, <span class='ident'>Receiver</span><span class='op'>&lt;</span><span class='ident'>ResponseEvent</span><span class='op'>&gt;</span>)<span class='op'>&gt;</span>,
                <span class='ident'>message_queue</span>: <span class='ident'>Arc</span><span class='op'>&lt;</span><span class='ident'>Mutex</span><span class='op'>&lt;</span><span class='ident'>MessageQueue</span><span class='op'>&gt;&gt;</span>,
-               <span class='ident'>requested_type</span>: <span class='ident'>DataRequest</span>)
+               <span class='ident'>requested_id</span>: <span class='ident'>DataIdentifier</span>)
                <span class='op'>-&gt;</span> <span class='ident'>GetResponseGetter</span> {
         <span class='ident'>GetResponseGetter</span> {
             <span class='ident'>data_channel</span>: <span class='ident'>data_channel</span>,
             <span class='ident'>message_queue</span>: <span class='ident'>message_queue</span>,
-            <span class='ident'>requested_name</span>: <span class='ident'>requested_type</span>.<span class='ident'>name</span>(),
-            <span class='ident'>requested_type</span>: <span class='ident'>requested_type</span>,
+            <span class='ident'>requested_name</span>: <span class='ident'>requested_id</span>.<span class='ident'>name</span>(),
+            <span class='ident'>requested_id</span>: <span class='ident'>requested_id</span>,
         }
     }
 
@@ -208,7 +208,7 @@
             <span class='kw'>match</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>data_receiver</span>.<span class='ident'>recv</span>()) {
                 <span class='ident'>ResponseEvent</span>::<span class='ident'>GetResp</span>(<span class='ident'>result</span>) <span class='op'>=&gt;</span> {
                     <span class='kw'>let</span> <span class='ident'>data</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>result</span>);
-                    <span class='kw'>if</span> <span class='kw'>let</span> <span class='ident'>DataRequest</span>::<span class='ident'>Immutable</span>(..) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>requested_type</span> {
+                    <span class='kw'>if</span> <span class='kw'>let</span> <span class='ident'>DataIdentifier</span>::<span class='ident'>Immutable</span>(..) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>requested_id</span> {
                         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>msg_queue</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>message_queue</span>.<span class='ident'>lock</span>());
                         <span class='ident'>msg_queue</span>.<span class='ident'>local_cache_insert</span>(<span class='self'>self</span>.<span class='ident'>requested_name</span>.<span class='ident'>clone</span>(), <span class='ident'>data</span>.<span class='ident'>clone</span>());
                     }

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.14.2/src/core/errors.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.14.3/src/core/errors.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>errors.rs.html -- source</title>
@@ -249,7 +249,7 @@
 
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>mpsc</span>;
 
-<span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>DataRequest</span>, <span class='ident'>Data</span>};
+<span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>DataIdentifier</span>, <span class='ident'>Data</span>};
 <span class='kw'>use</span> <span class='ident'>safe_network_common</span>::<span class='ident'>messaging</span>;
 <span class='kw'>use</span> <span class='ident'>safe_network_common</span>::<span class='ident'>client_errors</span>::{<span class='ident'>GetError</span>, <span class='ident'>MutationError</span>};
 <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::<span class='ident'>SerialisationError</span>;
@@ -296,7 +296,7 @@
     <span class='doccomment'>/// Performing a GET operation failed</span>
     <span class='ident'>GetFailure</span> {
         <span class='doccomment'>/// Orignal request that was made to the network</span>
-        <span class='ident'>request</span>: <span class='ident'>DataRequest</span>,
+        <span class='ident'>data_id</span>: <span class='ident'>DataIdentifier</span>,
         <span class='doccomment'>/// Reason for failure</span>
         <span class='ident'>reason</span>: <span class='ident'>GetError</span>,
     },
@@ -403,11 +403,11 @@
             <span class='ident'>CoreError</span>::<span class='ident'>UnsuccessfulPwHash</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;CoreError::UnsuccessfulPwHash&quot;</span>),
             <span class='ident'>CoreError</span>::<span class='ident'>OperationAborted</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;CoreError::OperationAborted&quot;</span>),
             <span class='ident'>CoreError</span>::<span class='ident'>MpidMessagingError</span>(<span class='kw-2'>ref</span> <span class='ident'>err</span>) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;CoreError::MpidMessagingError -&gt; {:?}&quot;</span>, <span class='ident'>err</span>),
-            <span class='ident'>CoreError</span>::<span class='ident'>GetFailure</span> { <span class='kw-2'>ref</span> <span class='ident'>request</span>, <span class='kw-2'>ref</span> <span class='ident'>reason</span>, } <span class='op'>=&gt;</span> {
+            <span class='ident'>CoreError</span>::<span class='ident'>GetFailure</span> { <span class='kw-2'>ref</span> <span class='ident'>data_id</span>, <span class='kw-2'>ref</span> <span class='ident'>reason</span>, } <span class='op'>=&gt;</span> {
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>,
                        <span class='string'>&quot;CoreError::GetFailure::{{ reason: {:?}, request: {:?}}}&quot;</span>,
                        <span class='ident'>reason</span>,
-                       <span class='ident'>request</span>)
+                       <span class='ident'>data_id</span>)
             }
             <span class='ident'>CoreError</span>::<span class='ident'>MutationFailure</span> { <span class='kw-2'>ref</span> <span class='ident'>data</span>, <span class='kw-2'>ref</span> <span class='ident'>reason</span>, } <span class='op'>=&gt;</span> {
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>,

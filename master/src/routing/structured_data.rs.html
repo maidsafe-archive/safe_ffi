@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.15.1/src/structured_data.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.16.2/src/structured_data.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>structured_data.rs.html -- source</title>
@@ -545,6 +545,12 @@
 <span id="502">502</span>
 <span id="503">503</span>
 <span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -567,6 +573,7 @@
 <span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>sign</span>::{<span class='ident'>PublicKey</span>, <span class='ident'>SecretKey</span>, <span class='ident'>Signature</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>::{<span class='self'>self</span>, <span class='ident'>Debug</span>, <span class='ident'>Formatter</span>};
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
+<span class='kw'>use</span> <span class='ident'>data</span>::<span class='ident'>DataIdentifier</span>;
 
 <span class='doccomment'>/// Maximum allowed size for a Structured Data to grow to</span>
 <span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>MAX_STRUCTURED_DATA_SIZE_IN_BYTES</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>102400</span>;
@@ -654,6 +661,11 @@
     <span class='doccomment'>/// Returns the name, computed from the type tag and identifier.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>name</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>XorName</span> {
         <span class='ident'>StructuredData</span>::<span class='ident'>compute_name</span>(<span class='self'>self</span>.<span class='ident'>type_tag</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>identifier</span>)
+    }
+
+    <span class='doccomment'>/// Returns `DataIdentifier` for this data element.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>identifier</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>DataIdentifier</span> {
+        <span class='ident'>DataIdentifier</span>::<span class='ident'>Structured</span>(<span class='self'>self</span>.<span class='ident'>identifier</span>, <span class='self'>self</span>.<span class='ident'>type_tag</span>)
     }
 
     <span class='doccomment'>/// Verifies that `other` is a valid update for `self`; returns an error otherwise.</span>

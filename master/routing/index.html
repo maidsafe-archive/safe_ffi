@@ -46,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-0' class='srclink' href='../src/routing/lib.rs.html#18-217' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-0' class='srclink' href='../src/routing/lib.rs.html#18-218' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Client and node implementations for a resilient decentralised network.</p>
 
 <p>The network is based on the <a href="../kademlia_routing_table/index.html">kademlia_routing_table</a> and uses the XOR metric to define the
@@ -185,6 +185,22 @@ client.</p>
                     </tr>
                 
                     <tr class=' module-item'>
+                        <td><a class='struct' href='struct.ImmutableDataBackup.html'
+                               title='routing::ImmutableDataBackup'>ImmutableDataBackup</a></td>
+                        <td class='docblock short'>
+                             <p>Backup types</p>
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.ImmutableDataSacrificial.html'
+                               title='routing::ImmutableDataSacrificial'>ImmutableDataSacrificial</a></td>
+                        <td class='docblock short'>
+                             <p>Sacrificial types</p>
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
                         <td><a class='struct' href='struct.MessageId.html'
                                title='routing::MessageId'>MessageId</a></td>
                         <td class='docblock short'>
@@ -267,10 +283,10 @@ routing node.</p>
                     </tr>
                 
                     <tr class=' module-item'>
-                        <td><a class='enum' href='enum.DataRequest.html'
-                               title='routing::DataRequest'>DataRequest</a></td>
+                        <td><a class='enum' href='enum.DataIdentifier.html'
+                               title='routing::DataIdentifier'>DataIdentifier</a></td>
                         <td class='docblock short'>
-                             <p>DataRequest.</p>
+                             <p>DataIdentifier.</p>
                         </td>
                     </tr>
                 
@@ -279,14 +295,6 @@ routing node.</p>
                                title='routing::Event'>Event</a></td>
                         <td class='docblock short'>
                              <p>An Event raised by a <code>Node</code> or <code>Client</code> via its event sender.</p>
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='enum' href='enum.ImmutableDataType.html'
-                               title='routing::ImmutableDataType'>ImmutableDataType</a></td>
-                        <td class='docblock short'>
-                             <p>The type of an individual copy of immutable data.</p>
                         </td>
                     </tr>
                 
@@ -344,7 +352,7 @@ routing node.</p>
                         <td><a class='fn' href='fn.backup_to_normal.html'
                                title='routing::backup_to_normal'>backup_to_normal</a></td>
                         <td class='docblock short'>
-                             <p>Convert backup ImmutableData name to normal name.</p>
+                             <p>Converts backup <code>ImmutableData</code> name to normal name.</p>
                         </td>
                     </tr>
                 
@@ -352,7 +360,7 @@ routing node.</p>
                         <td><a class='fn' href='fn.backup_to_sacrificial.html'
                                title='routing::backup_to_sacrificial'>backup_to_sacrificial</a></td>
                         <td class='docblock short'>
-                             <p>Convert backup ImmutableData name to sacrificial name.</p>
+                             <p>Converts backup <code>ImmutableData</code> name to sacrificial name.</p>
                         </td>
                     </tr>
                 
@@ -360,7 +368,7 @@ routing node.</p>
                         <td><a class='fn' href='fn.normal_to_backup.html'
                                title='routing::normal_to_backup'>normal_to_backup</a></td>
                         <td class='docblock short'>
-                             <p>Convert normal ImmutableData name to backup name.</p>
+                             <p>Converts normal <code>ImmutableData</code> name to backup name.</p>
                         </td>
                     </tr>
                 
@@ -368,7 +376,7 @@ routing node.</p>
                         <td><a class='fn' href='fn.normal_to_sacrificial.html'
                                title='routing::normal_to_sacrificial'>normal_to_sacrificial</a></td>
                         <td class='docblock short'>
-                             <p>Convert normal ImmutableData name to sacrificial name.</p>
+                             <p>Converts normal <code>ImmutableData</code> name to sacrificial name.</p>
                         </td>
                     </tr>
                 
@@ -376,7 +384,7 @@ routing node.</p>
                         <td><a class='fn' href='fn.sacrificial_to_backup.html'
                                title='routing::sacrificial_to_backup'>sacrificial_to_backup</a></td>
                         <td class='docblock short'>
-                             <p>Convert sacrificial ImmutableData name to backup name.</p>
+                             <p>Converts sacrificial <code>ImmutableData</code> name to backup name.</p>
                         </td>
                     </tr>
                 
@@ -384,7 +392,7 @@ routing node.</p>
                         <td><a class='fn' href='fn.sacrificial_to_normal.html'
                                title='routing::sacrificial_to_normal'>sacrificial_to_normal</a></td>
                         <td class='docblock short'>
-                             <p>Convert sacrificial ImmutableData name to normal name.</p>
+                             <p>Converts sacrificial <code>ImmutableData</code> name to normal name.</p>
                         </td>
                     </tr>
                 </table></section>

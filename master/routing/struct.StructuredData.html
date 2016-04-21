@@ -46,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-6267' class='srclink' href='../src/routing/structured_data.rs.html#33-41' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-6481' class='srclink' href='../src/routing/structured_data.rs.html#34-42' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct StructuredData {
     // some fields omitted
 }</pre><div class='docblock'><p>Mutable structured data.</p>
@@ -70,6 +70,8 @@ To transfer ownership, the current owner signs over the data; the previous owner
 must have the previous owners of <code>version - 1</code> as the current owners of that last version.</p>
 </div><h4 id='method.name' class='method'><code>fn <a href='#method.name' class='fnname'>name</a>(&amp;self) -&gt; <a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a></code></h4>
 <div class='docblock'><p>Returns the name, computed from the type tag and identifier.</p>
+</div><h4 id='method.identifier' class='method'><code>fn <a href='#method.identifier' class='fnname'>identifier</a>(&amp;self) -&gt; <a class='enum' href='../routing/enum.DataIdentifier.html' title='routing::DataIdentifier'>DataIdentifier</a></code></h4>
+<div class='docblock'><p>Returns <code>DataIdentifier</code> for this data element.</p>
 </div><h4 id='method.validate_self_against_successor' class='method'><code>fn <a href='#method.validate_self_against_successor' class='fnname'>validate_self_against_successor</a>(&amp;self, other: &amp;<a class='struct' href='../routing/struct.StructuredData.html' title='routing::StructuredData'>StructuredData</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a>&gt;</code></h4>
 <div class='docblock'><p>Verifies that <code>other</code> is a valid update for <code>self</code>; returns an error otherwise.</p>
 

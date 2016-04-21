@@ -652,16 +652,6 @@
 <span id="609">609</span>
 <span id="610">610</span>
 <span id="611">611</span>
-<span id="612">612</span>
-<span id="613">613</span>
-<span id="614">614</span>
-<span id="615">615</span>
-<span id="616">616</span>
-<span id="617">617</span>
-<span id="618">618</span>
-<span id="619">619</span>
-<span id="620">620</span>
-<span id="621">621</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -742,7 +732,7 @@
 <span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>core</span>::<span class='ident'>client</span>::<span class='ident'>Client</span>;
 <span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::<span class='ident'>Decodable</span>;
 <span class='kw'>use</span> <span class='ident'>libc</span>::{<span class='ident'>c_void</span>, <span class='ident'>int32_t</span>, <span class='ident'>c_char</span>};
-<span class='kw'>use</span> <span class='ident'>std</span>::{<span class='ident'>env</span>, <span class='ident'>mem</span>};
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>mem</span>;
 <span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::<span class='ident'>base64</span>::<span class='ident'>FromBase64</span>;
 <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::{<span class='ident'>serialise</span>, <span class='ident'>deserialise</span>};
 <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>thread</span>::<span class='ident'>RaiiThreadJoiner</span>;
@@ -825,19 +815,7 @@
 <span class='doccomment'>/// This function should be called to enable logging to a file</span>
 <span class='attribute'>#[<span class='ident'>no_mangle</span>]</span>
 <span class='kw'>pub</span> <span class='kw'>extern</span> <span class='string'>&quot;C&quot;</span> <span class='kw'>fn</span> <span class='ident'>init_logging</span>() <span class='op'>-&gt;</span> <span class='ident'>int32_t</span> {
-    <span class='ident'>env</span>::<span class='ident'>set_var</span>(<span class='string'>&quot;RUST_LOG&quot;</span>, <span class='string'>&quot;crust,routing,safe_core,safe_ffi=trace&quot;</span>);
-
-    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>current_exe_path</span> <span class='op'>=</span> <span class='macro'>ffi_try</span><span class='macro'>!</span>(<span class='ident'>env</span>::<span class='ident'>current_exe</span>().<span class='ident'>map_err</span>(<span class='op'>|</span><span class='ident'>err</span><span class='op'>|</span> {
-        <span class='ident'>CoreError</span>::<span class='ident'>Unexpected</span>(<span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{:?}&quot;</span>, <span class='ident'>err</span>))
-    }));
-
-    <span class='kw'>if</span> <span class='op'>!</span><span class='ident'>current_exe_path</span>.<span class='ident'>set_extension</span>(<span class='string'>&quot;log&quot;</span>) {
-        <span class='macro'>ffi_try</span><span class='macro'>!</span>(<span class='prelude-val'>Err</span>(<span class='ident'>CoreError</span>::<span class='ident'>Unexpected</span>(<span class='string'>&quot;Could not set the extension to the log file - \
-                                            logging will not be initiated&quot;</span>
-                                               .<span class='ident'>to_owned</span>())));
-    }
-
-    <span class='macro'>ffi_try</span><span class='macro'>!</span>(<span class='ident'>safe_log</span>::<span class='ident'>init_to_file</span>(<span class='boolval'>true</span>, <span class='ident'>current_exe_path</span>, <span class='boolval'>false</span>).<span class='ident'>map_err</span>(<span class='ident'>CoreError</span>::<span class='ident'>Unexpected</span>));
+    <span class='macro'>ffi_try</span><span class='macro'>!</span>(<span class='ident'>safe_log</span>::<span class='ident'>init</span>(<span class='boolval'>false</span>).<span class='ident'>map_err</span>(<span class='ident'>CoreError</span>::<span class='ident'>Unexpected</span>));
 
     <span class='number'>0</span>
 }
@@ -1257,8 +1235,10 @@
         }
     }
 
+    <span class='comment'>// Enable this test when doing explicit file-logging</span>
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>logging</span>() {
+    <span class='attribute'>#[<span class='ident'>ignore</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>file_logging</span>() {
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>init_logging</span>(), <span class='number'>0</span>);
 
         <span class='kw'>let</span> <span class='ident'>debug_msg</span> <span class='op'>=</span> <span class='string'>&quot;This is a sample debug message&quot;</span>.<span class='ident'>to_owned</span>();

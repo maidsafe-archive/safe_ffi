@@ -46,18 +46,24 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-2155' class='srclink' href='../src/routing/data.rs.html#27-34' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-2166' class='srclink' href='../src/routing/data.rs.html#27-38' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum Data {
     Structured(<a class='struct' href='../routing/struct.StructuredData.html' title='routing::StructuredData'>StructuredData</a>),
     Immutable(<a class='struct' href='../routing/struct.ImmutableData.html' title='routing::ImmutableData'>ImmutableData</a>),
+    ImmutableBackup(<a class='struct' href='../routing/struct.ImmutableDataBackup.html' title='routing::ImmutableDataBackup'>ImmutableDataBackup</a>),
+    ImmutableSacrificial(<a class='struct' href='../routing/struct.ImmutableDataSacrificial.html' title='routing::ImmutableDataSacrificial'>ImmutableDataSacrificial</a>),
     Plain(<a class='struct' href='../routing/struct.PlainData.html' title='routing::PlainData'>PlainData</a>),
 }</pre><div class='docblock'><p>This is the data types routing handles in the public interface</p>
 </div><h2 class='variants'>Variants</h2>
-<table class='variants_table'><tr><td id='variant.Structured'><code>Structured</code></td><td><div class='docblock'><p>StructuredData Data type.</p>
-</div></td><td></td></tr><tr><td id='variant.Immutable'><code>Immutable</code></td><td><div class='docblock'><p>ImmutableData Data type.</p>
-</div></td><td></td></tr><tr><td id='variant.Plain'><code>Plain</code></td><td><div class='docblock'><p>PlainData Data type.</p>
+<table class='variants_table'><tr><td id='variant.Structured'><code>Structured</code></td><td><div class='docblock'><p><code>StructuredData</code> data type.</p>
+</div></td><td></td></tr><tr><td id='variant.Immutable'><code>Immutable</code></td><td><div class='docblock'><p><code>ImmutableData</code> data type.</p>
+</div></td><td></td></tr><tr><td id='variant.ImmutableBackup'><code>ImmutableBackup</code></td><td><div class='docblock'><p><code>ImmutableData</code> data type - backup copy.</p>
+</div></td><td></td></tr><tr><td id='variant.ImmutableSacrificial'><code>ImmutableSacrificial</code></td><td><div class='docblock'><p><code>ImmutableData</code> data type - sacrificial copy.</p>
+</div></td><td></td></tr><tr><td id='variant.Plain'><code>Plain</code></td><td><div class='docblock'><p><code>PlainData</code> data type.</p>
 </div></td><td></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='enum' href='../routing/enum.Data.html' title='routing::Data'>Data</a></code></h3><div class='impl-items'><h4 id='method.name' class='method'><code>fn <a href='#method.name' class='fnname'>name</a>(&amp;self) -&gt; <a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a></code></h4>
 <div class='docblock'><p>Return data name.</p>
+</div><h4 id='method.identifier' class='method'><code>fn <a href='#method.identifier' class='fnname'>identifier</a>(&amp;self) -&gt; <a class='enum' href='../routing/enum.DataIdentifier.html' title='routing::DataIdentifier'>DataIdentifier</a></code></h4>
+<div class='docblock'><p>Return data identifier.</p>
 </div><h4 id='method.payload_size' class='method'><code>fn <a href='#method.payload_size' class='fnname'>payload_size</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a></code></h4>
 <div class='docblock'><p>Return data size.</p>
 </div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='enum' href='../routing/enum.Data.html' title='routing::Data'>Data</a></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#method.fmt' class='fnname'>fmt</a>(&amp;self, formatter: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>

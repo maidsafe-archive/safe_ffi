@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.15.1/src/plain_data.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.16.2/src/plain_data.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>plain_data.rs.html -- source</title>
@@ -145,6 +145,12 @@
 <span id="102">102</span>
 <span id="103">103</span>
 <span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -164,8 +170,9 @@
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>::{<span class='self'>self</span>, <span class='ident'>Debug</span>, <span class='ident'>Formatter</span>};
-<span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::{<span class='ident'>Decoder</span>, <span class='ident'>Encodable</span>, <span class='ident'>Encoder</span>};
+<span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::{<span class='ident'>Decoder</span>, <span class='ident'>Encoder</span>};
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
+<span class='kw'>use</span> <span class='ident'>data</span>::<span class='ident'>DataIdentifier</span>;
 <span class='kw'>use</span> <span class='ident'>utils</span>;
 
 <span class='doccomment'>/// Plain data with a name and a value.</span>
@@ -201,6 +208,11 @@
     <span class='doccomment'>/// Returns the size of the contained data. Equivalent to `value().len()`.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>payload_size</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
         <span class='self'>self</span>.<span class='ident'>value</span>.<span class='ident'>len</span>()
+    }
+
+    <span class='doccomment'>/// Returns `DataIdentifier` for this data element.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>identifier</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>DataIdentifier</span> {
+        <span class='ident'>DataIdentifier</span>::<span class='ident'>Plain</span>(<span class='self'>self</span>.<span class='ident'>name</span>())
     }
 }
 

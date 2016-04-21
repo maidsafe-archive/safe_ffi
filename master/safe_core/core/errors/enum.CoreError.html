@@ -65,7 +65,7 @@
     OperationAborted,
     MpidMessagingError(<a class='enum' href='../../../safe_network_common/messaging/error/enum.Error.html' title='safe_network_common::messaging::error::Error'>Error</a>),
     GetFailure {
-        request: <a class='enum' href='../../../routing/data/enum.DataRequest.html' title='routing::data::DataRequest'>DataRequest</a>,
+        data_id: <a class='enum' href='../../../routing/data/enum.DataIdentifier.html' title='routing::data::DataIdentifier'>DataIdentifier</a>,
         reason: <a class='enum' href='../../../safe_network_common/client_errors/enum.GetError.html' title='safe_network_common::client_errors::GetError'>GetError</a>,
     },
     MutationFailure {
@@ -94,7 +94,7 @@ allocate amount of requested memory</p>
 </div></td><td></td></tr><tr><td id='variant.GetFailure'><code>GetFailure</code></td><td><div class='docblock'><p>Performing a GET operation failed</p>
 </div><h3 class='fields'>Fields</h3>
 
-                                              <table><tr><td id='variant.GetFailure.field.request'><code>request</code></td><td><div class='docblock'><p>Orignal request that was made to the network</p>
+                                              <table><tr><td id='variant.GetFailure.field.data_id'><code>data_id</code></td><td><div class='docblock'><p>Orignal request that was made to the network</p>
 </div></td></tr><tr><td id='variant.GetFailure.field.reason'><code>reason</code></td><td><div class='docblock'><p>Reason for failure</p>
 </div></td></tr></table></td><td></td></tr><tr><td id='variant.MutationFailure'><code>MutationFailure</code></td><td><div class='docblock'><p>Performing a network mutating operation such as PUT/POST/DELETE failed</p>
 </div><h3 class='fields'>Fields</h3>
