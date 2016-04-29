@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/crust-0.10.0/src/service.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/crust-0.11.1/src/service.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>service.rs.html -- source</title>
@@ -1352,6 +1352,11 @@
 <span id="1309">1309</span>
 <span id="1310">1310</span>
 <span id="1311">1311</span>
+<span id="1312">1312</span>
+<span id="1313">1313</span>
+<span id="1314">1314</span>
+<span id="1315">1315</span>
+<span id="1316">1316</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -1555,14 +1560,18 @@
 
         <span class='kw'>let</span> <span class='ident'>udp_hole_punch_server</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>SimpleUdpHolePunchServer</span>::<span class='ident'>new</span>(<span class='ident'>mapping_context</span>.<span class='ident'>clone</span>())
                                              .<span class='ident'>result_log</span>().<span class='ident'>or_else</span>(<span class='op'>|</span><span class='ident'>err</span><span class='op'>|</span> {
-                                                 <span class='kw'>let</span> <span class='ident'>e</span>: <span class='ident'>io</span>::<span class='ident'>Error</span> <span class='op'>=</span> <span class='ident'>From</span>::<span class='ident'>from</span>(<span class='ident'>err</span>);
-                                                 <span class='prelude-val'>Err</span>(<span class='ident'>e</span>)
+                                                 <span class='kw'>let</span> <span class='ident'>err_str</span> <span class='op'>=</span> <span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;Failed to create UDP \
+                                                                        hole punch server: {}&quot;</span>,
+                                                                        <span class='ident'>err</span>);
+                                                 <span class='prelude-val'>Err</span>(<span class='ident'>io</span>::<span class='ident'>Error</span>::<span class='ident'>new</span>(<span class='ident'>io</span>::<span class='ident'>ErrorKind</span>::<span class='ident'>Other</span>, <span class='ident'>err_str</span>))
                                              }));
         <span class='kw'>let</span> <span class='ident'>tcp_hole_punch_server</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>SimpleTcpHolePunchServer</span>::<span class='ident'>new</span>(<span class='ident'>mapping_context</span>.<span class='ident'>clone</span>())
-                                             .<span class='ident'>result_log</span>()
-                                             .<span class='ident'>or</span>(<span class='prelude-val'>Err</span>(<span class='ident'>io</span>::<span class='ident'>Error</span>::<span class='ident'>new</span>(<span class='ident'>io</span>::<span class='ident'>ErrorKind</span>::<span class='ident'>Other</span>,
-                                                                    <span class='string'>&quot;Failed to create TCP \
-                                                                     hole punch server&quot;</span>))));
+                                             .<span class='ident'>result_log</span>().<span class='ident'>or_else</span>(<span class='op'>|</span><span class='ident'>err</span><span class='op'>|</span> {
+                                                 <span class='kw'>let</span> <span class='ident'>err_str</span> <span class='op'>=</span> <span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;Failed to create TCP \
+                                                                        hole punch server: {}&quot;</span>,
+                                                                        <span class='ident'>err</span>);
+                                                 <span class='prelude-val'>Err</span>(<span class='ident'>io</span>::<span class='ident'>Error</span>::<span class='ident'>new</span>(<span class='ident'>io</span>::<span class='ident'>ErrorKind</span>::<span class='ident'>Other</span>, <span class='ident'>err_str</span>))
+                                             }));
 
         {
             <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>static_contact_info</span> <span class='op'>=</span> <span class='ident'>static_contact_info</span>.<span class='ident'>lock</span>().<span class='ident'>unwrap</span>();
@@ -1669,6 +1678,7 @@
 
     <span class='doccomment'>/// Disconnect from the given peer and returns whether there was a connection at all.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>disconnect</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>id</span>: <span class='kw-2'>&amp;</span><span class='ident'>PeerId</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
+        <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;dropping connection to peer {:?}&quot;</span>, <span class='ident'>id</span>);
         <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>connection_map</span>.<span class='ident'>lock</span>()).<span class='ident'>remove</span>(<span class='kw-2'>&amp;</span><span class='ident'>id</span>).<span class='ident'>is_some</span>()
     }
 

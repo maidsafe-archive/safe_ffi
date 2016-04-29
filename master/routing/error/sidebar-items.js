@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["InterfaceError","InterfaceError."],["RoutingError","RoutingError."]]});
+initSidebarItems({"enum":[["InterfaceError","The type of errors that can occur if routing is unable to handle a send request."],["RoutingError","The type of errors that can occur during handling of routing events."]]});

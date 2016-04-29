@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.16.2/src/event.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.18.3/src/event.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>event.rs.html -- source</title>
@@ -83,6 +83,39 @@
 <span id="40">40</span>
 <span id="41">41</span>
 <span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -101,8 +134,12 @@
 <span class='comment'>// Please review the Licences for the specific language governing permissions and limitations</span>
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
+<span class='kw'>use</span> <span class='ident'>kademlia_routing_table</span>::<span class='ident'>RoutingTable</span>;
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
+
+<span class='kw'>use</span> <span class='ident'>core</span>::<span class='ident'>NodeInfo</span>;
 <span class='kw'>use</span> <span class='ident'>messages</span>::{<span class='ident'>RequestMessage</span>, <span class='ident'>ResponseMessage</span>};
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>::{<span class='self'>self</span>, <span class='ident'>Debug</span>, <span class='ident'>Formatter</span>};
 
 <span class='doccomment'>/// An Event raised by a `Node` or `Client` via its event sender.</span>
 <span class='doccomment'>///</span>
@@ -111,20 +148,49 @@
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// `Request` and `Response` events from group authorities are only raised once the quorum has been</span>
 <span class='doccomment'>/// reached, i. e. enough members of the group have sent the same message.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>)]</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Event</span> {
     <span class='doccomment'>/// Request.</span>
     <span class='ident'>Request</span>(<span class='ident'>RequestMessage</span>),
     <span class='doccomment'>/// Response.</span>
     <span class='ident'>Response</span>(<span class='ident'>ResponseMessage</span>),
     <span class='doccomment'>/// A new node joined the network and may be a member of group authorities we also belong to.</span>
-    <span class='ident'>NodeAdded</span>(<span class='ident'>XorName</span>),
+    <span class='ident'>NodeAdded</span>(<span class='ident'>XorName</span>, <span class='ident'>RoutingTable</span><span class='op'>&lt;</span><span class='ident'>NodeInfo</span><span class='op'>&gt;</span>),
     <span class='doccomment'>/// A node left the network and may have been a member of group authorities we also belong to.</span>
-    <span class='ident'>NodeLost</span>(<span class='ident'>XorName</span>),
+    <span class='ident'>NodeLost</span>(<span class='ident'>XorName</span>, <span class='ident'>RoutingTable</span><span class='op'>&lt;</span><span class='ident'>NodeInfo</span><span class='op'>&gt;</span>),
     <span class='doccomment'>/// The client has successfully connected to a proxy node on the network.</span>
     <span class='ident'>Connected</span>,
     <span class='doccomment'>/// We have disconnected from the network.</span>
     <span class='ident'>Disconnected</span>,
+    <span class='doccomment'>/// We failed to relocate as a new node in the network.</span>
+    <span class='ident'>GetNetworkNameFailed</span>,
+    <span class='doccomment'>/// We failed to start listening for incoming connections as the first node.</span>
+    <span class='ident'>NetworkStartupFailed</span>,
+    <span class='comment'>// TODO: Find a better solution for periodic tasks.</span>
+    <span class='doccomment'>/// This event is sent periodically every time Routing sends the `Heartbeat` messages.</span>
+    <span class='ident'>Tick</span>,
+}
+
+<span class='kw'>impl</span> <span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>Event</span> {
+    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
+        <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
+            <span class='ident'>Event</span>::<span class='ident'>Request</span>(<span class='kw-2'>ref</span> <span class='ident'>request</span>) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;Event::Request({:?})&quot;</span>, <span class='ident'>request</span>),
+            <span class='ident'>Event</span>::<span class='ident'>Response</span>(<span class='kw-2'>ref</span> <span class='ident'>response</span>) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;Event::Response({:?})&quot;</span>, <span class='ident'>response</span>),
+            <span class='ident'>Event</span>::<span class='ident'>NodeAdded</span>(<span class='kw-2'>ref</span> <span class='ident'>node_name</span>, _) <span class='op'>=&gt;</span> {
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>,
+                       <span class='string'>&quot;Event::NodeAdded({:?}, routing_table)&quot;</span>,
+                       <span class='ident'>node_name</span>)
+            }
+            <span class='ident'>Event</span>::<span class='ident'>NodeLost</span>(<span class='kw-2'>ref</span> <span class='ident'>node_name</span>, _) <span class='op'>=&gt;</span> {
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;Event::NodeLost({:?}, routing_table)&quot;</span>, <span class='ident'>node_name</span>)
+            }
+            <span class='ident'>Event</span>::<span class='ident'>Connected</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;Event::Connected&quot;</span>),
+            <span class='ident'>Event</span>::<span class='ident'>Disconnected</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;Event::Disconnected&quot;</span>),
+            <span class='ident'>Event</span>::<span class='ident'>GetNetworkNameFailed</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;Event::GetNetworkNameFailed&quot;</span>),
+            <span class='ident'>Event</span>::<span class='ident'>NetworkStartupFailed</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;Event::NetworkStartupFailed&quot;</span>),
+            <span class='ident'>Event</span>::<span class='ident'>Tick</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;Event::Tick&quot;</span>),
+        }
+    }
 }
 </pre>
 </section>

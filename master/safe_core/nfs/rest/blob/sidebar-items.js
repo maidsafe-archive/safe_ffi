@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Blob","Blob represents a File - Music, Video, Text etc"]]});

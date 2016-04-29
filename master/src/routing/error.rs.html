@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.16.2/src/error.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.18.3/src/error.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>error.rs.html -- source</title>
@@ -222,9 +222,9 @@
 <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>event_sender</span>::{<span class='ident'>EventSenderError</span>, <span class='ident'>MaidSafeEventCategory</span>};
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
-<span class='doccomment'>/// InterfaceError.</span>
+<span class='doccomment'>/// The type of errors that can occur if routing is unable to handle a send request. </span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>InterfaceError</span> {
-    <span class='doccomment'>/// NotConnected.</span>
+    <span class='doccomment'>/// We are not connected to the network.</span>
     <span class='ident'>NotConnected</span>,
     <span class='doccomment'>/// Error while trying to receive a message from a channel</span>
     <span class='ident'>ChannelRxError</span>(<span class='ident'>RecvError</span>),
@@ -245,7 +245,7 @@
 }
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
-<span class='doccomment'>/// RoutingError.</span>
+<span class='doccomment'>/// The type of errors that can occur during handling of routing events.</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>RoutingError</span> {
     <span class='doccomment'>/// The node/client has not bootstrapped yet</span>
     <span class='ident'>NotBootstrapped</span>,

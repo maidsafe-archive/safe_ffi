@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.16.2/src/authority.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.18.3/src/authority.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>authority.rs.html -- source</title>
@@ -148,6 +148,7 @@
 <span id="105">105</span>
 <span id="106">106</span>
 <span id="107">107</span>
+<span id="108">108</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -212,7 +213,8 @@
             <span class='ident'>Authority</span>::<span class='ident'>ClientManager</span>(_) <span class='op'>|</span>
             <span class='ident'>Authority</span>::<span class='ident'>NaeManager</span>(_) <span class='op'>|</span>
             <span class='ident'>Authority</span>::<span class='ident'>NodeManager</span>(_) <span class='op'>=&gt;</span> <span class='boolval'>true</span>,
-            <span class='ident'>Authority</span>::<span class='ident'>ManagedNode</span>(_) <span class='op'>|</span> <span class='ident'>Authority</span>::<span class='ident'>Client</span> { .. } <span class='op'>=&gt;</span> <span class='boolval'>false</span>,
+            <span class='ident'>Authority</span>::<span class='ident'>ManagedNode</span>(_) <span class='op'>|</span>
+            <span class='ident'>Authority</span>::<span class='ident'>Client</span> { .. } <span class='op'>=&gt;</span> <span class='boolval'>false</span>,
         }
     }
 

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.16.2/src/data.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.18.3/src/data.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>data.rs.html -- source</title>
@@ -333,8 +333,8 @@
     }
 }
 
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Hash</span>, <span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Ord</span>, <span class='ident'>Clone</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
-<span class='doccomment'>/// DataIdentifier.</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Hash</span>, <span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Ord</span>, <span class='ident'>Clone</span>, <span class='ident'>Copy</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
+<span class='doccomment'>/// An identifier to address a data chunk.</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>DataIdentifier</span> {
     <span class='doccomment'>/// Data request, (Identifier, TypeTag) pair for name resolution, for StructuredData.</span>
     <span class='ident'>Structured</span>(<span class='ident'>XorName</span>, <span class='ident'>u64</span>),

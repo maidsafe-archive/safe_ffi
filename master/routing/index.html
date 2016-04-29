@@ -46,10 +46,10 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-0' class='srclink' href='../src/routing/lib.rs.html#18-218' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-0' class='srclink' href='../src/routing/lib.rs.html#18-220' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Client and node implementations for a resilient decentralised network.</p>
 
-<p>The network is based on the <a href="../kademlia_routing_table/index.html">kademlia_routing_table</a> and uses the XOR metric to define the
+<p>The network is based on the <a href="../kademlia_routing_table/index.html"><code>kademlia_routing_table</code></a> and uses the XOR metric to define the
 &quot;distance&quot; between two <a href="../xor_name/struct.XorName.html"><code>XorName</code></a>s. <code>XorName</code>s are used as addresses of nodes, clients as
 well as data.</p>
 
@@ -218,6 +218,14 @@ routing node.</p>
                     </tr>
                 
                     <tr class=' module-item'>
+                        <td><a class='struct' href='struct.NodeInfo.html'
+                               title='routing::NodeInfo'>NodeInfo</a></td>
+                        <td class='docblock short'>
+                             <p>Info about nodes in the routing table.</p>
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
                         <td><a class='struct' href='struct.PlainData.html'
                                title='routing::PlainData'>PlainData</a></td>
                         <td class='docblock short'>
@@ -286,7 +294,7 @@ routing node.</p>
                         <td><a class='enum' href='enum.DataIdentifier.html'
                                title='routing::DataIdentifier'>DataIdentifier</a></td>
                         <td class='docblock short'>
-                             <p>DataIdentifier.</p>
+                             <p>An identifier to address a data chunk.</p>
                         </td>
                     </tr>
                 
@@ -302,7 +310,7 @@ routing node.</p>
                         <td><a class='enum' href='enum.InterfaceError.html'
                                title='routing::InterfaceError'>InterfaceError</a></td>
                         <td class='docblock short'>
-                             <p>InterfaceError.</p>
+                             <p>The type of errors that can occur if routing is unable to handle a send request.</p>
                         </td>
                     </tr>
                 
@@ -326,7 +334,7 @@ routing node.</p>
                         <td><a class='enum' href='enum.RoutingError.html'
                                title='routing::RoutingError'>RoutingError</a></td>
                         <td class='docblock short'>
-                             <p>RoutingError.</p>
+                             <p>The type of errors that can occur during handling of routing events.</p>
                         </td>
                     </tr>
                 

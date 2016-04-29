@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/accumulator-0.2.0/src/lib.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/accumulator-0.3.0/src/lib.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>lib.rs.html -- source</title>
@@ -384,7 +384,6 @@
 <span id="341">341</span>
 <span id="342">342</span>
 <span id="343">343</span>
-<span id="344">344</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -444,13 +443,12 @@
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>maidsafe_utilities</span>;
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>rand</span>;
-<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>time</span>;
 
 <span class='comment'>// MaidSafe crates</span>
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>lru_time_cache</span>;
 
 <span class='kw'>use</span> <span class='ident'>lru_time_cache</span>::<span class='ident'>LruCache</span>;
-<span class='kw'>use</span> <span class='ident'>time</span>::<span class='ident'>Duration</span>;
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>time</span>::<span class='ident'>Duration</span>;
 
 <span class='doccomment'>/// Implementation of [Accumulator](index.html#accumulator).</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Accumulator</span><span class='op'>&lt;</span><span class='ident'>Key</span>, <span class='ident'>Value</span><span class='op'>&gt;</span>

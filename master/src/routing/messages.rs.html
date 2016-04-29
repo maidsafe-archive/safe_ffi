@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.16.2/src/messages.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.18.3/src/messages.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>messages.rs.html -- source</title>
@@ -693,6 +693,12 @@
 <span id="650">650</span>
 <span id="651">651</span>
 <span id="652">652</span>
+<span id="653">653</span>
+<span id="654">654</span>
+<span id="655">655</span>
+<span id="656">656</span>
+<span id="657">657</span>
+<span id="658">658</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -796,6 +802,9 @@
     <span class='doccomment'>/// Sent from a node that found a new node in the network to all its contacts who might need to</span>
     <span class='doccomment'>/// add the new node to their routing table.</span>
     <span class='ident'>NewNode</span>(<span class='ident'>PublicId</span>),
+    <span class='doccomment'>/// Sent to a node that, on the addition of a node at a given bucket index, we no longer need to</span>
+    <span class='doccomment'>/// be connected to.</span>
+    <span class='ident'>ConnectionUnneeded</span>(<span class='ident'>XorName</span>),
     <span class='doccomment'>/// Sent from a node that needs a tunnel to be able to connect to the given peer.</span>
     <span class='ident'>TunnelRequest</span>(<span class='ident'>PeerId</span>),
     <span class='doccomment'>/// Sent as a response to `TunnelRequest` if the node can act as a tunnel.</span>
@@ -1130,6 +1139,9 @@
             }
             <span class='ident'>DirectMessage</span>::<span class='ident'>NodeIdentify</span> { .. } <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;NodeIdentify {{ .. }}&quot;</span>),
             <span class='ident'>DirectMessage</span>::<span class='ident'>NewNode</span>(<span class='kw-2'>ref</span> <span class='ident'>public_id</span>) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;NewNode({:?})&quot;</span>, <span class='ident'>public_id</span>),
+            <span class='ident'>DirectMessage</span>::<span class='ident'>ConnectionUnneeded</span>(<span class='kw-2'>ref</span> <span class='ident'>name</span>) <span class='op'>=&gt;</span> {
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;ConnectionUnneeded({:?})&quot;</span>, <span class='ident'>name</span>)
+            }
             <span class='ident'>DirectMessage</span>::<span class='ident'>Heartbeat</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;Heartbeat&quot;</span>),
             <span class='ident'>DirectMessage</span>::<span class='ident'>TunnelRequest</span>(<span class='ident'>peer_id</span>) <span class='op'>=&gt;</span> {
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;TunnelRequest({:?})&quot;</span>, <span class='ident'>peer_id</span>)
