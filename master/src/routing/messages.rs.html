@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.18.3/src/messages.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.18.5/src/messages.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>messages.rs.html -- source</title>
@@ -696,9 +696,6 @@
 <span id="653">653</span>
 <span id="654">654</span>
 <span id="655">655</span>
-<span id="656">656</span>
-<span id="657">657</span>
-<span id="658">658</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -797,8 +794,6 @@
     <span class='doccomment'>/// Sent from a client that became a full routing node. The recipient can remove it from its</span>
     <span class='doccomment'>/// client map.</span>
     <span class='ident'>ClientToNode</span>,
-    <span class='doccomment'>/// Sent regularly to every peer to detect if they go offline.</span>
-    <span class='ident'>Heartbeat</span>,
     <span class='doccomment'>/// Sent from a node that found a new node in the network to all its contacts who might need to</span>
     <span class='doccomment'>/// add the new node to their routing table.</span>
     <span class='ident'>NewNode</span>(<span class='ident'>PublicId</span>),
@@ -1142,7 +1137,6 @@
             <span class='ident'>DirectMessage</span>::<span class='ident'>ConnectionUnneeded</span>(<span class='kw-2'>ref</span> <span class='ident'>name</span>) <span class='op'>=&gt;</span> {
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;ConnectionUnneeded({:?})&quot;</span>, <span class='ident'>name</span>)
             }
-            <span class='ident'>DirectMessage</span>::<span class='ident'>Heartbeat</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;Heartbeat&quot;</span>),
             <span class='ident'>DirectMessage</span>::<span class='ident'>TunnelRequest</span>(<span class='ident'>peer_id</span>) <span class='op'>=&gt;</span> {
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;TunnelRequest({:?})&quot;</span>, <span class='ident'>peer_id</span>)
             }
